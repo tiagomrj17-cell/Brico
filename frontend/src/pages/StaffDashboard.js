@@ -163,17 +163,17 @@ const StaffDashboard = () => {
         </div>
 
         {/* Filters */}
-        <div className="mb-6 flex items-center gap-4">
+        <div className="mb-6 flex items-center gap-4 relative z-10">
           <Filter className="w-5 h-5 text-gray-600" />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-48" data-testid="filter-status">
               <SelectValue placeholder="Filtrar por status" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Todos">Todos</SelectItem>
-              <SelectItem value="Pendente">Pendente</SelectItem>
-              <SelectItem value="Entregue">Entregue</SelectItem>
-              <SelectItem value="Levantada">Levantada</SelectItem>
+            <SelectContent className="z-50">
+              <SelectItem value="Todos" data-testid="filter-option-todos">Todos</SelectItem>
+              <SelectItem value="Pendente" data-testid="filter-option-pendente">Pendente</SelectItem>
+              <SelectItem value="Entregue" data-testid="filter-option-entregue">Entregue</SelectItem>
+              <SelectItem value="Levantada" data-testid="filter-option-levantada">Levantada</SelectItem>
             </SelectContent>
           </Select>
         </div>
