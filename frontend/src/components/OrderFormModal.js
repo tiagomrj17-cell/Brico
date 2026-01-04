@@ -17,15 +17,8 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
   const isEditing = !!order;
   
   const [formData, setFormData] = useState({
-    nome_cliente: '',
-    contacto: '',
-    tem_entrega: false,
-    morada_entrega: '',
-    distancia_kms: '',
-    num_colaboradores: 1,
     observacoes: '',
     data_entrega_prevista: '',
-    data_entrega_real: '',
     status: 'Pendente'
   });
 
