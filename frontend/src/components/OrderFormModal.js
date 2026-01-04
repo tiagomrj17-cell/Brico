@@ -139,7 +139,15 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
         const updateData = {
           status: formData.status,
           observacoes: formData.observacoes || null,
-          data_entrega_prevista: formData.data_entrega_prevista || null
+          data_entrega_prevista: formData.data_entrega_prevista || null,
+          artigos: artigos.map(art => ({
+            codigo: art.codigo,
+            designacao: art.designacao,
+            quantidade: parseInt(art.quantidade),
+            preco_unitario: parseFloat(art.preco_unitario),
+            preco_total: parseFloat(art.preco_total),
+            separado: art.separado || false
+          }))
         };
         
         await axios.put(`${API}/orders/${order.id}`, updateData);
