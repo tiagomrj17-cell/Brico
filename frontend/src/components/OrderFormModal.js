@@ -92,7 +92,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
   };
 
   const addArtigo = () => {
-    setArtigos([...artigos, { codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0 }]);
+    setArtigos([...artigos, { codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
   };
 
   const removeArtigo = (index) => {
