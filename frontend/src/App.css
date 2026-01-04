@@ -22,38 +22,6 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 100vh;
 }
 
-.btn-primary-orange {
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn-primary-orange:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
-}
-
-.input-field {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  background: white;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: #ff6b35;
-  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
-}
-
 .status-badge {
   padding: 0.375rem 0.875rem;
   border-radius: 9999px;
@@ -90,4 +58,24 @@ h1, h2, h3, h4, h5, h6 {
 .status-cancelada {
   background: #fee2e2;
   color: #991b1b;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  @page {
+    size: A4;
+    margin: 2cm;
+  }
 }
