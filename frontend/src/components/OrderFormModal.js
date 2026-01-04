@@ -17,6 +17,12 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
   const isEditing = !!order;
   
   const [formData, setFormData] = useState({
+    nome_cliente: '',
+    contacto: '',
+    tem_entrega: false,
+    morada_entrega: '',
+    distancia_kms: '',
+    num_colaboradores: 1,
     observacoes: '',
     data_entrega_prevista: '',
     status: 'Pendente'
@@ -31,6 +37,12 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
   useEffect(() => {
     if (order) {
       setFormData({
+        nome_cliente: order.nome_cliente,
+        contacto: order.contacto,
+        tem_entrega: order.tem_entrega,
+        morada_entrega: order.morada_entrega || '',
+        distancia_kms: order.distancia_kms || '',
+        num_colaboradores: order.num_colaboradores || 1,
         observacoes: order.observacoes || '',
         data_entrega_prevista: order.data_entrega_prevista || '',
         status: order.status
@@ -43,6 +55,12 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
 
   const resetForm = () => {
     setFormData({
+      nome_cliente: '',
+      contacto: '',
+      tem_entrega: false,
+      morada_entrega: '',
+      distancia_kms: '',
+      num_colaboradores: 1,
       observacoes: '',
       data_entrega_prevista: '',
       status: 'Pendente'
