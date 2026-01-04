@@ -313,7 +313,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
                   <Label htmlFor="tem_entrega" className="text-base font-semibold cursor-pointer">
                     Necessita de Entrega?
                   </Label>
-                  <p className="text-sm text-gray-600 mt-1">2€/km + 15€/colaborador (mínimo 10€)</p>
+                  <p className="text-sm text-gray-600 mt-1">10€ base + 2€/km + 15€/colaborador adicional</p>
                 </div>
                 <Switch
                   id="tem_entrega"
@@ -379,6 +379,11 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
                     onChange={handleInputChange}
                     className="mt-1 border-gray-300 focus:border-orange-500"
                   />
+                  {!formData.data_entrega_prevista && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Se não tiver data, deixe em branco para combinar com o cliente posteriormente
+                    </p>
+                  )}
                 </div>
               </div>
             )}
