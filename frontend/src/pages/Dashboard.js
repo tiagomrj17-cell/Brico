@@ -357,22 +357,6 @@ const Dashboard = () => {
                       <Printer className="w-4 h-4" />
                       Imprimir
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if (order.status === 'Levantada') {
-                          toast.error('Não é possível eliminar encomendas já levantadas');
-                          return;
-                        }
-                        setDeletingOrder(order);
-                      }}
-                      disabled={order.status === 'Levantada'}
-                      className={`flex items-center gap-2 border-red-300 text-red-600 hover:bg-red-50 ${order.status === 'Levantada' ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Eliminar
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
