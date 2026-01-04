@@ -76,6 +76,7 @@ class Order(BaseModel):
     observacoes: Optional[str] = None
     data_entrega_prevista: Optional[str] = None
     data_levantada: Optional[str] = None
+    nome_colaborador: str
     historico: List[dict] = Field(default_factory=list)
     data_criacao: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     data_atualizacao: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
