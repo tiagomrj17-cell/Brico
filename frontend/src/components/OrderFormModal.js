@@ -183,9 +183,9 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
           subtotal_artigos,
           custo_entrega,
           total_final,
-          status: formData.status,
           observacoes: formData.observacoes || null,
-          data_entrega_prevista: formData.data_entrega_prevista || null
+          data_entrega_prevista: formData.data_entrega_prevista || null,
+          nome_colaborador: formData.nome_colaborador
         };
 
         await axios.post(`${API}/orders`, orderData);
