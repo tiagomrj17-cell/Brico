@@ -241,7 +241,8 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
                   value={formData.contacto}
                   onChange={handleInputChange}
                   className="mt-1 border-gray-300 focus:border-orange-500"
-                  required
+                  disabled={isEditing}
+                  required={!isEditing}
                 />
               </div>
             </div>
