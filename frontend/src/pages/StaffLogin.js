@@ -17,7 +17,7 @@ const StaffLogin = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/staff/dashboard');
+      navigate('/');
     }
   }, [isAuthenticated, navigate]);
 
@@ -29,7 +29,7 @@ const StaffLogin = () => {
 
     if (result.success) {
       toast.success('Login efetuado com sucesso!');
-      navigate('/staff/dashboard');
+      navigate('/');
     } else {
       toast.error(result.error);
     }
@@ -38,17 +38,17 @@ const StaffLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-purple-100 via-blue-100 to-pink-100">
-      <div className="w-full max-w-md fade-in">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-orange-50 to-white">
+      <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 mb-4">
             <Lock className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Staff Login</h1>
-          <p className="text-gray-600">Acesso restrito a funcionários</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Gestão de Encomendas</h1>
+          <p className="text-gray-600">Acesso restrito a staff</p>
         </div>
 
-        <Card className="glassmorphism border-0 shadow-2xl">
+        <Card className="bg-white border-gray-200 shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl">Entrar na Conta</CardTitle>
             <CardDescription>Insira as suas credenciais</CardDescription>
@@ -64,7 +64,7 @@ const StaffLogin = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="seu_username"
-                  className="mt-1"
+                  className="mt-1 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                   required
                 />
               </div>
@@ -77,7 +77,7 @@ const StaffLogin = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="mt-1"
+                  className="mt-1 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                   required
                 />
               </div>
@@ -85,24 +85,13 @@ const StaffLogin = () => {
                 type="submit"
                 data-testid="btn-login"
                 disabled={loading}
-                className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all"
+                className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
               >
                 {loading ? 'A entrar...' : 'Entrar'}
               </Button>
             </form>
           </CardContent>
         </Card>
-
-        <div className="text-center mt-6">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/')}
-            data-testid="btn-voltar-inicio"
-            className="text-gray-600 hover:text-gray-900"
-          >
-            ← Voltar ao Início
-          </Button>
-        </div>
       </div>
     </div>
   );

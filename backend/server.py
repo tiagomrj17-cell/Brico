@@ -53,6 +53,24 @@ class OrderCreate(BaseModel):
     subtotal_artigos: float
     custo_entrega: float
     total_final: float
+    observacoes: Optional[str] = None
+    data_entrega_prevista: Optional[str] = None
+
+class OrderUpdate(BaseModel):
+    nome_cliente: Optional[str] = None
+    contacto: Optional[str] = None
+    tem_entrega: Optional[bool] = None
+    morada_entrega: Optional[str] = None
+    distancia_kms: Optional[float] = None
+    num_colaboradores: Optional[int] = None
+    artigos: Optional[List[ArticleItem]] = None
+    subtotal_artigos: Optional[float] = None
+    custo_entrega: Optional[float] = None
+    total_final: Optional[float] = None
+    status: Optional[str] = None
+    observacoes: Optional[str] = None
+    data_entrega_prevista: Optional[str] = None
+    data_entrega_real: Optional[str] = None
 
 class Order(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -68,11 +86,12 @@ class Order(BaseModel):
     subtotal_artigos: float
     custo_entrega: float
     total_final: float
-    status: str = "Pendente"  # Pendente, Entregue, Levantada
+    status: str = "Pendente"  # Pendente, Em Preparação, Pronta para Levantamento, Entregue, Levantada, Cancelada
+    observacoes: Optional[str] = None
+    data_entrega_prevista: Optional[str] = None
+    data_entrega_real: Optional[str] = None
     data_criacao: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class OrderUpdate(BaseModel):
-    status: str
+    data_atualizacao: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class StaffLogin(BaseModel):
     username: str
@@ -129,7 +148,7 @@ async def get_current_staff(credentials: HTTPAuthorizationCredentials = Depends(
 # Routes
 @api_router.get("/")
 async def root():
-    return {"message": "Sistema de Encomendas API"}
+    return {"message": "Sistema de Gestão de Encomendas API"}
 
 # Staff authentication routes
 @api_router.post("/staff/register")
@@ -179,12 +198,13 @@ async def get_current_staff_info(current_staff: dict = Depends(get_current_staff
 
 # Order routes
 @api_router.post("/orders", response_model=Order)
-async def create_order(order_data: OrderCreate):
+async def create_order(order_data: OrderCreate, current_staff: dict = Depends(get_current_staff)):
     order_dict = order_data.model_dump()
     order_obj = Order(**order_dict)
     
     doc = order_obj.model_dump()
     doc['data_criacao'] = doc['data_criacao'].isoformat()
+    doc['data_atualizacao'] = doc['data_atualizacao'].isoformat()
     
     await db.orders.insert_one(doc)
     return order_obj
@@ -196,9 +216,11 @@ async def get_orders(current_staff: dict = Depends(get_current_staff)):
     for order in orders:
         if isinstance(order['data_criacao'], str):
             order['data_criacao'] = datetime.fromisoformat(order['data_criacao'])
+        if isinstance(order['data_atualizacao'], str):
+            order['data_atualizacao'] = datetime.fromisoformat(order['data_atualizacao'])
     
     # Sort by date descending
-    orders.sort(key=lambda x: x['data_criacao'], reverse=True)
+    orders.sort(key=lambda x: x['data_atualizacao'], reverse=True)
     return orders
 
 @api_router.get("/orders/{order_id}", response_model=Order)
@@ -209,24 +231,52 @@ async def get_order(order_id: str, current_staff: dict = Depends(get_current_sta
     
     if isinstance(order['data_criacao'], str):
         order['data_criacao'] = datetime.fromisoformat(order['data_criacao'])
+    if isinstance(order['data_atualizacao'], str):
+        order['data_atualizacao'] = datetime.fromisoformat(order['data_atualizacao'])
     
     return order
 
-@api_router.patch("/orders/{order_id}")
-async def update_order_status(order_id: str, update_data: OrderUpdate, current_staff: dict = Depends(get_current_staff)):
+@api_router.put("/orders/{order_id}", response_model=Order)
+async def update_order(order_id: str, update_data: OrderUpdate, current_staff: dict = Depends(get_current_staff)):
     order = await db.orders.find_one({"id": order_id})
     if not order:
         raise HTTPException(status_code=404, detail="Encomenda não encontrada")
     
+    # Prepare update data, excluding None values
+    update_dict = {k: v for k, v in update_data.model_dump().items() if v is not None}
+    
+    # Add updated timestamp
+    update_dict['data_atualizacao'] = datetime.now(timezone.utc).isoformat()
+    
     result = await db.orders.update_one(
         {"id": order_id},
-        {"$set": {"status": update_data.status}}
+        {"$set": update_dict}
     )
     
-    if result.modified_count == 0:
-        raise HTTPException(status_code=400, detail="Não foi possível atualizar o status")
+    if result.modified_count == 0 and len(update_dict) > 1:  # > 1 because data_atualizacao is always present
+        raise HTTPException(status_code=400, detail="Não foi possível atualizar a encomenda")
     
-    return {"message": "Status atualizado com sucesso", "status": update_data.status}
+    # Fetch and return updated order
+    updated_order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    if isinstance(updated_order['data_criacao'], str):
+        updated_order['data_criacao'] = datetime.fromisoformat(updated_order['data_criacao'])
+    if isinstance(updated_order['data_atualizacao'], str):
+        updated_order['data_atualizacao'] = datetime.fromisoformat(updated_order['data_atualizacao'])
+    
+    return updated_order
+
+@api_router.delete("/orders/{order_id}")
+async def delete_order(order_id: str, current_staff: dict = Depends(get_current_staff)):
+    order = await db.orders.find_one({"id": order_id})
+    if not order:
+        raise HTTPException(status_code=404, detail="Encomenda não encontrada")
+    
+    result = await db.orders.delete_one({"id": order_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=400, detail="Não foi possível eliminar a encomenda")
+    
+    return {"message": "Encomenda eliminada com sucesso", "id": order_id}
 
 # Include the router in the main app
 app.include_router(api_router)

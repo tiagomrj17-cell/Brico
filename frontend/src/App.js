@@ -2,7 +2,6 @@ import React from 'react';
 import '@/App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
-import PublicOrderPage from '@/pages/PublicOrderPage';
 import StaffLogin from '@/pages/StaffLogin';
 import StaffDashboard from '@/pages/StaffDashboard';
 import { AuthProvider } from '@/context/AuthContext';
@@ -14,10 +13,9 @@ function App() {
       <div className="App">
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<PublicOrderPage />} />
-            <Route path="/staff/login" element={<StaffLogin />} />
+            <Route path="/login" element={<StaffLogin />} />
             <Route 
-              path="/staff/dashboard" 
+              path="/" 
               element={
                 <ProtectedRoute>
                   <StaffDashboard />
