@@ -76,6 +76,8 @@ class Order(BaseModel):
     model_config = ConfigDict(extra="ignore")
     
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    numero_encomenda: str
+    tipo: str = "encomenda"
     nome_cliente: str
     contacto: str
     tem_entrega: bool
@@ -90,7 +92,8 @@ class Order(BaseModel):
     observacoes: Optional[str] = None
     data_entrega_prevista: Optional[str] = None
     data_levantada: Optional[str] = None
-    nome_colaborador: str
+    colaborador_id: str
+    nome_colaborador: Optional[str] = None
     historico: List[dict] = Field(default_factory=list)
     data_criacao: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     data_atualizacao: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
