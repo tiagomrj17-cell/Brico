@@ -151,7 +151,7 @@ async def get_next_order_number():
         try:
             last_num = int(last_order['numero_encomenda'].split('-')[1])
             next_num = last_num + 1
-        except:
+        except (ValueError, IndexError, AttributeError):
             next_num = 4000
     else:
         next_num = 4000
