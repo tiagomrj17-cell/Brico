@@ -256,6 +256,11 @@ const Dashboard = () => {
                     <div className="flex-1">
                       <h3 className="text-lg font-bold text-gray-900">{order.nome_cliente}</h3>
                       <p className="text-sm text-gray-600">{order.contacto}</p>
+                      {order.nome_colaborador && (
+                        <p className="text-sm text-purple-700 font-medium mt-0.5">
+                          Colaborador: {order.nome_colaborador}
+                        </p>
+                      )}
                       <p className="text-xs text-gray-500 mt-1">Criada: {formatDate(order.data_criacao)}</p>
                       {order.data_atualizacao && order.data_atualizacao !== order.data_criacao && (
                         <p className="text-xs text-orange-600 font-medium mt-0.5">
