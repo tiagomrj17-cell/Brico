@@ -287,34 +287,6 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
             </Select>
           </div>
 
-          {/* Datas */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="data_entrega_prevista">Data de Entrega Prevista</Label>
-              <Input
-                type="date"
-                id="data_entrega_prevista"
-                name="data_entrega_prevista"
-                data-testid="input-data-prevista"
-                value={formData.data_entrega_prevista}
-                onChange={handleInputChange}
-                className="mt-1 border-gray-300 focus:border-orange-500"
-              />
-            </div>
-            <div>
-              <Label htmlFor="data_entrega_real">Data de Entrega Real</Label>
-              <Input
-                type="date"
-                id="data_entrega_real"
-                name="data_entrega_real"
-                data-testid="input-data-real"
-                value={formData.data_entrega_real}
-                onChange={handleInputChange}
-                className="mt-1 border-gray-300 focus:border-orange-500"
-              />
-            </div>
-          </div>
-
           {/* Opção de Entrega */}
           {!isEditing && (
             <div className="space-y-4">
