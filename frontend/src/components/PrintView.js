@@ -112,10 +112,10 @@ const PrintView = ({ order }) => {
                   <td style={{ padding: '2mm', backgroundColor: '#f5f5f5' }}>{formatDate(order.data_entrega_prevista)}</td>
                 </tr>
               )}
-              {order.data_entrega_real && (
+              {order.data_levantada && (
                 <tr>
-                  <td style={{ padding: '2mm', fontWeight: 'bold' }}>Entrega Real:</td>
-                  <td style={{ padding: '2mm' }}>{formatDate(order.data_entrega_real)}</td>
+                  <td style={{ padding: '2mm', fontWeight: 'bold' }}>Data de Levantamento:</td>
+                  <td style={{ padding: '2mm', color: '#7c3aed', fontWeight: 'bold' }}>{formatDateTime(order.data_levantada)}</td>
                 </tr>
               )}
             </tbody>
