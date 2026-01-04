@@ -57,7 +57,8 @@ class OrderCreate(BaseModel):
     total_final: float
     observacoes: Optional[str] = None
     data_entrega_prevista: Optional[str] = None
-    nome_colaborador: str
+    colaborador_id: str
+    tipo: str = "encomenda"  # encomenda ou orcamento
 
 class HistoricoAlteracao(BaseModel):
     data_hora: str
