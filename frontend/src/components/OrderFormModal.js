@@ -106,11 +106,13 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
     let custo_entrega = 0;
     if (formData.tem_entrega) {
       const distancia = parseFloat(formData.distancia_kms) || 0;
-      const colaboradores = parseInt(formData.num_colaboradores) || 0;
-      custo_entrega = (distancia * 2) + (colaboradores * 15);
-      // Custo mínimo de entrega: 10€
-      if (custo_entrega < 10) {
-        custo_entrega = 10;
+      const colaboradores = parseInt(formData.num_colaboradores) || 1;
+      
+      // Custo base: 10€ (inclui 1 colaborador)
+      // Cada colaborador adicional: +15€
+      custo_entrega = 10 + (distancia * 2);
+      if (colaboradores > 1) {
+        custo_entrega += (colaboradores - 1) * 15;
       }
     }
 
