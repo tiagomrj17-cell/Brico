@@ -527,6 +527,20 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
                       €{artigo.preco_total.toFixed(2)}
                     </span>
                   </div>
+                  {isEditing && (
+                    <div className="flex items-center gap-2 mt-2">
+                      <input
+                        type="checkbox"
+                        id={`separado-${index}`}
+                        checked={artigo.separado || false}
+                        onChange={(e) => handleArtigoChange(index, 'separado', e.target.checked)}
+                        className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                      />
+                      <Label htmlFor={`separado-${index}`} className="text-sm cursor-pointer">
+                        Artigo já está separado
+                      </Label>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
