@@ -136,6 +136,10 @@ async def update_order(order_id: str, update_data: OrderUpdate):
     if not order:
         raise HTTPException(status_code=404, detail="Encomenda não encontrada")
     
+    # Não permitir edição se status for "Levantada"
+    if order.get('status') == 'Levantada':
+        raise HTTPException(status_code=403, detail="Não é possível editar encomendas já levantadas")
+    
     # Prepare update data, excluding None values
     update_dict = {k: v for k, v in update_data.model_dump().items() if v is not None}
     
@@ -191,6 +195,10 @@ async def delete_order(order_id: str):
     order = await db.orders.find_one({"id": order_id})
     if not order:
         raise HTTPException(status_code=404, detail="Encomenda não encontrada")
+    
+    # Não permitir eliminação se status for "Levantada"
+    if order.get('status') == 'Levantada':
+        raise HTTPException(status_code=403, detail="Não é possível eliminar encomendas já levantadas")
     
     result = await db.orders.delete_one({"id": order_id})
     
