@@ -1,0 +1,165 @@
+import React from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+
+const OrderDetailsModal = ({ open, onClose, order }) => {
+  if (!order) return null;
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleString('pt-PT', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formatDateOnly = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-PT', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  const getStatusColor = (status) => {
+    const statusMap = {
+      'Pendente': 'status-pendente',
+      'Em Preparação': 'status-em-preparacao',
+      'Pronta para Levantamento': 'status-pronta-levantamento',
+      'Entregue': 'status-entregue',
+      'Levantada': 'status-levantada',
+      'Cancelada': 'status-cancelada'
+    };
+    return statusMap[status] || 'bg-gray-100 text-gray-800';
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-2xl">Detalhes da Encomenda</DialogTitle>
+          <DialogDescription>
+            Encomenda de {order.nome_cliente}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-6 mt-4">
+          {/* Status */}
+          <div>
+            <Badge className={`status-badge ${getStatusColor(order.status)} text-base px-4 py-2`}>
+              {order.status}
+            </Badge>
+          </div>
+
+          {/* Cliente */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-semibold text-lg mb-3">Informações do Cliente</h3>
+            <div className="space-y-2">
+              <p><span className="font-medium text-gray-600">Nome:</span> {order.nome_cliente}</p>
+              <p><span className="font-medium text-gray-600">Contacto:</span> {order.contacto}</p>
+            </div>
+          </div>
+
+          {/* Datas */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-semibold text-lg mb-3">Datas</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-600">Criada em:</p>
+                <p className="font-medium">{formatDate(order.data_criacao)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Última atualização:</p>
+                <p className="font-medium">{formatDate(order.data_atualizacao)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Entrega Prevista:</p>
+                <p className="font-medium">{formatDateOnly(order.data_entrega_prevista)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Entrega Real:</p>
+                <p className="font-medium">{formatDateOnly(order.data_entrega_real)}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Entrega */}
+          {order.tem_entrega ? (
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h3 className="font-semibold text-lg mb-3">Informações de Entrega</h3>
+              <div className="space-y-2">
+                <p><span className="font-medium text-gray-600">Morada:</span> {order.morada_entrega}</p>
+                <p><span className="font-medium text-gray-600">Distância:</span> {order.distancia_kms} km</p>
+                <p><span className="font-medium text-gray-600">Colaboradores:</span> {order.num_colaboradores}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <h3 className="font-semibold text-lg">Levantamento</h3>
+              <p className="text-gray-600 mt-1">Cliente irá levantar a encomenda</p>
+            </div>
+          )}
+
+          {/* Artigos */}
+          <div>
+            <h3 className="font-semibold text-lg mb-3">Artigos</h3>
+            <div className="space-y-3">
+              {order.artigos.map((artigo, idx) => (
+                <div key={idx} className="bg-white border border-gray-200 p-4 rounded-lg">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <p className="font-semibold text-lg">{artigo.designacao}</p>
+                      <p className="text-sm text-gray-600">Código: {artigo.codigo}</p>
+                    </div>
+                    <Badge variant="secondary" className="text-sm">x{artigo.quantidade}</Badge>
+                  </div>
+                  <div className="flex justify-between text-sm mt-2 pt-2 border-t border-gray-200">
+                    <span className="text-gray-600">Preço Unitário: €{artigo.preco_unitario.toFixed(2)}</span>
+                    <span className="font-semibold text-orange-600">Total: €{artigo.preco_total.toFixed(2)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Observações */}
+          {order.observacoes && (
+            <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+              <h3 className="font-semibold text-lg mb-2">Observações</h3>
+              <p className="text-gray-700 whitespace-pre-wrap">{order.observacoes}</p>
+            </div>
+          )}
+
+          {/* Resumo */}
+          <div className="bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
+            <h3 className="font-semibold text-lg mb-3">Resumo de Custos</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-700">Subtotal Artigos:</span>
+                <span className="font-semibold">€{order.subtotal_artigos.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-700">Custo de Entrega:</span>
+                <span className="font-semibold">€{order.custo_entrega.toFixed(2)}</span>
+              </div>
+              <div className="border-t-2 border-orange-300 pt-2 mt-2">
+                <div className="flex justify-between text-xl">
+                  <span className="font-bold text-gray-900">Total Final:</span>
+                  <span className="font-bold text-orange-600">€{order.total_final.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default OrderDetailsModal;
