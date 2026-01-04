@@ -157,6 +157,23 @@ const PrintView = ({ order }) => {
           </div>
         )}
 
+        {/* Histórico de Alterações */}
+        {order.historico && order.historico.length > 0 && (
+          <div style={{ marginBottom: '8mm', padding: '4mm', backgroundColor: '#e0f2fe', border: '1px solid #0ea5e9', borderRadius: '2mm' }}>
+            <h3 style={{ fontSize: '14pt', margin: '0 0 2mm 0', color: '#333' }}>Histórico de Alterações</h3>
+            <div style={{ fontSize: '10pt' }}>
+              {order.historico.map((alt, idx) => (
+                <div key={idx} style={{ marginBottom: '2mm', paddingBottom: '2mm', borderBottom: idx < order.historico.length - 1 ? '1px solid #bae6fd' : 'none' }}>
+                  <div style={{ color: '#0c4a6e', fontWeight: 'bold' }}>{formatDateTime(alt.data_hora)}</div>
+                  <div style={{ color: '#333' }}>
+                    <strong>{alt.campo_alterado}</strong>: <span style={{ textDecoration: 'line-through', color: '#666' }}>{alt.valor_anterior || '(vazio)'}</span> → <strong>{alt.valor_novo}</strong>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Resumo */}
         <div style={{ marginTop: '10mm', border: '2px solid #ff6b35', padding: '5mm', backgroundColor: '#fff5f0' }}>
           <h2 style={{ fontSize: '16pt', margin: '0 0 3mm 0', color: '#ff6b35' }}>Resumo Financeiro</h2>
