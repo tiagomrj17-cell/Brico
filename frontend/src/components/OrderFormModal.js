@@ -121,58 +121,65 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.nome_cliente || !formData.contacto) {
-      toast.error('Por favor, preencha nome e contacto');
-      return;
-    }
-
-    if (artigos.some(art => !art.codigo || !art.designacao)) {
-      toast.error('Por favor, preencha todos os artigos');
-      return;
-    }
-
-    if (formData.tem_entrega && (!formData.morada_entrega || !formData.distancia_kms)) {
-      toast.error('Por favor, preencha os dados de entrega');
-      return;
-    }
-
-    const { subtotal_artigos, custo_entrega, total_final } = calculateTotals();
-
-    const orderData = {
-      nome_cliente: formData.nome_cliente,
-      contacto: formData.contacto,
-      tem_entrega: formData.tem_entrega,
-      morada_entrega: formData.tem_entrega ? formData.morada_entrega : null,
-      distancia_kms: formData.tem_entrega ? parseFloat(formData.distancia_kms) : null,
-      num_colaboradores: formData.tem_entrega ? parseInt(formData.num_colaboradores) : null,
-      artigos: artigos.map(art => ({
-        codigo: art.codigo,
-        designacao: art.designacao,
-        quantidade: parseInt(art.quantidade),
-        preco_unitario: parseFloat(art.preco_unitario),
-        preco_total: parseFloat(art.preco_total)
-      })),
-      subtotal_artigos,
-      custo_entrega,
-      total_final,
-      status: formData.status,
-      observacoes: formData.observacoes || null,
-      data_entrega_prevista: formData.data_entrega_prevista || null,
-      data_entrega_real: formData.data_entrega_real || null
-    };
-
     setSubmitting(true);
 
     try {
       if (isEditing) {
-        await axios.put(`${API}/orders/${order.id}`, orderData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        // Para edição, apenas enviar campos que podem ser editados
+        const updateData = {
+          status: formData.status,
+          observacoes: formData.observacoes || null,
+          data_entrega_prevista: formData.data_entrega_prevista || null,
+          data_entrega_real: formData.data_entrega_real || null
+        };
+        
+        await axios.put(`${API}/orders/${order.id}`, updateData);
         toast.success('Encomenda atualizada com sucesso!');
       } else {
-        await axios.post(`${API}/orders`, orderData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        // Para criar nova encomenda
+        if (!formData.nome_cliente || !formData.contacto) {
+          toast.error('Por favor, preencha nome e contacto');
+          setSubmitting(false);
+          return;
+        }
+
+        if (artigos.some(art => !art.codigo || !art.designacao)) {
+          toast.error('Por favor, preencha todos os artigos');
+          setSubmitting(false);
+          return;
+        }
+
+        if (formData.tem_entrega && (!formData.morada_entrega || !formData.distancia_kms)) {
+          toast.error('Por favor, preencha os dados de entrega');
+          setSubmitting(false);
+          return;
+        }
+
+        const { subtotal_artigos, custo_entrega, total_final } = calculateTotals();
+
+        const orderData = {
+          nome_cliente: formData.nome_cliente,
+          contacto: formData.contacto,
+          tem_entrega: formData.tem_entrega,
+          morada_entrega: formData.tem_entrega ? formData.morada_entrega : null,
+          distancia_kms: formData.tem_entrega ? parseFloat(formData.distancia_kms) : null,
+          num_colaboradores: formData.tem_entrega ? parseInt(formData.num_colaboradores) : null,
+          artigos: artigos.map(art => ({
+            codigo: art.codigo,
+            designacao: art.designacao,
+            quantidade: parseInt(art.quantidade),
+            preco_unitario: parseFloat(art.preco_unitario),
+            preco_total: parseFloat(art.preco_total)
+          })),
+          subtotal_artigos,
+          custo_entrega,
+          total_final,
+          status: formData.status,
+          observacoes: formData.observacoes || null,
+          data_entrega_prevista: formData.data_entrega_prevista || null
+        };
+
+        await axios.post(`${API}/orders`, orderData);
         toast.success('Encomenda criada com sucesso!');
       }
       
