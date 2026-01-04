@@ -48,7 +48,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
         nome_colaborador: order.nome_colaborador || '',
         status: order.status
       });
-      setArtigos(order.artigos || [{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0 }]);
+      setArtigos(order.artigos || [{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
     } else {
       resetForm();
     }
