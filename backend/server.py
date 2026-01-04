@@ -74,7 +74,8 @@ class Order(BaseModel):
     status: str = "Pendente"
     observacoes: Optional[str] = None
     data_entrega_prevista: Optional[str] = None
-    data_entrega_real: Optional[str] = None
+    data_levantada: Optional[str] = None
+    historico: List[dict] = Field(default_factory=list)
     data_criacao: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     data_atualizacao: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
