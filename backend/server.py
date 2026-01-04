@@ -214,9 +214,11 @@ async def get_orders(current_staff: dict = Depends(get_current_staff)):
     orders = await db.orders.find({}, {"_id": 0}).to_list(1000)
     
     for order in orders:
-        if isinstance(order['data_criacao'], str):
+        if isinstance(order.get('data_criacao'), str):
             order['data_criacao'] = datetime.fromisoformat(order['data_criacao'])
-        if isinstance(order['data_atualizacao'], str):
+        if 'data_atualizacao' not in order:
+            order['data_atualizacao'] = order.get('data_criacao', datetime.now(timezone.utc))
+        elif isinstance(order['data_atualizacao'], str):
             order['data_atualizacao'] = datetime.fromisoformat(order['data_atualizacao'])
     
     # Sort by date descending
