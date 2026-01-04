@@ -45,6 +45,7 @@ class OrderCreate(BaseModel):
     total_final: float
     observacoes: Optional[str] = None
     data_entrega_prevista: Optional[str] = None
+    nome_colaborador: str
 
 class HistoricoAlteracao(BaseModel):
     data_hora: str
