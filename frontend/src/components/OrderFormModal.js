@@ -186,7 +186,8 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
             designacao: art.designacao,
             quantidade: parseInt(art.quantidade),
             preco_unitario: parseFloat(art.preco_unitario),
-            preco_total: parseFloat(art.preco_total)
+            preco_total: parseFloat(art.preco_total),
+            separado: art.separado || false
           })),
           subtotal_artigos,
           custo_entrega,
