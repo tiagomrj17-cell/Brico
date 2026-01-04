@@ -31,6 +31,7 @@ class ArticleItem(BaseModel):
     quantidade: int
     preco_unitario: float
     preco_total: float
+    separado: bool = False
 
 class OrderCreate(BaseModel):
     nome_cliente: str
