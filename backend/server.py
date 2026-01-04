@@ -103,6 +103,40 @@ class Order(BaseModel):
 async def root():
     return {"message": "Sistema de Gestão de Encomendas API"}
 
+# Colaboradores routes
+@api_router.post("/colaboradores", response_model=Colaborador)
+async def create_colaborador(colab_data: ColaboradorCreate):
+    colab_obj = Colaborador(**colab_data.model_dump())
+    doc = colab_obj.model_dump()
+    doc['data_criacao'] = doc['data_criacao'].isoformat()
+    
+    await db.colaboradores.insert_one(doc)
+    return colab_obj
+
+@api_router.get("/colaboradores", response_model=List[Colaborador])
+async def get_colaboradores():
+    colaboradores = await db.colaboradores.find({"ativo": True}, {"_id": 0}).to_list(1000)
+    
+    for colab in colaboradores:
+        if isinstance(colab.get('data_criacao'), str):
+            colab['data_criacao'] = datetime.fromisoformat(colab['data_criacao'])
+    
+    colaboradores.sort(key=lambda x: x.get('nome', ''))
+    return colaboradores
+
+@api_router.delete("/colaboradores/{colaborador_id}")
+async def delete_colaborador(colaborador_id: str):
+    # Marcar como inativo ao invés de deletar
+    result = await db.colaboradores.update_one(
+        {"id": colaborador_id},
+        {"$set": {"ativo": False}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Colaborador não encontrado")
+    
+    return {"message": "Colaborador removido com sucesso"}
+
 # Order routes (sem autenticação)
 @api_router.post("/orders", response_model=Order)
 async def create_order(order_data: OrderCreate):
