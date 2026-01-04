@@ -25,7 +25,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
     num_colaboradores: 1,
     observacoes: '',
     data_entrega_prevista: '',
-    status: 'Pendente'
+    nome_colaborador: ''
   });
 
   const [artigos, setArtigos] = useState([
