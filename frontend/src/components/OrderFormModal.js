@@ -287,6 +287,22 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
             </Select>
           </div>
 
+          {/* Data de entrega prevista - apenas em edição */}
+          {isEditing && order.tem_entrega && (
+            <div>
+              <Label htmlFor="data_entrega_prevista">Data de Entrega Prevista</Label>
+              <Input
+                type="date"
+                id="data_entrega_prevista"
+                name="data_entrega_prevista"
+                data-testid="input-data-prevista"
+                value={formData.data_entrega_prevista}
+                onChange={handleInputChange}
+                className="mt-1 border-gray-300 focus:border-orange-500"
+              />
+            </div>
+          )}
+
           {/* Opção de Entrega */}
           {!isEditing && (
             <div className="space-y-4">
