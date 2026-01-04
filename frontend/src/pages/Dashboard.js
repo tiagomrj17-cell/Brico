@@ -283,14 +283,22 @@ const Dashboard = () => {
                       <p className="font-semibold">{order.artigos.length}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Entrega Prevista</p>
-                      <p className="font-semibold">{order.data_entrega_prevista || '-'}</p>
+                      <p className="text-gray-600">Data/Hora Criação</p>
+                      <p className="font-semibold text-xs">{formatDate(order.data_criacao)}</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Total</p>
                       <p className="font-semibold text-orange-600 text-base">€{order.total_final.toFixed(2)}</p>
                     </div>
                   </div>
+
+                  {order.data_entrega_prevista && (
+                    <div className="mb-3 p-2 bg-blue-50 rounded text-sm">
+                      <p className="text-blue-800">
+                        <span className="font-medium">Entrega Prevista:</span> {order.data_entrega_prevista}
+                      </p>
+                    </div>
+                  )}
 
                   {order.observacoes && (
                     <div className="mb-3 p-2 bg-gray-50 rounded text-sm">
