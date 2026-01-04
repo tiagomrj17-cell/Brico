@@ -458,6 +458,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
               </div>
             ))}
           </div>
+          )}
 
           {/* Observações */}
           <div>
