@@ -58,6 +58,7 @@ class OrderUpdate(BaseModel):
     status: Optional[str] = None
     observacoes: Optional[str] = None
     data_entrega_prevista: Optional[str] = None
+    artigos: Optional[List[ArticleItem]] = None
 
 class Order(BaseModel):
     model_config = ConfigDict(extra="ignore")
