@@ -109,9 +109,15 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
       const distancia = parseFloat(formData.distancia_kms) || 0;
       const colaboradores = parseInt(formData.num_colaboradores) || 1;
       
-      // Custo base: 10€ (inclui 1 colaborador)
-      // Cada colaborador adicional: +15€
-      custo_entrega = 10 + (distancia * 2);
+      // Nova fórmula: 10€ se distância < 10km
+      // Se >= 10km: 10€ + 2€ por cada km acima de 10km
+      if (distancia < 10) {
+        custo_entrega = 10;
+      } else {
+        custo_entrega = 10 + ((distancia - 10) * 2);
+      }
+      
+      // Adicionar custo de colaboradores adicionais
       if (colaboradores > 1) {
         custo_entrega += (colaboradores - 1) * 15;
       }
