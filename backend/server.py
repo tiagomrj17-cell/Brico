@@ -46,11 +46,16 @@ class OrderCreate(BaseModel):
     observacoes: Optional[str] = None
     data_entrega_prevista: Optional[str] = None
 
+class HistoricoAlteracao(BaseModel):
+    data_hora: str
+    campo_alterado: str
+    valor_anterior: str
+    valor_novo: str
+
 class OrderUpdate(BaseModel):
     status: Optional[str] = None
     observacoes: Optional[str] = None
     data_entrega_prevista: Optional[str] = None
-    data_entrega_real: Optional[str] = None
 
 class Order(BaseModel):
     model_config = ConfigDict(extra="ignore")
