@@ -153,6 +153,11 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                     <div>
                       <p className="font-semibold text-lg">{artigo.designacao}</p>
                       <p className="text-sm text-gray-600">Código: {artigo.codigo}</p>
+                      {artigo.separado && (
+                        <p className="text-xs text-green-700 font-medium mt-1 bg-green-50 inline-block px-2 py-1 rounded">
+                          ✓ Separado
+                        </p>
+                      )}
                     </div>
                     <Badge variant="secondary" className="text-sm">x{artigo.quantidade}</Badge>
                   </div>
