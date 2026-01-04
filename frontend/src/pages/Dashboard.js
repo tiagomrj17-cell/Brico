@@ -199,22 +199,35 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        <div className="mb-6 flex items-center gap-4 relative z-10">
-          <Filter className="w-5 h-5 text-gray-600" />
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-64 border-gray-300" data-testid="filter-status">
-              <SelectValue placeholder="Filtrar por status" />
-            </SelectTrigger>
-            <SelectContent className="z-50">
-              <SelectItem value="Todos">Todos</SelectItem>
-              <SelectItem value="Pendente">Pendente</SelectItem>
-              <SelectItem value="Em Preparação">Em Preparação</SelectItem>
-              <SelectItem value="Pronta para Levantamento">Pronta para Levantamento</SelectItem>
-              <SelectItem value="Entregue">Entregue</SelectItem>
-              <SelectItem value="Levantada">Levantada</SelectItem>
-              <SelectItem value="Cancelada">Cancelada</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 relative z-10">
+          <div className="flex items-center gap-2">
+            <Filter className="w-5 h-5 text-gray-600" />
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-64 border-gray-300" data-testid="filter-status">
+                <SelectValue placeholder="Filtrar por status" />
+              </SelectTrigger>
+              <SelectContent className="z-50">
+                <SelectItem value="Todos">Todos</SelectItem>
+                <SelectItem value="Pendente">Pendente</SelectItem>
+                <SelectItem value="Em Preparação">Em Preparação</SelectItem>
+                <SelectItem value="Pronta para Levantamento">Pronta para Levantamento</SelectItem>
+                <SelectItem value="Entregue">Entregue</SelectItem>
+                <SelectItem value="Levantada">Levantada</SelectItem>
+                <SelectItem value="Cancelada">Cancelada</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="flex-1 max-w-md">
+            <Input
+              type="text"
+              placeholder="Pesquisar por nome do cliente ou colaborador..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="border-gray-300"
+              data-testid="search-input"
+            />
+          </div>
         </div>
 
         {loading ? (
