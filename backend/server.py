@@ -262,9 +262,11 @@ async def update_order(order_id: str, update_data: OrderUpdate, current_staff: d
     
     # Fetch and return updated order
     updated_order = await db.orders.find_one({"id": order_id}, {"_id": 0})
-    if isinstance(updated_order['data_criacao'], str):
+    if isinstance(updated_order.get('data_criacao'), str):
         updated_order['data_criacao'] = datetime.fromisoformat(updated_order['data_criacao'])
-    if isinstance(updated_order['data_atualizacao'], str):
+    if 'data_atualizacao' not in updated_order:
+        updated_order['data_atualizacao'] = updated_order.get('data_criacao', datetime.now(timezone.utc))
+    elif isinstance(updated_order['data_atualizacao'], str):
         updated_order['data_atualizacao'] = datetime.fromisoformat(updated_order['data_atualizacao'])
     
     return updated_order
