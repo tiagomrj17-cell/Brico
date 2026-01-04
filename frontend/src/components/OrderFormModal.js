@@ -206,6 +206,15 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+          {isEditing && (
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+              <p className="text-sm text-orange-800">
+                <strong>Nota:</strong> Em modo de edição, apenas pode alterar o <strong>estado</strong>, <strong>observações</strong> e <strong>datas</strong>. 
+                Os dados do cliente e artigos não podem ser modificados.
+              </p>
+            </div>
+          )}
+
           {/* Dados do Cliente */}
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Dados do Cliente</h3>
@@ -219,7 +228,8 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
                   value={formData.nome_cliente}
                   onChange={handleInputChange}
                   className="mt-1 border-gray-300 focus:border-orange-500"
-                  required
+                  disabled={isEditing}
+                  required={!isEditing}
                 />
               </div>
               <div>
