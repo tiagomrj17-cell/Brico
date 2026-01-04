@@ -62,18 +62,27 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h3 className="font-semibold text-lg mb-3">Histórico de Alterações</h3>
               <div className="space-y-2 max-h-60 overflow-y-auto">
-                {order.historico.map((alt, idx) => (
-                  <div key={idx} className="text-sm bg-white p-2 rounded border border-blue-100">
-                    <p className="font-medium text-blue-900">{formatDate(alt.data_hora)}</p>
-                    <p className="text-gray-700">
-                      <span className="font-semibold">{alt.campo_alterado}</span>
-                      {': '}
-                      <span className="line-through text-gray-500">{alt.valor_anterior || '(vazio)'}</span>
-                      {' → '}
-                      <span className="font-semibold text-green-700">{alt.valor_novo}</span>
-                    </p>
-                  </div>
-                ))}
+                {order.historico.map((alt, idx) => {
+                  const nomeCampo = {
+                    'status': 'Estado',
+                    'observacoes': 'Observações',
+                    'data_entrega_prevista': 'Data de Entrega Prevista',
+                    'data_levantada': 'Data de Levantamento'
+                  }[alt.campo_alterado] || alt.campo_alterado;
+                  
+                  return (
+                    <div key={idx} className="text-sm bg-white p-3 rounded border border-blue-100">
+                      <p className="font-medium text-blue-900">{formatDate(alt.data_hora)}</p>
+                      <p className="text-gray-700 mt-1">
+                        <span className="font-semibold text-blue-800">{nomeCampo}</span>
+                      </p>
+                      <div className="mt-1 pl-2 border-l-2 border-blue-300">
+                        <p className="text-red-600 text-xs">Antes: {alt.valor_anterior || '(vazio)'}</p>
+                        <p className="text-green-700 text-xs font-medium">Agora: {alt.valor_novo}</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
