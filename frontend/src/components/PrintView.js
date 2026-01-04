@@ -69,9 +69,17 @@ const PrintView = ({ order }) => {
                 <td style={{ padding: '2mm', fontWeight: 'bold' }}>Contacto:</td>
                 <td style={{ padding: '2mm' }}>{order.contacto}</td>
               </tr>
+              {order.nome_colaborador && (
+                <tr>
+                  <td style={{ padding: '2mm', backgroundColor: '#f5f5f5', fontWeight: 'bold' }}>Colaborador:</td>
+                  <td style={{ padding: '2mm', backgroundColor: '#f5f5f5', color: '#7c3aed', fontWeight: 'bold' }}>
+                    {order.nome_colaborador}
+                  </td>
+                </tr>
+              )}
               <tr>
-                <td style={{ padding: '2mm', backgroundColor: '#f5f5f5', fontWeight: 'bold' }}>Status:</td>
-                <td style={{ padding: '2mm', backgroundColor: '#f5f5f5', color: '#ff6b35', fontWeight: 'bold' }}>
+                <td style={{ padding: '2mm', fontWeight: 'bold' }}>Status:</td>
+                <td style={{ padding: '2mm', color: '#ff6b35', fontWeight: 'bold' }}>
                   {order.status}
                 </td>
               </tr>
