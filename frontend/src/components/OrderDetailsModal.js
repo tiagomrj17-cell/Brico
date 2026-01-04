@@ -57,6 +57,27 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
             </Badge>
           </div>
 
+          {/* Histórico de Alterações */}
+          {order.historico && order.historico.length > 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h3 className="font-semibold text-lg mb-3">Histórico de Alterações</h3>
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {order.historico.map((alt, idx) => (
+                  <div key={idx} className="text-sm bg-white p-2 rounded border border-blue-100">
+                    <p className="font-medium text-blue-900">{formatDate(alt.data_hora)}</p>
+                    <p className="text-gray-700">
+                      <span className="font-semibold">{alt.campo_alterado}</span>
+                      {': '}
+                      <span className="line-through text-gray-500">{alt.valor_anterior || '(vazio)'}</span>
+                      {' → '}
+                      <span className="font-semibold text-green-700">{alt.valor_novo}</span>
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Cliente */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold text-lg mb-3">Informações do Cliente</h3>
@@ -78,14 +99,18 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                 <p className="text-sm text-gray-600">Última atualização:</p>
                 <p className="font-medium">{formatDate(order.data_atualizacao)}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-600">Entrega Prevista:</p>
-                <p className="font-medium">{formatDateOnly(order.data_entrega_prevista)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Entrega Real:</p>
-                <p className="font-medium">{formatDateOnly(order.data_entrega_real)}</p>
-              </div>
+              {order.data_entrega_prevista && (
+                <div>
+                  <p className="text-sm text-gray-600">Entrega Prevista:</p>
+                  <p className="font-medium">{formatDateOnly(order.data_entrega_prevista)}</p>
+                </div>
+              )}
+              {order.data_levantada && (
+                <div>
+                  <p className="text-sm text-gray-600">Data de Levantamento:</p>
+                  <p className="font-medium text-purple-700">{formatDate(order.data_levantada)}</p>
+                </div>
+              )}
             </div>
           </div>
 
