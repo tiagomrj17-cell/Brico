@@ -31,15 +31,8 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
   useEffect(() => {
     if (order) {
       setFormData({
-        nome_cliente: order.nome_cliente,
-        contacto: order.contacto,
-        tem_entrega: order.tem_entrega,
-        morada_entrega: order.morada_entrega || '',
-        distancia_kms: order.distancia_kms || '',
-        num_colaboradores: order.num_colaboradores || 1,
         observacoes: order.observacoes || '',
         data_entrega_prevista: order.data_entrega_prevista || '',
-        data_entrega_real: order.data_entrega_real || '',
         status: order.status
       });
       setArtigos(order.artigos || [{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0 }]);
@@ -50,15 +43,8 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
 
   const resetForm = () => {
     setFormData({
-      nome_cliente: '',
-      contacto: '',
-      tem_entrega: false,
-      morada_entrega: '',
-      distancia_kms: '',
-      num_colaboradores: 1,
       observacoes: '',
       data_entrega_prevista: '',
-      data_entrega_real: '',
       status: 'Pendente'
     });
     setArtigos([{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0 }]);
