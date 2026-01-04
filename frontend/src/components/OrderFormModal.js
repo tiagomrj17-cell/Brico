@@ -207,12 +207,33 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
 
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           {isEditing && (
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-              <p className="text-sm text-orange-800">
-                <strong>Nota:</strong> Em modo de edição, apenas pode alterar o <strong>estado</strong>, <strong>observações</strong> e <strong>datas</strong>. 
-                Os dados do cliente e artigos não podem ser modificados.
-              </p>
-            </div>
+            <>
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                <p className="text-sm text-orange-800">
+                  <strong>Nota:</strong> Em modo de edição, apenas pode alterar o <strong>estado</strong>, <strong>observações</strong> e <strong>data de entrega prevista</strong>. 
+                  Os dados do cliente e artigos não podem ser modificados.
+                </p>
+              </div>
+              
+              {order.historico && order.historico.length > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-sm mb-2 text-blue-900">Histórico de Alterações</h4>
+                  <div className="space-y-1 max-h-40 overflow-y-auto">
+                    {order.historico.map((alt, idx) => (
+                      <div key={idx} className="text-xs text-blue-800 border-b border-blue-100 pb-1">
+                        <span className="font-medium">{new Date(alt.data_hora).toLocaleString('pt-PT')}</span>
+                        {' - '}
+                        <span className="font-semibold">{alt.campo_alterado}</span>
+                        {': '}
+                        <span className="line-through">{alt.valor_anterior || '(vazio)'}</span>
+                        {' → '}
+                        <span className="font-medium">{alt.valor_novo}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Dados do Cliente */}
