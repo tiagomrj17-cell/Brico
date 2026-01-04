@@ -25,6 +25,17 @@ app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
 # Models
+class Colaborador(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    nome: str
+    ativo: bool = True
+    data_criacao: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ColaboradorCreate(BaseModel):
+    nome: str
+
 class ArticleItem(BaseModel):
     codigo: str
     designacao: str
