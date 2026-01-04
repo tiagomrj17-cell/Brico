@@ -13,7 +13,7 @@ import { Trash2, Plus } from 'lucide-react';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const OrderFormModal = ({ open, onClose, onSave, order, token }) => {
+const OrderFormModal = ({ open, onClose, onSave, order }) => {
   const isEditing = !!order;
   
   const [formData, setFormData] = useState({
