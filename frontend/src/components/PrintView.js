@@ -162,14 +162,25 @@ const PrintView = ({ order }) => {
           <div style={{ marginBottom: '8mm', padding: '4mm', backgroundColor: '#e0f2fe', border: '1px solid #0ea5e9', borderRadius: '2mm' }}>
             <h3 style={{ fontSize: '14pt', margin: '0 0 2mm 0', color: '#333' }}>Histórico de Alterações</h3>
             <div style={{ fontSize: '10pt' }}>
-              {order.historico.map((alt, idx) => (
-                <div key={idx} style={{ marginBottom: '2mm', paddingBottom: '2mm', borderBottom: idx < order.historico.length - 1 ? '1px solid #bae6fd' : 'none' }}>
-                  <div style={{ color: '#0c4a6e', fontWeight: 'bold' }}>{formatDateTime(alt.data_hora)}</div>
-                  <div style={{ color: '#333' }}>
-                    <strong>{alt.campo_alterado}</strong>: <span style={{ textDecoration: 'line-through', color: '#666' }}>{alt.valor_anterior || '(vazio)'}</span> → <strong>{alt.valor_novo}</strong>
+              {order.historico.map((alt, idx) => {
+                const nomeCampo = {
+                  'status': 'Estado',
+                  'observacoes': 'Observações',
+                  'data_entrega_prevista': 'Data de Entrega Prevista',
+                  'data_levantada': 'Data de Levantamento'
+                }[alt.campo_alterado] || alt.campo_alterado;
+                
+                return (
+                  <div key={idx} style={{ marginBottom: '3mm', paddingBottom: '2mm', borderBottom: idx < order.historico.length - 1 ? '1px solid #bae6fd' : 'none' }}>
+                    <div style={{ color: '#0c4a6e', fontWeight: 'bold', marginBottom: '1mm' }}>{formatDateTime(alt.data_hora)}</div>
+                    <div style={{ color: '#1e40af', fontWeight: 'bold' }}>{nomeCampo}</div>
+                    <div style={{ paddingLeft: '3mm', marginTop: '1mm' }}>
+                      <div style={{ color: '#dc2626' }}>Antes: {alt.valor_anterior || '(vazio)'}</div>
+                      <div style={{ color: '#16a34a', fontWeight: 'bold' }}>Agora: {alt.valor_novo}</div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
