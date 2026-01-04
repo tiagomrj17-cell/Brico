@@ -45,6 +45,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
         num_colaboradores: order.num_colaboradores || 1,
         observacoes: order.observacoes || '',
         data_entrega_prevista: order.data_entrega_prevista || '',
+        nome_colaborador: order.nome_colaborador || '',
         status: order.status
       });
       setArtigos(order.artigos || [{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0 }]);
@@ -63,7 +64,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
       num_colaboradores: 1,
       observacoes: '',
       data_entrega_prevista: '',
-      status: 'Pendente'
+      nome_colaborador: ''
     });
     setArtigos([{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0 }]);
   };
