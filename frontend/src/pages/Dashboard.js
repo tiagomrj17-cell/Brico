@@ -270,12 +270,21 @@ const Dashboard = () => {
                   {order.historico && order.historico.length > 0 && (
                     <div className="mb-3 p-2 bg-blue-50 rounded text-sm border border-blue-200">
                       <p className="text-blue-800 font-medium mb-1">Últimas Alterações:</p>
-                      <div className="text-xs text-blue-700">
-                        {order.historico.slice(-2).map((alt, idx) => (
-                          <p key={idx} className="truncate">
-                            {formatDate(alt.data_hora)} - {alt.campo_alterado}: {alt.valor_novo}
-                          </p>
-                        ))}
+                      <div className="text-xs text-blue-700 space-y-1">
+                        {order.historico.slice(-3).reverse().map((alt, idx) => {
+                          const nomeCampo = {
+                            'status': 'Estado',
+                            'observacoes': 'Observações',
+                            'data_entrega_prevista': 'Data Prevista',
+                            'data_levantada': 'Levantamento'
+                          }[alt.campo_alterado] || alt.campo_alterado;
+                          
+                          return (
+                            <p key={idx} className="truncate">
+                              <span className="font-medium">{nomeCampo}:</span> {alt.valor_novo}
+                            </p>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
