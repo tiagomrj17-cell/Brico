@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('Todos');
+  const [searchText, setSearchText] = useState('');
   
   const [orderFormOpen, setOrderFormOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
@@ -31,12 +32,24 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (statusFilter === 'Todos') {
-      setFilteredOrders(orders);
-    } else {
-      setFilteredOrders(orders.filter(order => order.status === statusFilter));
+    let filtered = orders;
+    
+    // Filter by status
+    if (statusFilter !== 'Todos') {
+      filtered = filtered.filter(order => order.status === statusFilter);
     }
-  }, [statusFilter, orders]);
+    
+    // Filter by search text
+    if (searchText.trim()) {
+      const search = searchText.toLowerCase();
+      filtered = filtered.filter(order => 
+        order.nome_cliente.toLowerCase().includes(search) ||
+        (order.nome_colaborador && order.nome_colaborador.toLowerCase().includes(search))
+      );
+    }
+    
+    setFilteredOrders(filtered);
+  }, [statusFilter, searchText, orders]);
 
   const fetchOrders = async () => {
     try {
