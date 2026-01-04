@@ -93,6 +93,9 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
             <div className="space-y-2">
               <p><span className="font-medium text-gray-600">Nome:</span> {order.nome_cliente}</p>
               <p><span className="font-medium text-gray-600">Contacto:</span> {order.contacto}</p>
+              {order.nome_colaborador && (
+                <p><span className="font-medium text-gray-600">Colaborador:</span> <span className="text-purple-700 font-semibold">{order.nome_colaborador}</span></p>
+              )}
             </div>
           </div>
 
