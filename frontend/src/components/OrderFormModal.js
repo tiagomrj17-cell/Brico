@@ -291,7 +291,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
 
           {/* Nome do Colaborador */}
           <div>
-            <Label htmlFor="nome_colaborador">Nome do Colaborador que Faz a Encomenda *</Label>
+            <Label htmlFor="nome_colaborador">Nome do Colaborador *</Label>
             <Input
               id="nome_colaborador"
               name="nome_colaborador"
