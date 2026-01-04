@@ -66,7 +66,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
       data_entrega_prevista: '',
       nome_colaborador: ''
     });
-    setArtigos([{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0 }]);
+    setArtigos([{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
   };
 
   const handleInputChange = (e) => {
