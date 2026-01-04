@@ -138,9 +138,38 @@ async def delete_colaborador(colaborador_id: str):
     return {"message": "Colaborador removido com sucesso"}
 
 # Order routes (sem autenticação)
+async def get_next_order_number():
+    # Buscar o último número de encomenda
+    last_order = await db.orders.find_one(
+        {},
+        {"_id": 0, "numero_encomenda": 1},
+        sort=[("numero_encomenda", -1)]
+    )
+    
+    if last_order and last_order.get('numero_encomenda'):
+        # Extrair número e incrementar
+        try:
+            last_num = int(last_order['numero_encomenda'].split('-')[1])
+            next_num = last_num + 1
+        except:
+            next_num = 4000
+    else:
+        next_num = 4000
+    
+    return f"2026-{next_num}"
+
 @api_router.post("/orders", response_model=Order)
 async def create_order(order_data: OrderCreate):
     order_dict = order_data.model_dump()
+    
+    # Gerar número de encomenda
+    order_dict['numero_encomenda'] = await get_next_order_number()
+    
+    # Buscar nome do colaborador
+    colaborador = await db.colaboradores.find_one({"id": order_data.colaborador_id})
+    if colaborador:
+        order_dict['nome_colaborador'] = colaborador['nome']
+    
     order_obj = Order(**order_dict)
     
     doc = order_obj.model_dump()
