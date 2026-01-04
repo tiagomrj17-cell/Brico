@@ -349,7 +349,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
                   <Label htmlFor="tem_entrega" className="text-base font-semibold cursor-pointer">
                     Necessita de Entrega?
                   </Label>
-                  <p className="text-sm text-gray-600 mt-1">10€ base + 2€/km + 15€/colaborador adicional</p>
+                  <p className="text-sm text-gray-600 mt-1">10€ até 10km, depois +2€/km adicional</p>
                 </div>
                 <Switch
                   id="tem_entrega"
