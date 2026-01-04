@@ -267,6 +267,19 @@ const Dashboard = () => {
                     </div>
                   )}
 
+                  {order.historico && order.historico.length > 0 && (
+                    <div className="mb-3 p-2 bg-blue-50 rounded text-sm border border-blue-200">
+                      <p className="text-blue-800 font-medium mb-1">Últimas Alterações:</p>
+                      <div className="text-xs text-blue-700">
+                        {order.historico.slice(-2).map((alt, idx) => (
+                          <p key={idx} className="truncate">
+                            {formatDate(alt.data_hora)} - {alt.campo_alterado}: {alt.valor_novo}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
                     <Button
                       variant="outline"
