@@ -476,6 +476,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
           </div>
 
           {/* Resumo de Custos */}
+          {!isEditing && (
           <div className="p-4 bg-orange-50 rounded-lg space-y-2">
             <h3 className="font-semibold text-lg mb-2">Resumo de Custos</h3>
             <div className="flex justify-between items-center">
@@ -493,6 +494,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
               </div>
             </div>
           </div>
+          )}
 
           {/* Buttons */}
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
