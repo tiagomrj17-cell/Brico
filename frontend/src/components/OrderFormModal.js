@@ -289,6 +289,22 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
             </div>
           </div>
 
+          {/* Nome do Colaborador */}
+          <div>
+            <Label htmlFor="nome_colaborador">Nome do Colaborador que Faz a Encomenda *</Label>
+            <Input
+              id="nome_colaborador"
+              name="nome_colaborador"
+              data-testid="input-nome-colaborador"
+              value={formData.nome_colaborador}
+              onChange={handleInputChange}
+              className="mt-1 border-gray-300 focus:border-orange-500"
+              disabled={isEditing}
+              placeholder="Ex: Maria Silva"
+              required={!isEditing}
+            />
+          </div>
+
           {/* Estado */}
           <div>
             <Label htmlFor="status">Estado da Encomenda *</Label>
