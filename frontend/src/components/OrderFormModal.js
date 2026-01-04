@@ -29,7 +29,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
   });
 
   const [artigos, setArtigos] = useState([
-    { codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0 }
+    { codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }
   ]);
 
   const [submitting, setSubmitting] = useState(false);
