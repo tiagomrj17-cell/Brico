@@ -78,10 +78,11 @@ const Dashboard = () => {
   };
 
   const handlePrint = (order) => {
-    setPrintingOrder(order);
-    setTimeout(() => {
-      window.print();
-    }, 100);
+    // Abrir nova janela com a página de impressão
+    const printWindow = window.open(`/print/${order.id}`, '_blank');
+    if (!printWindow) {
+      toast.error('Por favor, permita pop-ups para imprimir');
+    }
   };
 
   const getStatusColor = (status) => {
