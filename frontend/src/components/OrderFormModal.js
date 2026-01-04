@@ -146,8 +146,8 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
         toast.success('Encomenda atualizada com sucesso!');
       } else {
         // Para criar nova encomenda
-        if (!formData.nome_cliente || !formData.contacto) {
-          toast.error('Por favor, preencha nome e contacto');
+        if (!formData.nome_cliente || !formData.contacto || !formData.nome_colaborador) {
+          toast.error('Por favor, preencha nome do cliente, contacto e colaborador');
           setSubmitting(false);
           return;
         }
