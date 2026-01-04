@@ -295,21 +295,22 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
           </div>
 
           {/* Opção de Entrega */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div>
-                <Label htmlFor="tem_entrega" className="text-base font-semibold cursor-pointer">
-                  Necessita de Entrega?
-                </Label>
-                <p className="text-sm text-gray-600 mt-1">2€/km + 15€/colaborador</p>
+          {!isEditing && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div>
+                  <Label htmlFor="tem_entrega" className="text-base font-semibold cursor-pointer">
+                    Necessita de Entrega?
+                  </Label>
+                  <p className="text-sm text-gray-600 mt-1">2€/km + 15€/colaborador</p>
+                </div>
+                <Switch
+                  id="tem_entrega"
+                  data-testid="switch-tem-entrega"
+                  checked={formData.tem_entrega}
+                  onCheckedChange={handleSwitchChange}
+                />
               </div>
-              <Switch
-                id="tem_entrega"
-                data-testid="switch-tem-entrega"
-                checked={formData.tem_entrega}
-                onCheckedChange={handleSwitchChange}
-              />
-            </div>
 
             {formData.tem_entrega && (
               <div className="space-y-4 pl-4 border-l-2 border-orange-500">
