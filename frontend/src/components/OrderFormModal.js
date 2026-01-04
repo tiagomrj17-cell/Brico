@@ -305,23 +305,25 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
             />
           </div>
 
-          {/* Estado */}
-          <div>
-            <Label htmlFor="status">Estado da Encomenda *</Label>
-            <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({...prev, status: value}))}>
-              <SelectTrigger className="mt-1 border-gray-300" data-testid="select-status">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Pendente">Pendente</SelectItem>
-                <SelectItem value="Em Preparação">Em Preparação</SelectItem>
-                <SelectItem value="Pronta para Levantamento">Pronta para Levantamento</SelectItem>
-                <SelectItem value="Entregue">Entregue</SelectItem>
-                <SelectItem value="Levantada">Levantada</SelectItem>
-                <SelectItem value="Cancelada">Cancelada</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Estado - apenas em edição */}
+          {isEditing && (
+            <div>
+              <Label htmlFor="status">Estado da Encomenda *</Label>
+              <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({...prev, status: value}))}>
+                <SelectTrigger className="mt-1 border-gray-300" data-testid="select-status">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Pendente">Pendente</SelectItem>
+                  <SelectItem value="Em Preparação">Em Preparação</SelectItem>
+                  <SelectItem value="Pronta para Levantamento">Pronta para Levantamento</SelectItem>
+                  <SelectItem value="Entregue">Entregue</SelectItem>
+                  <SelectItem value="Levantada">Levantada</SelectItem>
+                  <SelectItem value="Cancelada">Cancelada</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Data de entrega prevista - apenas em edição */}
           {isEditing && order.tem_entrega && (
