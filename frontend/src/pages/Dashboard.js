@@ -330,10 +330,15 @@ const Dashboard = () => {
                       size="sm"
                       data-testid="btn-editar"
                       onClick={() => {
+                        if (order.status === 'Levantada') {
+                          toast.error('Não é possível editar encomendas já levantadas');
+                          return;
+                        }
                         setEditingOrder(order);
                         setOrderFormOpen(true);
                       }}
-                      className="flex items-center gap-2 border-gray-300"
+                      disabled={order.status === 'Levantada'}
+                      className={`flex items-center gap-2 border-gray-300 ${order.status === 'Levantada' ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <Edit className="w-4 h-4" />
                       Editar
@@ -350,8 +355,15 @@ const Dashboard = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setDeletingOrder(order)}
-                      className="flex items-center gap-2 border-red-300 text-red-600 hover:bg-red-50"
+                      onClick={() => {
+                        if (order.status === 'Levantada') {
+                          toast.error('Não é possível eliminar encomendas já levantadas');
+                          return;
+                        }
+                        setDeletingOrder(order);
+                      }}
+                      disabled={order.status === 'Levantada'}
+                      className={`flex items-center gap-2 border-red-300 text-red-600 hover:bg-red-50 ${order.status === 'Levantada' ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <Trash2 className="w-4 h-4" />
                       Eliminar
