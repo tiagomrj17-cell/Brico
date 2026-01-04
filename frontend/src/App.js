@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import Dashboard from '@/pages/Dashboard';
 import PrintPage from '@/pages/PrintPage';
-import PrintPageCliente from '@/pages/PrintPageCliente';
 import ColaboradoresPage from '@/pages/ColaboradoresPage';
 
 function App() {
@@ -14,7 +13,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/print/:orderId" element={<PrintPage />} />
-          <Route path="/print-cliente/:orderId" element={<PrintPageCliente />} />
           <Route path="/colaboradores" element={<ColaboradoresPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
