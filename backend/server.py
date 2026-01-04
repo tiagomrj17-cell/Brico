@@ -137,15 +137,40 @@ async def update_order(order_id: str, update_data: OrderUpdate):
     # Prepare update data, excluding None values
     update_dict = {k: v for k, v in update_data.model_dump().items() if v is not None}
     
-    # Add updated timestamp
-    update_dict['data_atualizacao'] = datetime.now(timezone.utc).isoformat()
+    # Create historico entry for changes
+    historico = order.get('historico', [])
+    data_hora_atual = datetime.now(timezone.utc).isoformat()
+    
+    for campo, novo_valor in update_dict.items():
+        valor_anterior = order.get(campo, '')
+        if valor_anterior != novo_valor:
+            historico.append({
+                'data_hora': data_hora_atual,
+                'campo_alterado': campo,
+                'valor_anterior': str(valor_anterior),
+                'valor_novo': str(novo_valor)
+            })
+    
+    # Add data_levantada when status changes to Levantada
+    if update_data.status == 'Levantada' and order.get('status') != 'Levantada':
+        update_dict['data_levantada'] = data_hora_atual
+        historico.append({
+            'data_hora': data_hora_atual,
+            'campo_alterado': 'data_levantada',
+            'valor_anterior': '',
+            'valor_novo': data_hora_atual
+        })
+    
+    # Add updated timestamp and historico
+    update_dict['data_atualizacao'] = data_hora_atual
+    update_dict['historico'] = historico
     
     result = await db.orders.update_one(
         {"id": order_id},
         {"$set": update_dict}
     )
     
-    if result.modified_count == 0 and len(update_dict) > 1:
+    if result.modified_count == 0 and len(update_dict) > 2:
         raise HTTPException(status_code=400, detail="Não foi possível atualizar a encomenda")
     
     # Fetch and return updated order
