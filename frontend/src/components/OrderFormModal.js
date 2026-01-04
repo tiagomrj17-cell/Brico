@@ -360,8 +360,10 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
               </div>
             )}
           </div>
+          )}
 
           {/* Artigos */}
+          {!isEditing && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-lg">Artigos</h3>
