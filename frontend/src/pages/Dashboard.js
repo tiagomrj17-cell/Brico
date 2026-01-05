@@ -340,7 +340,7 @@ const Dashboard = () => {
                       {/* Título: Número + Nome do Cliente */}
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         {order.numero_encomenda && (
-                          <span className="text-lg font-bold text-orange-600">
+                          <span className={`text-lg font-bold ${order.tipo === 'orcamento' ? 'text-blue-700' : 'text-green-700'}`}>
                             #{order.numero_encomenda}
                           </span>
                         )}
