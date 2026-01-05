@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useReactToPrint } from 'react-to-print';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -51,10 +52,19 @@ const PrintPageInternal = () => {
     });
   };
 
-  const handlePrint = () => {
+  // Método 1: Impressão nativa
+  const handleNativePrint = () => {
     window.print();
   };
 
+  // Método 2: react-to-print
+  const handleReactToPrint = useReactToPrint({
+    contentRef,
+    documentTitle: order ? `${order.tipo === 'orcamento' ? 'Orcamento' : 'Encomenda'}_${order.numero_encomenda}_Interno` : 'Documento',
+    onAfterPrint: () => console.log('Impressão concluída'),
+  });
+
+  // Método 3: html2canvas + jsPDF
   const handleDownloadPDF = async () => {
     const element = contentRef.current;
     if (!element) {
@@ -65,7 +75,7 @@ const PrintPageInternal = () => {
     setDownloading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 200));
       
       const canvas = await html2canvas(element, {
         scale: 2,
@@ -73,8 +83,8 @@ const PrintPageInternal = () => {
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
-        width: element.scrollWidth,
-        height: element.scrollHeight
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight
       });
       
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -108,7 +118,7 @@ const PrintPageInternal = () => {
       
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
-      alert('Erro ao gerar PDF: ' + error.message);
+      alert('Erro ao gerar PDF. Tente o método "Guardar como PDF".');
     } finally {
       setDownloading(false);
     }
@@ -134,54 +144,90 @@ const PrintPageInternal = () => {
 
   return (
     <div>
-      {/* Botões de ação */}
+      {/* Barra de Acções */}
       <div className="no-print" style={{ 
-        padding: '20px', 
-        textAlign: 'center', 
-        backgroundColor: '#f5f5f5', 
-        borderBottom: '1px solid #ddd',
+        padding: '16px 20px', 
+        backgroundColor: '#1f2937', 
+        borderBottom: '2px solid #ff6b35',
         position: 'sticky',
         top: 0,
         zIndex: 100
       }}>
-        <button
-          onClick={handlePrint}
-          style={{
-            padding: '12px 32px',
-            fontSize: '16px',
-            backgroundColor: '#ff6b35',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            marginRight: '12px',
-            fontWeight: 'bold'
-          }}
-        >
-          🖨️ Imprimir
-        </button>
-        <button
-          onClick={handleDownloadPDF}
-          disabled={downloading}
-          style={{
-            padding: '12px 32px',
-            fontSize: '16px',
-            backgroundColor: downloading ? '#93c5fd' : '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: downloading ? 'wait' : 'pointer',
-            fontWeight: 'bold'
-          }}
-        >
-          {downloading ? '⏳ A gerar...' : '📄 Download PDF'}
-        </button>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <p style={{ color: '#9ca3af', fontSize: '12px', marginBottom: '12px', textAlign: 'center' }}>
+            Escolha uma das opções abaixo para imprimir ou guardar como PDF
+          </p>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            {/* Opção 1: Imprimir/PDF nativo */}
+            <button
+              onClick={handleNativePrint}
+              style={{
+                padding: '12px 24px',
+                fontSize: '14px',
+                backgroundColor: '#ff6b35',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              🖨️ Imprimir / Guardar PDF
+            </button>
+            
+            {/* Opção 2: react-to-print */}
+            <button
+              onClick={handleReactToPrint}
+              style={{
+                padding: '12px 24px',
+                fontSize: '14px',
+                backgroundColor: '#10b981',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              📄 Imprimir (Alt)
+            </button>
+            
+            {/* Opção 3: Download PDF directo */}
+            <button
+              onClick={handleDownloadPDF}
+              disabled={downloading}
+              style={{
+                padding: '12px 24px',
+                fontSize: '14px',
+                backgroundColor: downloading ? '#6b7280' : '#2563eb',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: downloading ? 'wait' : 'pointer',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              {downloading ? '⏳ A gerar...' : '⬇️ Download PDF'}
+            </button>
+          </div>
+          <p style={{ color: '#6b7280', fontSize: '11px', marginTop: '10px', textAlign: 'center' }}>
+            💡 Dica: Use "Imprimir / Guardar PDF" e escolha "Guardar como PDF" na impressora
+          </p>
+        </div>
       </div>
 
-      {/* Conteúdo para impressão/PDF */}
+      {/* Conteúdo do Documento */}
       <div 
         ref={contentRef}
-        id="print-content"
         style={{
           maxWidth: '210mm',
           margin: '0 auto',
@@ -239,7 +285,7 @@ const PrintPageInternal = () => {
           </table>
         </div>
 
-        {/* Informação de Entrega */}
+        {/* Tipo de Entrega */}
         <div style={{ marginBottom: '6mm' }}>
           <h2 style={{ fontSize: '14pt', margin: '0 0 2mm 0', color: '#333' }}>Tipo de Entrega</h2>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -343,7 +389,6 @@ const PrintPageInternal = () => {
             </tbody>
           </table>
           
-          {/* Estado de pagamento */}
           {order.total_final > 0 && (
             <div style={{ marginTop: '4mm', paddingTop: '4mm', borderTop: '2px dashed #22c55e' }}>
               <table style={{ width: '100%', fontSize: '11pt' }}>
@@ -397,8 +442,9 @@ const PrintPageInternal = () => {
           body {
             margin: 0;
             padding: 0;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
           }
           .no-print {
             display: none !important;
