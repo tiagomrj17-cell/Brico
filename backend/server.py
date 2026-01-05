@@ -277,10 +277,6 @@ async def delete_order(order_id: str):
     if not order:
         raise HTTPException(status_code=404, detail="Encomenda não encontrada")
     
-    # Não permitir eliminação se status for "Levantada"
-    if order.get('status') == 'Levantada':
-        raise HTTPException(status_code=403, detail="Não é possível eliminar encomendas já levantadas")
-    
     result = await db.orders.delete_one({"id": order_id})
     
     if result.deleted_count == 0:
