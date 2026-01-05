@@ -376,10 +376,12 @@ const PrintPageInternal = () => {
                 <td style={{ padding: '1mm 0' }}>Subtotal Artigos:</td>
                 <td style={{ padding: '1mm 0', textAlign: 'right', fontWeight: 'bold' }}>€{(order.subtotal_artigos || 0).toFixed(2)}</td>
               </tr>
-              <tr>
-                <td style={{ padding: '1mm 0' }}>Custo de Entrega:</td>
-                <td style={{ padding: '1mm 0', textAlign: 'right', fontWeight: 'bold' }}>€{(order.custo_entrega || 0).toFixed(2)}</td>
-              </tr>
+              {order.tem_entrega && (
+                <tr>
+                  <td style={{ padding: '1mm 0' }}>Custo de Entrega:</td>
+                  <td style={{ padding: '1mm 0', textAlign: 'right', fontWeight: 'bold' }}>€{(order.custo_entrega || 0).toFixed(2)}</td>
+                </tr>
+              )}
               <tr style={{ borderTop: '2px solid #ff6b35' }}>
                 <td style={{ padding: '2mm 0 0 0', fontSize: '14pt', fontWeight: 'bold' }}>TOTAL:</td>
                 <td style={{ padding: '2mm 0 0 0', textAlign: 'right', fontSize: '16pt', fontWeight: 'bold', color: '#ff6b35' }}>
