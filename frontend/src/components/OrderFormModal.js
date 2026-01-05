@@ -446,7 +446,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                   value={formData.nome_cliente}
                   onChange={handleInputChange}
                   className="mt-1 border-gray-300 focus:border-orange-500"
-                  disabled={isEditing}
+                  disabled={isEditing && !fullEditMode}
                   required={!isEditing && orderType !== 'orcamento'}
                 />
               </div>
@@ -459,7 +459,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                   value={formData.contacto}
                   onChange={handleInputChange}
                   className="mt-1 border-gray-300 focus:border-orange-500"
-                  disabled={isEditing}
+                  disabled={isEditing && !fullEditMode}
                   required={!isEditing && orderType !== 'orcamento'}
                 />
               </div>
