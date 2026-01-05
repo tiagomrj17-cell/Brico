@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { CheckCircle } from 'lucide-react';
 
 const OrderDetailsModal = ({ open, onClose, order }) => {
   if (!order) return null;
@@ -39,22 +40,29 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
     return statusMap[status] || 'bg-gray-100 text-gray-800';
   };
 
+  const tipoDoc = order.tipo === 'orcamento' ? 'Orçamento' : 'Encomenda';
+  const adiantamento = order.adiantamento || 0;
+  const faltaPagar = order.total_final - adiantamento;
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Detalhes da Encomenda</DialogTitle>
+          <DialogTitle className="text-2xl">Detalhes {order.tipo === 'orcamento' ? 'do Orçamento' : 'da Encomenda'}</DialogTitle>
           <DialogDescription>
-            Encomenda de {order.nome_cliente}
+            {order.numero_encomenda && <span className="text-orange-600 font-bold">#{order.numero_encomenda}</span>} - {order.nome_cliente}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 mt-4">
           {/* Status */}
-          <div>
+          <div className="flex items-center gap-3">
             <Badge className={`status-badge ${getStatusColor(order.status)} text-base px-4 py-2`}>
               {order.status}
             </Badge>
+            {order.tipo === 'orcamento' && (
+              <Badge className="bg-blue-100 text-blue-800">Orçamento</Badge>
+            )}
           </div>
 
           {/* Histórico de Alterações */}
@@ -67,7 +75,8 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                     'status': 'Estado',
                     'observacoes': 'Observações',
                     'data_entrega_prevista': 'Data de Entrega Prevista',
-                    'data_levantada': 'Data de Levantamento'
+                    'data_levantada': 'Data de Levantamento',
+                    'pago_totalidade': 'Pago na Totalidade'
                   }[alt.campo_alterado] || alt.campo_alterado;
                   
                   return (
@@ -178,7 +187,7 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
             </div>
           )}
 
-          {/* Resumo */}
+          {/* Resumo Financeiro */}
           <div className="bg-orange-50 p-4 rounded-lg border-2 border-orange-200">
             <h3 className="font-semibold text-lg mb-3">Resumo de Custos</h3>
             <div className="space-y-2">
@@ -196,6 +205,33 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                   <span className="font-bold text-orange-600">€{order.total_final.toFixed(2)}</span>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Informação de Pagamento */}
+          <div className={`p-4 rounded-lg border-2 ${order.pago_totalidade ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200'}`}>
+            <h3 className="font-semibold text-lg mb-3">Informação de Pagamento</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-700">Valor Pago pelo Cliente:</span>
+                <span className="font-semibold text-green-700">€{adiantamento.toFixed(2)}</span>
+              </div>
+              
+              {order.pago_totalidade ? (
+                <div className="bg-green-100 p-3 rounded-lg mt-2">
+                  <div className="flex items-center gap-2 text-green-800">
+                    <CheckCircle className="w-5 h-5" />
+                    <span className="font-bold text-lg">PAGO NA TOTALIDADE</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-red-50 p-3 rounded-lg mt-2 border border-red-200">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-red-700">Falta Pagar:</span>
+                    <span className="font-bold text-red-600 text-xl">€{faltaPagar.toFixed(2)}</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
