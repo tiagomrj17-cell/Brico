@@ -426,12 +426,25 @@ const Dashboard = () => {
                           
                           // Formatar valor para campos especiais
                           let valorFormatado = alt.valor_novo;
-                          if (alt.campo_alterado === 'artigos' && Array.isArray(alt.valor_novo)) {
-                            valorFormatado = alt.valor_novo.map(a => `${a.designacao || a.codigo} (x${a.quantidade})`).join(', ');
+                          
+                          // Tentar fazer parse se for string JSON
+                          let valorParsed = alt.valor_novo;
+                          if (typeof alt.valor_novo === 'string') {
+                            try {
+                              valorParsed = JSON.parse(alt.valor_novo.replace(/'/g, '"').replace(/True/g, 'true').replace(/False/g, 'false'));
+                            } catch (e) {
+                              valorParsed = alt.valor_novo;
+                            }
+                          }
+                          
+                          if (alt.campo_alterado === 'artigos' && Array.isArray(valorParsed)) {
+                            valorFormatado = valorParsed.map(a => `${a.designacao || a.codigo} (x${a.quantidade})`).join(', ');
                           } else if (alt.campo_alterado === 'pago_totalidade') {
-                            valorFormatado = alt.valor_novo ? 'Sim' : 'Não';
-                          } else if (typeof alt.valor_novo === 'object') {
-                            valorFormatado = JSON.stringify(alt.valor_novo);
+                            valorFormatado = (valorParsed === true || valorParsed === 'True' || valorParsed === 'true') ? 'Sim' : 'Não';
+                          } else if (Array.isArray(valorParsed)) {
+                            valorFormatado = valorParsed.map(a => a.designacao || a.codigo || JSON.stringify(a)).join(', ');
+                          } else if (typeof valorParsed === 'object' && valorParsed !== null) {
+                            valorFormatado = valorParsed.designacao || valorParsed.codigo || JSON.stringify(valorParsed);
                           }
                           
                           return (
