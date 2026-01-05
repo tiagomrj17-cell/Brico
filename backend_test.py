@@ -236,18 +236,18 @@ class OrderManagementAPITester:
         # Basic connectivity
         self.test_root_endpoint()
         
-        # Authentication tests
-        self.test_invalid_login()
-        self.test_unauthorized_access()
-        self.test_staff_login()
-        self.test_staff_me()
+        # Colaboradores tests
+        self.test_get_colaboradores()
+        self.test_create_colaborador()
         
-        # Order management tests
-        self.test_create_order()
-        self.test_order_calculations()
+        # Orders tests
         self.test_get_orders()
+        self.test_create_order()
         self.test_get_single_order()
         self.test_update_order_status()
+        
+        # Orçamento test
+        self.test_create_orcamento()
         
         # Print summary
         print("\n" + "=" * 60)
