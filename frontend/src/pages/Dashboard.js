@@ -394,9 +394,17 @@ const Dashboard = () => {
                     <div>
                       <p className="text-gray-600">Total</p>
                       <p className="font-semibold text-orange-600 text-base">€{order.total_final.toFixed(2)}</p>
-                      {order.adiantamento > 0 && (
+                      {order.pago_totalidade ? (
+                        <p className="text-xs text-green-600 font-bold">
+                          ✓ Pago na totalidade
+                        </p>
+                      ) : order.adiantamento > 0 ? (
                         <p className="text-xs text-red-600 font-bold">
                           Falta: €{(order.total_final - order.adiantamento).toFixed(2)}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-red-600 font-bold">
+                          Falta: €{order.total_final.toFixed(2)}
                         </p>
                       )}
                     </div>
