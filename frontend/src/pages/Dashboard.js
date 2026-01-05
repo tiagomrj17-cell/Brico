@@ -419,12 +419,24 @@ const Dashboard = () => {
                             'status': 'Estado',
                             'observacoes': 'Observações',
                             'data_entrega_prevista': 'Data Prevista',
-                            'data_levantada': 'Levantamento'
+                            'data_levantada': 'Levantamento',
+                            'artigos': 'Artigos',
+                            'pago_totalidade': 'Pago na Totalidade'
                           }[alt.campo_alterado] || alt.campo_alterado;
+                          
+                          // Formatar valor para campos especiais
+                          let valorFormatado = alt.valor_novo;
+                          if (alt.campo_alterado === 'artigos' && Array.isArray(alt.valor_novo)) {
+                            valorFormatado = alt.valor_novo.map(a => `${a.designacao || a.codigo} (x${a.quantidade})`).join(', ');
+                          } else if (alt.campo_alterado === 'pago_totalidade') {
+                            valorFormatado = alt.valor_novo ? 'Sim' : 'Não';
+                          } else if (typeof alt.valor_novo === 'object') {
+                            valorFormatado = JSON.stringify(alt.valor_novo);
+                          }
                           
                           return (
                             <p key={idx} className="truncate">
-                              <span className="font-medium">{nomeCampo}:</span> {alt.valor_novo}
+                              <span className="font-medium">{nomeCampo}:</span> {valorFormatado}
                             </p>
                           );
                         })}
