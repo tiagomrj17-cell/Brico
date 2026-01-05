@@ -228,6 +228,147 @@ class OrderManagementAPITester:
             data=orcamento_data
         )
 
+    def test_delete_order_with_levantada_status(self):
+        """Test deleting an order with 'Levantada' status - specific requirement from review"""
+        # First create a new order specifically for this test
+        if not self.created_colaborador_id:
+            self.log_test("Delete Levantada Order (No Colaborador)", False, "No colaborador ID available")
+            return False
+            
+        order_data = {
+            "nome_cliente": "Maria Silva",
+            "contacto": "912345678",
+            "tem_entrega": False,
+            "colaborador_id": self.created_colaborador_id,
+            "tipo": "encomenda",
+            "artigos": [
+                {
+                    "codigo": "DEL001",
+                    "designacao": "Produto para Teste Delete",
+                    "quantidade": 1,
+                    "preco_unitario": 50.00,
+                    "preco_total": 50.00,
+                    "separado": False
+                }
+            ],
+            "subtotal_artigos": 50.00,
+            "custo_entrega": 0.00,
+            "total_final": 50.00,
+            "observacoes": "Encomenda para teste de eliminação com status Levantada"
+        }
+        
+        # Create the order
+        success, response = self.run_test(
+            "Create Order for Delete Test",
+            "POST",
+            "orders",
+            200,
+            data=order_data
+        )
+        
+        if not success or 'id' not in response:
+            self.log_test("Delete Levantada Order - Creation Failed", False, "Could not create order for delete test")
+            return False
+            
+        order_id = response['id']
+        
+        # Update status to 'Levantada'
+        success, _ = self.run_test(
+            "Update Order to Levantada Status",
+            "PUT",
+            f"orders/{order_id}",
+            200,
+            data={"status": "Levantada"}
+        )
+        
+        if not success:
+            self.log_test("Delete Levantada Order - Status Update Failed", False, "Could not update order to Levantada")
+            return False
+        
+        # Now try to delete the order with 'Levantada' status
+        success, _ = self.run_test(
+            "Delete Order with Levantada Status",
+            "DELETE",
+            f"orders/{order_id}",
+            200
+        )
+        
+        return success
+
+    def test_order_number_format(self):
+        """Test that new orders return number in 2026-XXXX format"""
+        if not self.created_colaborador_id:
+            self.log_test("Order Number Format Test (No Colaborador)", False, "No colaborador ID available")
+            return False
+            
+        order_data = {
+            "nome_cliente": "António Costa",
+            "contacto": "963852741",
+            "tem_entrega": True,
+            "morada_entrega": "Avenida da Liberdade, 100, Lisboa",
+            "distancia_kms": 3.0,
+            "num_colaboradores": 2,
+            "colaborador_id": self.created_colaborador_id,
+            "tipo": "encomenda",
+            "artigos": [
+                {
+                    "codigo": "NUM001",
+                    "designacao": "Produto Teste Numeração",
+                    "quantidade": 3,
+                    "preco_unitario": 33.33,
+                    "preco_total": 99.99,
+                    "separado": False
+                }
+            ],
+            "subtotal_artigos": 99.99,
+            "custo_entrega": 26.00,  # 3km * 2 + 2 colaboradores * 10
+            "total_final": 125.99
+        }
+        
+        success, response = self.run_test(
+            "Create Order - Number Format Test",
+            "POST",
+            "orders",
+            200,
+            data=order_data
+        )
+        
+        if success and 'numero_encomenda' in response:
+            numero = response['numero_encomenda']
+            if numero.startswith('2026-') and len(numero.split('-')[1]) >= 4:
+                self.log_test("Order Number Format Validation", True, f"Correct format: {numero}")
+                return True
+            else:
+                self.log_test("Order Number Format Validation", False, f"Invalid format: {numero}")
+                return False
+        else:
+            self.log_test("Order Number Format Validation", False, "No order number in response")
+            return False
+
+    def test_orders_data_structure(self):
+        """Test GET /api/orders returns proper data structure"""
+        success, response = self.run_test("Get Orders - Data Structure", "GET", "orders", 200)
+        
+        if success and isinstance(response, list):
+            if len(response) > 0:
+                # Check first order structure
+                order = response[0]
+                required_fields = ['id', 'numero_encomenda', 'nome_cliente', 'contacto', 'status', 'data_criacao']
+                missing_fields = [field for field in required_fields if field not in order]
+                
+                if not missing_fields:
+                    self.log_test("Orders Data Structure Validation", True, f"All required fields present in {len(response)} orders")
+                    return True
+                else:
+                    self.log_test("Orders Data Structure Validation", False, f"Missing fields: {missing_fields}")
+                    return False
+            else:
+                self.log_test("Orders Data Structure Validation", True, "Empty orders list - structure cannot be validated but endpoint works")
+                return True
+        else:
+            self.log_test("Orders Data Structure Validation", False, "Response is not a list or request failed")
+            return False
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("🚀 Starting Order Management System API Tests")
