@@ -2,9 +2,24 @@
 
 ## Testing Protocol
 - Date: 2026-01-05
-- Testing Focus: Full feature implementation with adiantamento
+- Testing Focus: UI/Logic changes - Status labels, optional fields for quotes, OrderDetailsModal cleanup
 
-## Completed Features
+## Latest Changes (Fork Session)
+
+### OrderFormModal.js
+- [x] Campos opcionais para Orçamentos (nome, contacto, artigos, adiantamento não são obrigatórios)
+- [x] Apenas "Nome do Cliente" e "Colaborador" são obrigatórios para orçamentos
+- [x] Etiquetas atualizadas: "Pronto para Levantamento", "Cancelado"
+
+### OrderDetailsModal.js
+- [x] Removido "Última atualização" da secção de Datas
+- [x] "Custo de Entrega" só aparece se o pedido tem entrega
+
+### Dashboard.js
+- [x] Cards de estatística: "Pronto", "Concluído", "Cancelado"
+- [x] Dropdown de filtro: "Pronto para Levantamento", "Cancelado"
+
+## Previous Completed Features
 
 ### Dashboard
 - [x] Título "Encomendas e Orçamentos"
