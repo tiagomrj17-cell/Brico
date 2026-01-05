@@ -250,7 +250,7 @@ const Dashboard = () => {
           </Card>
           <Card className="bg-indigo-50 border-indigo-200 shadow-sm">
             <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Pronta</CardDescription>
+              <CardDescription className="text-xs">Pronto</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-indigo-700">{counts.prontaLevantamento}</p>
@@ -258,7 +258,7 @@ const Dashboard = () => {
           </Card>
           <Card className="bg-green-50 border-green-200 shadow-sm">
             <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Concluídas</CardDescription>
+              <CardDescription className="text-xs">Concluído</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-green-700">{counts.entregue + counts.levantada}</p>
@@ -266,7 +266,7 @@ const Dashboard = () => {
           </Card>
           <Card className="bg-red-50 border-red-200 shadow-sm">
             <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Cancelada</CardDescription>
+              <CardDescription className="text-xs">Cancelado</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-red-700">{counts.cancelada}</p>
