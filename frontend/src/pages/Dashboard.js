@@ -421,6 +421,7 @@ const Dashboard = () => {
                             'data_entrega_prevista': 'Data Prevista',
                             'data_levantada': 'Levantamento',
                             'artigos': 'Artigos',
+                            'artigos_separados': 'Artigos Separados',
                             'pago_totalidade': 'Pago na Totalidade'
                           }[alt.campo_alterado] || alt.campo_alterado;
                           
@@ -437,7 +438,9 @@ const Dashboard = () => {
                             }
                           }
                           
-                          if (alt.campo_alterado === 'artigos' && Array.isArray(valorParsed)) {
+                          if (alt.campo_alterado === 'artigos_separados') {
+                            valorFormatado = `✓ ${alt.valor_novo}`;
+                          } else if (alt.campo_alterado === 'artigos' && Array.isArray(valorParsed)) {
                             valorFormatado = valorParsed.map(a => `${a.designacao || a.codigo} (x${a.quantidade})`).join(', ');
                           } else if (alt.campo_alterado === 'pago_totalidade') {
                             valorFormatado = (valorParsed === true || valorParsed === 'True' || valorParsed === 'true') ? 'Sim' : 'Não';
@@ -448,7 +451,7 @@ const Dashboard = () => {
                           }
                           
                           return (
-                            <p key={idx} className="truncate">
+                            <p key={idx} className={`truncate ${alt.campo_alterado === 'artigos_separados' ? 'text-green-700' : ''}`}>
                               <span className="font-medium">{nomeCampo}:</span> {valorFormatado}
                             </p>
                           );
