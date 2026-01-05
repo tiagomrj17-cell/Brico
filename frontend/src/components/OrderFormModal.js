@@ -171,22 +171,33 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
         toast.success(`${tipoLabel} atualizado com sucesso!`);
         onSave(response.data);
       } else {
-        if (!formData.nome_cliente || !formData.contacto || !formData.colaborador_id) {
-          toast.error('Por favor, preencha nome do cliente, contacto e selecione um colaborador');
+        // Validações - Orçamento tem menos campos obrigatórios
+        if (!formData.nome_cliente || !formData.colaborador_id) {
+          toast.error('Por favor, preencha nome do cliente e selecione um colaborador');
           setSubmitting(false);
           return;
         }
 
-        if (artigos.some(art => !art.codigo || !art.designacao)) {
-          toast.error('Por favor, preencha todos os artigos');
+        // Contacto obrigatório apenas para encomendas
+        if (orderType !== 'orcamento' && !formData.contacto) {
+          toast.error('Por favor, preencha o contacto do cliente');
           setSubmitting(false);
           return;
         }
 
-        if (artigos.some(art => parseFloat(art.preco_unitario) < 0.01)) {
-          toast.error('O preço unitário deve ser pelo menos €0.01');
-          setSubmitting(false);
-          return;
+        // Artigos obrigatórios apenas para encomendas
+        if (orderType !== 'orcamento') {
+          if (artigos.some(art => !art.codigo || !art.designacao)) {
+            toast.error('Por favor, preencha todos os artigos');
+            setSubmitting(false);
+            return;
+          }
+
+          if (artigos.some(art => parseFloat(art.preco_unitario) < 0.01)) {
+            toast.error('O preço unitário deve ser pelo menos €0.01');
+            setSubmitting(false);
+            return;
+          }
         }
 
         if (formData.tem_entrega && (!formData.morada_entrega || !formData.distancia_kms)) {
@@ -310,7 +321,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             <h3 className="font-semibold text-lg">Dados do Cliente</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="nome_cliente">Nome Completo *</Label>
+                <Label htmlFor="nome_cliente">Nome Completo {orderType !== 'orcamento' || isEditing ? '*' : ''}</Label>
                 <Input
                   id="nome_cliente"
                   name="nome_cliente"
@@ -319,11 +330,11 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                   onChange={handleInputChange}
                   className="mt-1 border-gray-300 focus:border-orange-500"
                   disabled={isEditing}
-                  required={!isEditing}
+                  required={!isEditing && orderType !== 'orcamento'}
                 />
               </div>
               <div>
-                <Label htmlFor="contacto">Contacto *</Label>
+                <Label htmlFor="contacto">Contacto {orderType !== 'orcamento' ? '*' : ''}</Label>
                 <Input
                   id="contacto"
                   name="contacto"
@@ -332,7 +343,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                   onChange={handleInputChange}
                   className="mt-1 border-gray-300 focus:border-orange-500"
                   disabled={isEditing}
-                  required={!isEditing}
+                  required={!isEditing && orderType !== 'orcamento'}
                 />
               </div>
             </div>
@@ -385,10 +396,10 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                 <SelectContent>
                   <SelectItem value="Pendente">Pendente</SelectItem>
                   <SelectItem value="Em Preparação">Em Preparação</SelectItem>
-                  <SelectItem value="Pronta para Levantamento">Pronta para Levantamento</SelectItem>
+                  <SelectItem value="Pronta para Levantamento">Pronto para Levantamento</SelectItem>
                   <SelectItem value="Entregue">Entregue</SelectItem>
                   <SelectItem value="Levantada">Levantada</SelectItem>
-                  <SelectItem value="Cancelada">Cancelada</SelectItem>
+                  <SelectItem value="Cancelada">Cancelado</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -544,36 +555,36 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <Label>Código *</Label>
+                      <Label>Código {orderType !== 'orcamento' ? '*' : ''}</Label>
                       <Input
                         value={artigo.codigo}
                         onChange={(e) => handleArtigoChange(index, 'codigo', e.target.value)}
                         className="mt-1 border-gray-300"
-                        required
+                        required={orderType !== 'orcamento'}
                       />
                     </div>
                     <div>
-                      <Label>Designação *</Label>
+                      <Label>Designação {orderType !== 'orcamento' ? '*' : ''}</Label>
                       <Input
                         value={artigo.designacao}
                         onChange={(e) => handleArtigoChange(index, 'designacao', e.target.value)}
                         className="mt-1 border-gray-300"
-                        required
+                        required={orderType !== 'orcamento'}
                       />
                     </div>
                     <div>
-                      <Label>Quantidade *</Label>
+                      <Label>Quantidade {orderType !== 'orcamento' ? '*' : ''}</Label>
                       <Input
                         type="number"
                         min="1"
                         value={artigo.quantidade}
                         onChange={(e) => handleArtigoChange(index, 'quantidade', e.target.value)}
                         className="mt-1 border-gray-300"
-                        required
+                        required={orderType !== 'orcamento'}
                       />
                     </div>
                     <div>
-                      <Label>Preço Unitário (€) *</Label>
+                      <Label>Preço Unitário (€) {orderType !== 'orcamento' ? '*' : ''}</Label>
                       <Input
                         type="number"
                         step="0.01"
@@ -581,7 +592,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                         value={artigo.preco_unitario}
                         onChange={(e) => handleArtigoChange(index, 'preco_unitario', e.target.value)}
                         className="mt-1 border-gray-300"
-                        required
+                        required={orderType !== 'orcamento'}
                       />
                     </div>
                   </div>
@@ -641,7 +652,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           {!isEditing && (
             <div className={`p-4 rounded-lg border ${adiantamento > total_final ? 'bg-red-50 border-red-300' : 'bg-green-50 border-green-200'}`}>
               <Label htmlFor="adiantamento" className={`text-base font-semibold ${adiantamento > total_final ? 'text-red-800' : 'text-green-800'}`}>
-                Adiantamento (€) *
+                Adiantamento (€) {orderType !== 'orcamento' ? '*' : ''}
               </Label>
               <p className="text-sm text-green-700 mb-2">Valor pago pelo cliente (0€ se nenhum adiantamento)</p>
               <Input
@@ -654,7 +665,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                 value={formData.adiantamento}
                 onChange={handleInputChange}
                 placeholder="0.00"
-                required
+                required={orderType !== 'orcamento'}
                 className={`mt-1 ${adiantamento > total_final ? 'border-red-500 focus:border-red-500' : 'border-green-300 focus:border-green-500'}`}
               />
               {adiantamento > total_final && (

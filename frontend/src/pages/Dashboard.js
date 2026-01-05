@@ -288,7 +288,7 @@ const Dashboard = () => {
                 <SelectItem value="Pronta para Levantamento">Pronta para Levantamento</SelectItem>
                 <SelectItem value="Entregue">Entregue</SelectItem>
                 <SelectItem value="Levantada">Levantada</SelectItem>
-                <SelectItem value="Cancelada">Cancelada</SelectItem>
+                <SelectItem value="Cancelada">Cancelado</SelectItem>
               </SelectContent>
             </Select>
           </div>

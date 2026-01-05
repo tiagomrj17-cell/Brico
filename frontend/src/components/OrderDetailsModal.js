@@ -116,10 +116,6 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                 <p className="text-sm text-gray-600">Criada em:</p>
                 <p className="font-medium">{formatDate(order.data_criacao)}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-600">Última atualização:</p>
-                <p className="font-medium">{formatDate(order.data_atualizacao)}</p>
-              </div>
               {order.data_entrega_prevista && (
                 <div>
                   <p className="text-sm text-gray-600">Entrega Prevista:</p>
@@ -195,10 +191,12 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                 <span className="text-gray-700">Subtotal Artigos:</span>
                 <span className="font-semibold">€{order.subtotal_artigos.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-700">Custo de Entrega:</span>
-                <span className="font-semibold">€{order.custo_entrega.toFixed(2)}</span>
-              </div>
+              {order.tem_entrega && (
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Custo de Entrega:</span>
+                  <span className="font-semibold">€{order.custo_entrega.toFixed(2)}</span>
+                </div>
+              )}
               <div className="border-t-2 border-orange-300 pt-2 mt-2">
                 <div className="flex justify-between text-xl">
                   <span className="font-bold text-gray-900">Total Final:</span>
