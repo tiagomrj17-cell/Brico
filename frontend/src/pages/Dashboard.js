@@ -1,35 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Package, Filter, Plus, Edit, Trash2, Printer } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Package, Filter, Plus, Edit, Printer, Users, ChevronDown, FileText } from 'lucide-react';
 import OrderFormModal from '@/components/OrderFormModal';
 import OrderDetailsModal from '@/components/OrderDetailsModal';
-import DeleteConfirmDialog from '@/components/DeleteConfirmDialog';
-import PrintView from '@/components/PrintView';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
+  const [colaboradores, setColaboradores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('Todos');
+  const [colaboradorFilter, setColaboradorFilter] = useState('Todos');
   const [searchText, setSearchText] = useState('');
   
   const [orderFormOpen, setOrderFormOpen] = useState(false);
+  const [orderType, setOrderType] = useState('encomenda');
   const [editingOrder, setEditingOrder] = useState(null);
   const [viewingOrder, setViewingOrder] = useState(null);
-  const [deletingOrder, setDeletingOrder] = useState(null);
-  const [printingOrder, setPrintingOrder] = useState(null);
 
   useEffect(() => {
     fetchOrders();
+    fetchColaboradores();
   }, []);
 
   useEffect(() => {
@@ -40,17 +43,23 @@ const Dashboard = () => {
       filtered = filtered.filter(order => order.status === statusFilter);
     }
     
+    // Filter by collaborator
+    if (colaboradorFilter !== 'Todos') {
+      filtered = filtered.filter(order => order.colaborador_id === colaboradorFilter);
+    }
+    
     // Filter by search text
     if (searchText.trim()) {
       const search = searchText.toLowerCase();
       filtered = filtered.filter(order => 
         order.nome_cliente.toLowerCase().includes(search) ||
-        (order.nome_colaborador && order.nome_colaborador.toLowerCase().includes(search))
+        (order.nome_colaborador && order.nome_colaborador.toLowerCase().includes(search)) ||
+        (order.numero_encomenda && order.numero_encomenda.toLowerCase().includes(search))
       );
     }
     
     setFilteredOrders(filtered);
-  }, [statusFilter, searchText, orders]);
+  }, [statusFilter, colaboradorFilter, searchText, orders]);
 
   const fetchOrders = async () => {
     try {
@@ -64,25 +73,39 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteOrder = async () => {
-    if (!deletingOrder) return;
-
+  const fetchColaboradores = async () => {
     try {
-      await axios.delete(`${API}/orders/${deletingOrder.id}`);
-      toast.success('Encomenda eliminada com sucesso!');
-      setDeletingOrder(null);
-      fetchOrders();
+      const response = await axios.get(`${API}/colaboradores`);
+      setColaboradores(response.data);
     } catch (error) {
-      toast.error('Erro ao eliminar encomenda');
+      console.error('Erro ao carregar colaboradores:', error);
     }
   };
 
-  const handlePrint = (order) => {
-    // Abrir nova janela com a página de impressão
-    const printWindow = window.open(`/print/${order.id}`, '_blank');
+  const handlePrintInterno = (order) => {
+    const printWindow = window.open(`/print-interno/${order.id}`, '_blank');
     if (!printWindow) {
       toast.error('Por favor, permita pop-ups para imprimir');
     }
+  };
+
+  const handlePrintCliente = (order) => {
+    const printWindow = window.open(`/print-cliente/${order.id}`, '_blank');
+    if (!printWindow) {
+      toast.error('Por favor, permita pop-ups para imprimir');
+    }
+  };
+
+  const handleCreateEncomenda = () => {
+    setEditingOrder(null);
+    setOrderType('encomenda');
+    setOrderFormOpen(true);
+  };
+
+  const handleCreateOrcamento = () => {
+    setEditingOrder(null);
+    setOrderType('orcamento');
+    setOrderFormOpen(true);
   };
 
   const getStatusColor = (status) => {
@@ -125,26 +148,46 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {printingOrder && <PrintView order={printingOrder} />}
-
       <div className="no-print bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-4xl font-bold text-gray-900">Gestão de Encomendas</h1>
               <p className="text-gray-600 mt-2">Sistema de gestão completo</p>
             </div>
-            <Button
-              onClick={() => {
-                setEditingOrder(null);
-                setOrderFormOpen(true);
-              }}
-              data-testid="btn-nova-encomenda"
-              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white flex items-center gap-2 px-6 py-6 text-lg"
-            >
-              <Plus className="w-5 h-5" />
-              Nova Encomenda
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => navigate('/colaboradores')}
+                variant="outline"
+                className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
+              >
+                <Users className="w-4 h-4" />
+                Gerir Colaboradores
+              </Button>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    data-testid="btn-nova-encomenda"
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white flex items-center gap-2 px-6 py-6 text-lg"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Criar Novo
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={handleCreateEncomenda} className="cursor-pointer">
+                    <Package className="w-4 h-4 mr-2" />
+                    Criar Encomenda
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleCreateOrcamento} className="cursor-pointer">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Criar Orçamento
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </div>
@@ -205,11 +248,11 @@ const Dashboard = () => {
           <div className="flex items-center gap-2">
             <Filter className="w-5 h-5 text-gray-600" />
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-64 border-gray-300" data-testid="filter-status">
+              <SelectTrigger className="w-52 border-gray-300" data-testid="filter-status">
                 <SelectValue placeholder="Filtrar por status" />
               </SelectTrigger>
               <SelectContent className="z-50">
-                <SelectItem value="Todos">Todos</SelectItem>
+                <SelectItem value="Todos">Todos os Estados</SelectItem>
                 <SelectItem value="Pendente">Pendente</SelectItem>
                 <SelectItem value="Em Preparação">Em Preparação</SelectItem>
                 <SelectItem value="Pronta para Levantamento">Pronta para Levantamento</SelectItem>
@@ -220,10 +263,25 @@ const Dashboard = () => {
             </Select>
           </div>
           
+          <div className="flex items-center gap-2">
+            <Users className="w-5 h-5 text-purple-600" />
+            <Select value={colaboradorFilter} onValueChange={setColaboradorFilter}>
+              <SelectTrigger className="w-52 border-purple-300" data-testid="filter-colaborador">
+                <SelectValue placeholder="Filtrar por colaborador" />
+              </SelectTrigger>
+              <SelectContent className="z-50">
+                <SelectItem value="Todos">Todos os Colaboradores</SelectItem>
+                {colaboradores.map((colab) => (
+                  <SelectItem key={colab.id} value={colab.id}>{colab.nome}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
           <div className="flex-1 max-w-md">
             <Input
               type="text"
-              placeholder="Pesquisar por nome do cliente ou colaborador..."
+              placeholder="Pesquisar por cliente, colaborador ou nº..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               className="border-gray-300"
@@ -242,7 +300,7 @@ const Dashboard = () => {
             <CardContent>
               <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 text-lg mb-4">Nenhuma encomenda encontrada</p>
-              <Button onClick={() => setOrderFormOpen(true)} className="bg-orange-500 hover:bg-orange-600 text-white">
+              <Button onClick={handleCreateEncomenda} className="bg-orange-500 hover:bg-orange-600 text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Criar Primeira Encomenda
               </Button>
@@ -255,8 +313,18 @@ const Dashboard = () => {
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900">{order.nome_cliente}</h3>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="text-lg font-bold text-gray-900">{order.nome_cliente}</h3>
+                        {order.tipo === 'orcamento' && (
+                          <Badge className="bg-blue-100 text-blue-800 text-xs">Orçamento</Badge>
+                        )}
+                      </div>
                       <p className="text-sm text-gray-600">{order.contacto}</p>
+                      {order.numero_encomenda && (
+                        <p className="text-sm text-orange-600 font-semibold">
+                          #{order.numero_encomenda}
+                        </p>
+                      )}
                       {order.nome_colaborador && (
                         <p className="text-sm text-purple-700 font-medium mt-0.5">
                           Colaborador: {order.nome_colaborador}
@@ -330,7 +398,7 @@ const Dashboard = () => {
                     </div>
                   )}
 
-                  <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
+                  <div className="flex items-center gap-2 pt-3 border-t border-gray-200 flex-wrap">
                     <Button
                       variant="outline"
                       size="sm"
@@ -349,6 +417,7 @@ const Dashboard = () => {
                           return;
                         }
                         setEditingOrder(order);
+                        setOrderType(order.tipo || 'encomenda');
                         setOrderFormOpen(true);
                       }}
                       disabled={order.status === 'Levantada'}
@@ -357,15 +426,31 @@ const Dashboard = () => {
                       <Edit className="w-4 h-4" />
                       Editar
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePrint(order)}
-                      className="flex items-center gap-2 border-orange-300 text-orange-600 hover:bg-orange-50"
-                    >
-                      <Printer className="w-4 h-4" />
-                      Imprimir
-                    </Button>
+                    
+                    {/* Dropdown de Impressão */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center gap-2 border-orange-300 text-orange-600 hover:bg-orange-50"
+                        >
+                          <Printer className="w-4 h-4" />
+                          Imprimir
+                          <ChevronDown className="w-3 h-3" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handlePrintCliente(order)} className="cursor-pointer">
+                          <FileText className="w-4 h-4 mr-2" />
+                          Versão Cliente
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handlePrintInterno(order)} className="cursor-pointer">
+                          <Package className="w-4 h-4 mr-2" />
+                          Versão Interna
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </CardContent>
               </Card>
@@ -384,21 +469,17 @@ const Dashboard = () => {
           setOrderFormOpen(false);
           setEditingOrder(null);
           fetchOrders();
+          fetchColaboradores();
         }}
         order={editingOrder}
+        orderType={orderType}
+        colaboradores={colaboradores}
       />
 
       <OrderDetailsModal
         open={!!viewingOrder}
         onClose={() => setViewingOrder(null)}
         order={viewingOrder}
-      />
-
-      <DeleteConfirmDialog
-        open={!!deletingOrder}
-        onClose={() => setDeletingOrder(null)}
-        onConfirm={handleDeleteOrder}
-        orderName={deletingOrder?.nome_cliente}
       />
     </div>
   );
