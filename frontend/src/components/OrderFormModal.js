@@ -198,6 +198,13 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             setSubmitting(false);
             return;
           }
+        } else {
+          // Para orçamentos, preço pode ser 0
+          if (artigos.some(art => parseFloat(art.preco_unitario) < 0)) {
+            toast.error('O preço unitário não pode ser negativo');
+            setSubmitting(false);
+            return;
+          }
         }
 
         if (formData.tem_entrega && (!formData.morada_entrega || !formData.distancia_kms)) {
@@ -405,8 +412,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             </div>
           )}
 
-          {/* Pago na Totalidade - apenas em edição */}
-          {isEditing && (
+          {/* Pago na Totalidade - apenas em edição e se total > 0 */}
+          {isEditing && calculateTotals().total_final > 0 && (
             <div className={`p-4 rounded-lg border ${formData.pago_totalidade ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200'}`}>
               <div className="flex items-center justify-between">
                 <div>

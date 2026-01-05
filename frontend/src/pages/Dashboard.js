@@ -374,7 +374,7 @@ const Dashboard = () => {
                     </Badge>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3 text-sm">
                     <div>
                       <p className="text-gray-600">Tipo</p>
                       <p className="font-semibold">{order.tem_entrega ? 'Entrega' : 'Levantamento'}</p>
@@ -384,24 +384,21 @@ const Dashboard = () => {
                       <p className="font-semibold">{order.artigos.length}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Valor Pago</p>
-                      <p className="font-semibold text-green-600">€{(order.adiantamento || 0).toFixed(2)}</p>
-                    </div>
-                    <div>
                       <p className="text-gray-600">Total</p>
                       <p className="font-semibold text-orange-600 text-base">€{order.total_final.toFixed(2)}</p>
-                      {order.pago_totalidade ? (
-                        <p className="text-xs text-green-600 font-bold">
-                          ✓ Pago na totalidade
-                        </p>
-                      ) : (order.adiantamento || 0) > 0 ? (
-                        <p className="text-xs text-red-600 font-bold">
-                          Falta: €{(order.total_final - (order.adiantamento || 0)).toFixed(2)}
-                        </p>
-                      ) : (
-                        <p className="text-xs text-red-600 font-bold">
-                          Falta: €{order.total_final.toFixed(2)}
-                        </p>
+                      {order.total_final > 0 && (
+                        <>
+                          <p className="text-xs text-green-600">Pago: €{(order.adiantamento || 0).toFixed(2)}</p>
+                          {order.pago_totalidade ? (
+                            <p className="text-xs text-green-600 font-bold">
+                              ✓ Pago na totalidade
+                            </p>
+                          ) : (
+                            <p className="text-xs text-red-600 font-bold">
+                              Falta: €{(order.total_final - (order.adiantamento || 0)).toFixed(2)}
+                            </p>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
