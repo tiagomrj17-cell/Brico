@@ -594,25 +594,31 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             </div>
           )}
 
-          {/* Adiantamento - apenas em criação */}
+          {/* Adiantamento - obrigatório em criação */}
           {!isEditing && (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-              <Label htmlFor="adiantamento" className="text-base font-semibold text-green-800">
-                Adiantamento (€)
+            <div className={`p-4 rounded-lg border ${adiantamento > total_final ? 'bg-red-50 border-red-300' : 'bg-green-50 border-green-200'}`}>
+              <Label htmlFor="adiantamento" className={`text-base font-semibold ${adiantamento > total_final ? 'text-red-800' : 'text-green-800'}`}>
+                Adiantamento (€) *
               </Label>
-              <p className="text-sm text-green-700 mb-2">Valor pago antecipadamente pelo cliente</p>
+              <p className="text-sm text-green-700 mb-2">Valor pago antecipadamente pelo cliente (obrigatório)</p>
               <Input
                 id="adiantamento"
                 name="adiantamento"
                 type="number"
                 step="0.01"
-                min="0"
+                min="0.01"
                 max={total_final}
                 value={formData.adiantamento}
                 onChange={handleInputChange}
                 placeholder="0.00"
-                className="mt-1 border-green-300 focus:border-green-500"
+                required
+                className={`mt-1 ${adiantamento > total_final ? 'border-red-500 focus:border-red-500' : 'border-green-300 focus:border-green-500'}`}
               />
+              {adiantamento > total_final && (
+                <p className="text-sm text-red-600 font-semibold mt-2">
+                  ⚠️ O adiantamento não pode ser superior ao total (€{total_final.toFixed(2)})
+                </p>
+              )}
             </div>
           )}
 
