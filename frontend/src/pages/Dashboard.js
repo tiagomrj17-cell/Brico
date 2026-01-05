@@ -351,14 +351,16 @@ const Dashboard = () => {
                           </span>
                         )}
                         <span className="text-lg font-bold text-gray-900">{order.nome_cliente}</span>
-                        {order.tipo === 'orcamento' && (
+                        {order.tipo === 'orcamento' ? (
                           <Badge className="bg-blue-100 text-blue-800 text-xs">Orçamento</Badge>
+                        ) : (
+                          <Badge className="bg-orange-100 text-orange-800 text-xs">Encomenda</Badge>
                         )}
                       </div>
                       
                       {/* Colaborador primeiro */}
                       {order.nome_colaborador && (
-                        <p className="text-sm text-purple-700 font-medium">
+                        <p className="text-sm text-gray-700 font-medium">
                           Colaborador: {order.nome_colaborador}
                         </p>
                       )}
@@ -558,7 +560,7 @@ const Dashboard = () => {
                   Cliente: <strong>{createdOrder?.nome_cliente}</strong>
                 </span>
                 <span className="block text-gray-600">
-                  Colaborador: <strong className="text-purple-600">{createdOrder?.nome_colaborador}</strong>
+                  Colaborador: <strong className="text-gray-800">{createdOrder?.nome_colaborador}</strong>
                 </span>
                 <span className="block text-gray-600">
                   Total: <strong className="text-orange-600 text-lg">€{createdOrder?.total_final?.toFixed(2)}</strong>
