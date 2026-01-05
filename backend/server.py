@@ -245,12 +245,42 @@ async def update_order(order_id: str, update_data: OrderUpdate):
     for campo, novo_valor in update_dict.items():
         valor_anterior = order.get(campo, '')
         if valor_anterior != novo_valor:
-            historico.append({
-                'data_hora': data_hora_atual,
-                'campo_alterado': campo,
-                'valor_anterior': str(valor_anterior),
-                'valor_novo': str(novo_valor)
-            })
+            # Tratamento especial para artigos - detectar separados
+            if campo == 'artigos':
+                artigos_anteriores = order.get('artigos', [])
+                artigos_novos = novo_valor if isinstance(novo_valor, list) else []
+                
+                # Verificar quais artigos foram marcados como separados
+                artigos_separados = []
+                for i, artigo_novo in enumerate(artigos_novos):
+                    if i < len(artigos_anteriores):
+                        artigo_anterior = artigos_anteriores[i]
+                        if artigo_novo.get('separado') and not artigo_anterior.get('separado'):
+                            nome_artigo = artigo_novo.get('designacao') or artigo_novo.get('codigo') or f'Artigo {i+1}'
+                            artigos_separados.append(nome_artigo)
+                
+                if artigos_separados:
+                    historico.append({
+                        'data_hora': data_hora_atual,
+                        'campo_alterado': 'artigos_separados',
+                        'valor_anterior': '',
+                        'valor_novo': ', '.join(artigos_separados)
+                    })
+                else:
+                    # Mudança geral nos artigos
+                    historico.append({
+                        'data_hora': data_hora_atual,
+                        'campo_alterado': campo,
+                        'valor_anterior': str(valor_anterior),
+                        'valor_novo': str(novo_valor)
+                    })
+            else:
+                historico.append({
+                    'data_hora': data_hora_atual,
+                    'campo_alterado': campo,
+                    'valor_anterior': str(valor_anterior),
+                    'valor_novo': str(novo_valor)
+                })
     
     # Add data_levantada when status changes to Levantada
     if update_data.status == 'Levantada' and order.get('status') != 'Levantada':
