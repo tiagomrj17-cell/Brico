@@ -167,6 +167,12 @@ async def get_next_order_number(tipo: str = "encomenda"):
     
     return f"{prefix}{next_num}"
 
+@api_router.get("/orders/next-number/{tipo}")
+async def get_next_number(tipo: str):
+    """Retorna o próximo número sequencial para encomenda ou orçamento"""
+    next_number = await get_next_order_number(tipo)
+    return {"next_number": next_number}
+
 @api_router.post("/orders", response_model=Order)
 async def create_order(order_data: OrderCreate):
     order_dict = order_data.model_dump()
