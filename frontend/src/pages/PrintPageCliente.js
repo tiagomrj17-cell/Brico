@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -9,6 +11,8 @@ const PrintPageCliente = () => {
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
+  const printRef = useRef(null);
 
   useEffect(() => {
     fetchOrder();
@@ -51,8 +55,45 @@ const PrintPageCliente = () => {
     window.print();
   };
 
-  const handleDownloadPDF = () => {
-    window.print();
+  const handleDownloadPDF = async () => {
+    if (!printRef.current) return;
+    
+    setDownloading(true);
+    try {
+      const canvas = await html2canvas(printRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      const tipoDoc = order.tipo === 'orcamento' ? 'Orcamento' : 'Encomenda';
+      const fileName = `${tipoDoc}_${order.numero_encomenda || order.id.slice(0, 8)}_Cliente.pdf`;
+      pdf.save(fileName);
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      alert('Erro ao gerar PDF. Tente usar a opção de impressão.');
+    } finally {
+      setDownloading(false);
+    }
   };
 
   if (loading) {
@@ -95,24 +136,25 @@ const PrintPageCliente = () => {
         </button>
         <button
           onClick={handleDownloadPDF}
+          disabled={downloading}
           style={{
             padding: '10px 30px',
             fontSize: '16px',
-            backgroundColor: '#2563eb',
+            backgroundColor: downloading ? '#93c5fd' : '#2563eb',
             color: 'white',
             border: 'none',
             borderRadius: '5px',
-            cursor: 'pointer'
+            cursor: downloading ? 'not-allowed' : 'pointer'
           }}
         >
-          📄 Download PDF
+          {downloading ? '⏳ A gerar PDF...' : '📄 Download PDF'}
         </button>
         <p style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
           Para guardar como PDF, escolha "Guardar como PDF" na janela de impressão
         </p>
       </div>
 
-      <div style={{
+      <div ref={printRef} style={{
         maxWidth: '210mm',
         margin: '0 auto',
         padding: '20mm',
