@@ -347,10 +347,6 @@ const PrintPageInternal = () => {
               </div>
             )}
           </div>
-                </tbody>
-              </table>
-            </div>
-          )}
         </div>
 
         {/* Footer */}
