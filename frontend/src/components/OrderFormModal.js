@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, CheckSquare } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -102,6 +102,13 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     }
   };
 
+  // Marcar todos os artigos como separados
+  const handleTudoSeparado = () => {
+    const newArtigos = artigos.map(art => ({ ...art, separado: true }));
+    setArtigos(newArtigos);
+    toast.success('Todos os artigos marcados como separados');
+  };
+
   const calculateTotals = () => {
     const subtotal_artigos = artigos.reduce((sum, art) => sum + (parseFloat(art.preco_total) || 0), 0);
     
@@ -151,8 +158,9 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           }))
         };
         
-        await axios.put(`${API}/orders/${order.id}`, updateData);
+        const response = await axios.put(`${API}/orders/${order.id}`, updateData);
         toast.success(`${tipoLabel} atualizado com sucesso!`);
+        onSave(response.data);
       } else {
         // Para criar nova encomenda/orçamento
         if (!formData.nome_cliente || !formData.contacto || !formData.colaborador_id) {
@@ -199,11 +207,10 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           tipo: orderType
         };
 
-        await axios.post(`${API}/orders`, orderData);
+        const response = await axios.post(`${API}/orders`, orderData);
         toast.success(`${tipoLabel} criado com sucesso!`);
+        onSave(response.data);
       }
-      
-      onSave();
     } catch (error) {
       toast.error(`Erro ao guardar ${tipoLabel.toLowerCase()}: ` + (error.response?.data?.detail || error.message));
     } finally {
@@ -218,7 +225,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">
-            {isEditing ? `Editar ${tipoLabel}` : `Novo ${tipoLabel}`}
+            {isEditing ? `Editar ${tipoLabel}` : (orderType === 'orcamento' ? 'Novo Orçamento' : 'Nova Encomenda')}
           </DialogTitle>
           <DialogDescription>
             {isEditing ? `Atualize os dados do ${tipoLabel.toLowerCase()}` : `Preencha os dados do novo ${tipoLabel.toLowerCase()}`}
@@ -559,10 +566,22 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           </div>
           )}
 
-          {/* Artigos em edição - apenas marcar como separado */}
+          {/* Artigos em edição - marcar como separado */}
           {isEditing && (
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Artigos (marcar como separado)</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-lg">Artigos</h3>
+                <Button
+                  type="button"
+                  onClick={handleTudoSeparado}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2 border-green-500 text-green-600 hover:bg-green-50"
+                >
+                  <CheckSquare className="w-4 h-4" />
+                  Tudo Separado
+                </Button>
+              </div>
               {artigos.map((artigo, index) => (
                 <div key={index} className="p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center justify-between">
@@ -576,7 +595,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                         id={`separado-${index}`}
                         checked={artigo.separado || false}
                         onChange={(e) => handleArtigoChange(index, 'separado', e.target.checked)}
-                        className="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                        className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
                       />
                       <Label htmlFor={`separado-${index}`} className="text-sm cursor-pointer font-medium">
                         Separado
