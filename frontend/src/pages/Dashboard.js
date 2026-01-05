@@ -45,17 +45,14 @@ const Dashboard = () => {
   useEffect(() => {
     let filtered = orders;
     
-    // Filter by status
     if (statusFilter !== 'Todos') {
       filtered = filtered.filter(order => order.status === statusFilter);
     }
     
-    // Filter by collaborator
     if (colaboradorFilter !== 'Todos') {
       filtered = filtered.filter(order => order.colaborador_id === colaboradorFilter);
     }
     
-    // Filter by search text
     if (searchText.trim()) {
       const search = searchText.toLowerCase();
       filtered = filtered.filter(order => 
@@ -171,6 +168,11 @@ const Dashboard = () => {
       levantada: orders.filter(o => o.status === 'Levantada').length,
       cancelada: orders.filter(o => o.status === 'Cancelada').length
     };
+  };
+
+  // Verificar se pode editar (não pode se Levantada, Entregue ou Cancelada)
+  const canEdit = (order) => {
+    return !['Levantada', 'Entregue', 'Cancelada'].includes(order.status);
   };
 
   const counts = getStatusCounts();
@@ -341,24 +343,30 @@ const Dashboard = () => {
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-lg font-bold text-gray-900">{order.nome_cliente}</h3>
+                      {/* Título: Número + Nome do Cliente */}
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        {order.numero_encomenda && (
+                          <span className="text-lg font-bold text-orange-600">
+                            #{order.numero_encomenda}
+                          </span>
+                        )}
+                        <span className="text-lg font-bold text-gray-900">{order.nome_cliente}</span>
                         {order.tipo === 'orcamento' && (
                           <Badge className="bg-blue-100 text-blue-800 text-xs">Orçamento</Badge>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600">{order.contacto}</p>
-                      {order.numero_encomenda && (
-                        <p className="text-sm text-orange-600 font-semibold">
-                          #{order.numero_encomenda}
-                        </p>
-                      )}
+                      
+                      {/* Colaborador primeiro */}
                       {order.nome_colaborador && (
-                        <p className="text-sm text-purple-700 font-medium mt-0.5">
+                        <p className="text-sm text-purple-700 font-medium">
                           Colaborador: {order.nome_colaborador}
                         </p>
                       )}
-                      <p className="text-xs text-gray-500 mt-1">Criada: {formatDate(order.data_criacao)}</p>
+                      
+                      {/* Contacto */}
+                      <p className="text-sm text-gray-600">{order.contacto}</p>
+                      
+                      {/* Data de atualização se diferente da criação */}
                       {order.data_atualizacao && order.data_atualizacao !== order.data_criacao && (
                         <p className="text-xs text-orange-600 font-medium mt-0.5">
                           Última atualização: {formatDate(order.data_atualizacao)}
@@ -380,7 +388,7 @@ const Dashboard = () => {
                       <p className="font-semibold">{order.artigos.length}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Data/Hora Criação</p>
+                      <p className="text-gray-600">Data/Hora</p>
                       <p className="font-semibold text-xs">{formatDate(order.data_criacao)}</p>
                     </div>
                     <div>
@@ -435,39 +443,34 @@ const Dashboard = () => {
                     >
                       Ver Detalhes
                     </Button>
+                    
+                    {/* Botão Editar - desativado se Levantada, Entregue ou Cancelada */}
                     <Button
                       variant="outline"
                       size="sm"
                       data-testid="btn-editar"
                       onClick={() => {
-                        if (order.status === 'Levantada') {
-                          toast.error('Não é possível editar encomendas já levantadas');
+                        if (!canEdit(order)) {
+                          toast.error('Não é possível editar encomendas finalizadas');
                           return;
                         }
                         setEditingOrder(order);
                         setOrderType(order.tipo || 'encomenda');
                         setOrderFormOpen(true);
                       }}
-                      disabled={order.status === 'Levantada'}
-                      className={`flex items-center gap-2 border-gray-300 ${order.status === 'Levantada' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      disabled={!canEdit(order)}
+                      className={`flex items-center gap-2 border-gray-300 ${!canEdit(order) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <Edit className="w-4 h-4" />
                       Editar
                     </Button>
                     
-                    {/* Botão Eliminar */}
+                    {/* Botão Eliminar - sempre ativo */}
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => {
-                        if (order.status === 'Levantada') {
-                          toast.error('Não é possível eliminar encomendas já levantadas');
-                          return;
-                        }
-                        setDeletingOrder(order);
-                      }}
-                      disabled={order.status === 'Levantada'}
-                      className={`flex items-center gap-2 border-red-300 text-red-600 hover:bg-red-50 ${order.status === 'Levantada' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      onClick={() => setDeletingOrder(order)}
+                      className="flex items-center gap-2 border-red-300 text-red-600 hover:bg-red-50"
                     >
                       <Trash2 className="w-4 h-4" />
                       Eliminar
@@ -527,7 +530,7 @@ const Dashboard = () => {
         open={!!deletingOrder}
         onClose={() => setDeletingOrder(null)}
         onConfirm={handleDeleteOrder}
-        orderName={deletingOrder?.nome_cliente}
+        orderName={deletingOrder ? `${deletingOrder.numero_encomenda ? '#' + deletingOrder.numero_encomenda + ' - ' : ''}${deletingOrder.nome_cliente}` : ''}
       />
 
       {/* Modal de Sucesso após Criação */}
@@ -538,18 +541,23 @@ const Dashboard = () => {
               <Package className="w-5 h-5" />
               {createdOrder?.tipo === 'orcamento' ? 'Orçamento' : 'Encomenda'} Criado com Sucesso!
             </DialogTitle>
-            <DialogDescription>
-              {createdOrder?.numero_encomenda && (
-                <span className="block text-2xl font-bold text-orange-600 my-4">
-                  #{createdOrder.numero_encomenda}
+            <DialogDescription asChild>
+              <div className="space-y-2">
+                {createdOrder?.numero_encomenda && (
+                  <span className="block text-2xl font-bold text-orange-600 my-4">
+                    #{createdOrder.numero_encomenda}
+                  </span>
+                )}
+                <span className="block text-gray-600">
+                  Cliente: <strong>{createdOrder?.nome_cliente}</strong>
                 </span>
-              )}
-              <span className="block text-gray-600">
-                Cliente: <strong>{createdOrder?.nome_cliente}</strong>
-              </span>
-              <span className="block text-gray-600">
-                Total: <strong className="text-orange-600">€{createdOrder?.total_final?.toFixed(2)}</strong>
-              </span>
+                <span className="block text-gray-600">
+                  Colaborador: <strong className="text-purple-600">{createdOrder?.nome_colaborador}</strong>
+                </span>
+                <span className="block text-gray-600">
+                  Total: <strong className="text-orange-600">€{createdOrder?.total_final?.toFixed(2)}</strong>
+                </span>
+              </div>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex flex-col sm:flex-row gap-2">
