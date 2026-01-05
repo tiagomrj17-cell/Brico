@@ -302,9 +302,6 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                   {nextNumber}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 mt-1">
-                Este será o número d{tipoLabelFeminino}
-              </p>
             </div>
           )}
           <DialogDescription>
