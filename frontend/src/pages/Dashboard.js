@@ -100,17 +100,11 @@ const Dashboard = () => {
   };
 
   const handlePrintInterno = (order) => {
-    const printWindow = window.open(`/print-interno/${order.id}`, '_blank');
-    if (!printWindow) {
-      toast.error('Por favor, permita pop-ups para imprimir');
-    }
+    window.open(`/print-interno/${order.id}`, '_blank', 'noopener,noreferrer');
   };
 
   const handlePrintCliente = (order) => {
-    const printWindow = window.open(`/print-cliente/${order.id}`, '_blank');
-    if (!printWindow) {
-      toast.error('Por favor, permita pop-ups para imprimir');
-    }
+    window.open(`/print-cliente/${order.id}`, '_blank', 'noopener,noreferrer');
   };
 
   const handleCreateEncomenda = () => {
