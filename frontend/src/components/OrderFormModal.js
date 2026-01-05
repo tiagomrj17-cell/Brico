@@ -8,17 +8,18 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Trash2, Plus, CheckSquare, CheckCircle, Hash } from 'lucide-react';
+import { Trash2, Plus, CheckSquare, CheckCircle, Hash, Edit3 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda', colaboradores = [] }) => {
+const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda', colaboradores = [], fullEdit = false }) => {
   const isEditing = !!order;
   const tipoLabel = orderType === 'orcamento' ? 'Orçamento' : 'Encomenda';
   const tipoLabelFeminino = orderType === 'orcamento' ? 'o orçamento' : 'a encomenda';
   
   const [nextNumber, setNextNumber] = useState(null);
+  const [fullEditMode, setFullEditMode] = useState(fullEdit);
   
   const [formData, setFormData] = useState({
     nome_cliente: '',
@@ -39,6 +40,13 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
   ]);
 
   const [submitting, setSubmitting] = useState(false);
+
+  // Reset fullEditMode quando o modal fecha
+  useEffect(() => {
+    if (!open) {
+      setFullEditMode(fullEdit);
+    }
+  }, [open, fullEdit]);
 
   // Buscar próximo número quando modal abre para criação
   useEffect(() => {
