@@ -328,18 +328,55 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                         'observacoes': 'Observações',
                         'data_entrega_prevista': 'Data de Entrega Prevista',
                         'data_levantada': 'Data de Levantamento',
-                        'pago_totalidade': 'Pago na Totalidade'
+                        'pago_totalidade': 'Pago na Totalidade',
+                        'artigos': 'Artigos',
+                        'artigos_separados': 'Artigos Separados'
                       }[alt.campo_alterado] || alt.campo_alterado;
                       
+                      // Formatar valores para campos especiais
+                      let valorAnterior = alt.valor_anterior || '(vazio)';
+                      let valorNovo = alt.valor_novo;
+                      
+                      // Tentar fazer parse se for string JSON
+                      const formatarValor = (valor) => {
+                        if (!valor || valor === '(vazio)') return valor;
+                        try {
+                          const parsed = JSON.parse(valor.replace(/'/g, '"').replace(/True/g, 'true').replace(/False/g, 'false'));
+                          if (Array.isArray(parsed)) {
+                            return parsed.map(a => `${a.designacao || a.codigo} (x${a.quantidade})`).join(', ');
+                          }
+                          return valor;
+                        } catch (e) {
+                          // Verificar se é True/False simples
+                          if (valor === 'True' || valor === 'true') return 'Sim';
+                          if (valor === 'False' || valor === 'false') return 'Não';
+                          return valor;
+                        }
+                      };
+                      
+                      if (alt.campo_alterado === 'artigos_separados') {
+                        valorAnterior = '';
+                        valorNovo = `✓ ${alt.valor_novo}`;
+                      } else if (alt.campo_alterado === 'artigos' || alt.campo_alterado === 'pago_totalidade') {
+                        valorAnterior = formatarValor(alt.valor_anterior);
+                        valorNovo = formatarValor(alt.valor_novo);
+                      }
+                      
                       return (
-                        <div key={idx} className="text-xs bg-white p-2 rounded border border-blue-100">
+                        <div key={idx} className={`text-xs bg-white p-2 rounded border ${alt.campo_alterado === 'artigos_separados' ? 'border-green-200 bg-green-50' : 'border-blue-100'}`}>
                           <div className="font-medium text-blue-900">{new Date(alt.data_hora).toLocaleString('pt-PT')}</div>
                           <div className="text-gray-700 mt-1">
-                            <span className="font-semibold text-blue-800">{nomeCampo}:</span>
+                            <span className={`font-semibold ${alt.campo_alterado === 'artigos_separados' ? 'text-green-700' : 'text-blue-800'}`}>{nomeCampo}:</span>
                             <div className="mt-0.5">
-                              <span className="text-red-600">Antes: {alt.valor_anterior || '(vazio)'}</span>
-                              <span className="mx-2">→</span>
-                              <span className="text-green-700 font-medium">Agora: {alt.valor_novo}</span>
+                              {valorAnterior && valorAnterior !== '(vazio)' && alt.campo_alterado !== 'artigos_separados' && (
+                                <>
+                                  <span className="text-red-600">Antes: {valorAnterior}</span>
+                                  <span className="mx-2">→</span>
+                                </>
+                              )}
+                              <span className={`font-medium ${alt.campo_alterado === 'artigos_separados' ? 'text-green-700' : 'text-green-700'}`}>
+                                {alt.campo_alterado === 'artigos_separados' ? valorNovo : `Agora: ${valorNovo}`}
+                              </span>
                             </div>
                           </div>
                         </div>
