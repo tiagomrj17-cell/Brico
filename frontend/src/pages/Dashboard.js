@@ -552,7 +552,7 @@ const Dashboard = () => {
           <DialogHeader>
             <DialogTitle className="text-green-600 flex items-center gap-2 text-xl">
               <Package className="w-6 h-6" />
-              {createdOrder?.tipo === 'orcamento' ? 'Orçamento' : 'Encomenda'} Criado!
+              {createdOrder?.tipo === 'orcamento' ? 'Orçamento criado!' : 'Encomenda criada!'}
             </DialogTitle>
             {createdOrder?.numero_encomenda && (
               <p className="text-3xl font-bold text-orange-600 mt-2">
@@ -570,13 +570,17 @@ const Dashboard = () => {
                 <span className="block text-gray-600">
                   Total: <strong className="text-orange-600 text-lg">€{createdOrder?.total_final?.toFixed(2)}</strong>
                 </span>
-                {createdOrder?.adiantamento > 0 && (
+                {createdOrder?.pago_totalidade ? (
+                  <span className="block text-green-700 font-bold flex items-center gap-2">
+                    ✓ Pago na totalidade
+                  </span>
+                ) : (
                   <>
                     <span className="block text-green-700">
-                      Adiantamento: <strong>€{createdOrder.adiantamento.toFixed(2)}</strong>
+                      Adiantamento: <strong>€{(createdOrder?.adiantamento || 0).toFixed(2)}</strong>
                     </span>
                     <span className="block text-red-600 font-bold">
-                      Falta Pagar: €{(createdOrder.total_final - createdOrder.adiantamento).toFixed(2)}
+                      Falta Pagar: €{(createdOrder?.total_final - (createdOrder?.adiantamento || 0)).toFixed(2)}
                     </span>
                   </>
                 )}
