@@ -8,9 +8,11 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Package, Filter, Plus, Edit, Printer, Users, ChevronDown, FileText } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Package, Filter, Plus, Edit, Printer, Users, ChevronDown, FileText, Trash2 } from 'lucide-react';
 import OrderFormModal from '@/components/OrderFormModal';
 import OrderDetailsModal from '@/components/OrderDetailsModal';
+import DeleteConfirmDialog from '@/components/DeleteConfirmDialog';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -29,6 +31,11 @@ const Dashboard = () => {
   const [orderType, setOrderType] = useState('encomenda');
   const [editingOrder, setEditingOrder] = useState(null);
   const [viewingOrder, setViewingOrder] = useState(null);
+  const [deletingOrder, setDeletingOrder] = useState(null);
+  
+  // Estado para mostrar modal de sucesso após criação
+  const [createdOrder, setCreatedOrder] = useState(null);
+  const [showCreatedModal, setShowCreatedModal] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -82,6 +89,19 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteOrder = async () => {
+    if (!deletingOrder) return;
+
+    try {
+      await axios.delete(`${API}/orders/${deletingOrder.id}`);
+      toast.success('Eliminado com sucesso!');
+      setDeletingOrder(null);
+      fetchOrders();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erro ao eliminar');
+    }
+  };
+
   const handlePrintInterno = (order) => {
     const printWindow = window.open(`/print-interno/${order.id}`, '_blank');
     if (!printWindow) {
@@ -106,6 +126,15 @@ const Dashboard = () => {
     setEditingOrder(null);
     setOrderType('orcamento');
     setOrderFormOpen(true);
+  };
+
+  const handleOrderCreated = (newOrder) => {
+    setOrderFormOpen(false);
+    setEditingOrder(null);
+    setCreatedOrder(newOrder);
+    setShowCreatedModal(true);
+    fetchOrders();
+    fetchColaboradores();
   };
 
   const getStatusColor = (status) => {
@@ -152,8 +181,7 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900">Gestão de Encomendas</h1>
-              <p className="text-gray-600 mt-2">Sistema de gestão completo</p>
+              <h1 className="text-4xl font-bold text-gray-900">Encomendas e Orçamentos</h1>
             </div>
             <div className="flex items-center gap-3">
               <Button
@@ -179,11 +207,11 @@ const Dashboard = () => {
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem onClick={handleCreateEncomenda} className="cursor-pointer">
                     <Package className="w-4 h-4 mr-2" />
-                    Criar Encomenda
+                    Nova Encomenda
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleCreateOrcamento} className="cursor-pointer">
                     <FileText className="w-4 h-4 mr-2" />
-                    Criar Orçamento
+                    Novo Orçamento
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -293,7 +321,7 @@ const Dashboard = () => {
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600">A carregar encomendas...</p>
+            <p className="mt-4 text-gray-600">A carregar...</p>
           </div>
         ) : filteredOrders.length === 0 ? (
           <Card className="text-center py-12 bg-white border-gray-200">
@@ -427,6 +455,24 @@ const Dashboard = () => {
                       Editar
                     </Button>
                     
+                    {/* Botão Eliminar */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (order.status === 'Levantada') {
+                          toast.error('Não é possível eliminar encomendas já levantadas');
+                          return;
+                        }
+                        setDeletingOrder(order);
+                      }}
+                      disabled={order.status === 'Levantada'}
+                      className={`flex items-center gap-2 border-red-300 text-red-600 hover:bg-red-50 ${order.status === 'Levantada' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Eliminar
+                    </Button>
+                    
                     {/* Dropdown de Impressão */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -465,12 +511,7 @@ const Dashboard = () => {
           setOrderFormOpen(false);
           setEditingOrder(null);
         }}
-        onSave={() => {
-          setOrderFormOpen(false);
-          setEditingOrder(null);
-          fetchOrders();
-          fetchColaboradores();
-        }}
+        onSave={handleOrderCreated}
         order={editingOrder}
         orderType={orderType}
         colaboradores={colaboradores}
@@ -481,6 +522,66 @@ const Dashboard = () => {
         onClose={() => setViewingOrder(null)}
         order={viewingOrder}
       />
+
+      <DeleteConfirmDialog
+        open={!!deletingOrder}
+        onClose={() => setDeletingOrder(null)}
+        onConfirm={handleDeleteOrder}
+        orderName={deletingOrder?.nome_cliente}
+      />
+
+      {/* Modal de Sucesso após Criação */}
+      <Dialog open={showCreatedModal} onOpenChange={setShowCreatedModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-green-600 flex items-center gap-2">
+              <Package className="w-5 h-5" />
+              {createdOrder?.tipo === 'orcamento' ? 'Orçamento' : 'Encomenda'} Criado com Sucesso!
+            </DialogTitle>
+            <DialogDescription>
+              {createdOrder?.numero_encomenda && (
+                <span className="block text-2xl font-bold text-orange-600 my-4">
+                  #{createdOrder.numero_encomenda}
+                </span>
+              )}
+              <span className="block text-gray-600">
+                Cliente: <strong>{createdOrder?.nome_cliente}</strong>
+              </span>
+              <span className="block text-gray-600">
+                Total: <strong className="text-orange-600">€{createdOrder?.total_final?.toFixed(2)}</strong>
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                handlePrintCliente(createdOrder);
+              }}
+              className="flex items-center gap-2"
+            >
+              <Printer className="w-4 h-4" />
+              Imprimir Cliente
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                handlePrintInterno(createdOrder);
+              }}
+              className="flex items-center gap-2"
+            >
+              <Printer className="w-4 h-4" />
+              Imprimir Interno
+            </Button>
+            <Button
+              onClick={() => setShowCreatedModal(false)}
+              className="bg-orange-500 hover:bg-orange-600 text-white"
+            >
+              Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
