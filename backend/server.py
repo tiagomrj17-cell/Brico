@@ -99,6 +99,7 @@ class Order(BaseModel):
     colaborador_id: Optional[str] = None
     nome_colaborador: Optional[str] = None
     adiantamento: Optional[float] = None  # Valor do adiantamento pago
+    pago_totalidade: bool = False  # Se o valor total foi pago
     historico: List[dict] = Field(default_factory=list)
     data_criacao: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     data_atualizacao: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
