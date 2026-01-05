@@ -294,6 +294,19 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           <DialogTitle className="text-2xl">
             {isEditing ? `Editar ${tipoLabel}` : (orderType === 'orcamento' ? 'Novo Orçamento' : 'Nova Encomenda')}
           </DialogTitle>
+          {!isEditing && nextNumber && (
+            <div className={`mt-2 p-3 rounded-lg border-2 ${orderType === 'orcamento' ? 'bg-blue-50 border-blue-300' : 'bg-orange-50 border-orange-300'}`}>
+              <div className="flex items-center gap-2">
+                <Hash className={`w-5 h-5 ${orderType === 'orcamento' ? 'text-blue-600' : 'text-orange-600'}`} />
+                <span className={`text-2xl font-bold ${orderType === 'orcamento' ? 'text-blue-700' : 'text-orange-700'}`}>
+                  {nextNumber}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 mt-1">
+                Este será o número d{tipoLabelFeminino}
+              </p>
+            </div>
+          )}
           <DialogDescription>
             {isEditing ? `Atualize os dados d${tipoLabelFeminino}` : `Preencha os dados da nova ${orderType === 'orcamento' ? 'orçamento' : 'encomenda'}`}
           </DialogDescription>
