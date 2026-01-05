@@ -238,13 +238,13 @@ const PrintPageInternal = () => {
         }}
       >
         {/* Header */}
-        <div style={{ borderBottom: '3px solid #ff6b35', paddingBottom: '8mm', marginBottom: '8mm' }}>
+        <div style={{ borderBottom: `3px solid ${order.tipo === 'orcamento' ? '#2563eb' : '#16a34a'}`, paddingBottom: '8mm', marginBottom: '8mm' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <h1 style={{ fontSize: '24pt', margin: '0', color: '#ff6b35', fontWeight: 'bold' }}>
+              <h1 style={{ fontSize: '24pt', margin: '0', color: order.tipo === 'orcamento' ? '#2563eb' : '#16a34a', fontWeight: 'bold' }}>
                 {tipoDoc}
               </h1>
-              <p style={{ fontSize: '18pt', margin: '4mm 0 0 0', color: '#333', fontWeight: 'bold' }}>
+              <p style={{ fontSize: '18pt', margin: '4mm 0 0 0', color: order.tipo === 'orcamento' ? '#1d4ed8' : '#15803d', fontWeight: 'bold' }}>
                 #{order.numero_encomenda || order.id.slice(0, 8).toUpperCase()}
               </p>
               <p style={{ fontSize: '11pt', margin: '4mm 0 0 0', color: '#666' }}>
@@ -253,7 +253,7 @@ const PrintPageInternal = () => {
             </div>
             <div style={{ textAlign: 'right', backgroundColor: '#f5f5f5', padding: '3mm', borderRadius: '2mm' }}>
               <p style={{ margin: '0', fontSize: '9pt', color: '#666' }}>VERSÃO INTERNA</p>
-              <p style={{ margin: '2mm 0 0 0', fontSize: '11pt', fontWeight: 'bold', color: order.status === 'Levantada' ? '#16a34a' : '#ff6b35' }}>
+              <p style={{ margin: '2mm 0 0 0', fontSize: '11pt', fontWeight: 'bold', color: order.status === 'Levantada' ? '#16a34a' : (order.tipo === 'orcamento' ? '#2563eb' : '#16a34a') }}>
                 {order.status}
               </p>
             </div>
