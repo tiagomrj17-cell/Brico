@@ -180,7 +180,21 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
         }
 
         const { subtotal_artigos, custo_entrega, total_final } = calculateTotals();
-        const adiantamentoValue = parseFloat(formData.adiantamento) || null;
+        const adiantamentoValue = parseFloat(formData.adiantamento) || 0;
+
+        // Validação: Adiantamento obrigatório
+        if (adiantamentoValue <= 0) {
+          toast.error('O adiantamento é obrigatório. Por favor, introduza um valor.');
+          setSubmitting(false);
+          return;
+        }
+
+        // Validação: Adiantamento não pode ser maior que o total
+        if (adiantamentoValue > total_final) {
+          toast.error(`O adiantamento (€${adiantamentoValue.toFixed(2)}) não pode ser superior ao total (€${total_final.toFixed(2)})`);
+          setSubmitting(false);
+          return;
+        }
 
         const orderData = {
           nome_cliente: formData.nome_cliente,
