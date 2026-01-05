@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Trash2, Plus, CheckSquare } from 'lucide-react';
+import { Trash2, Plus, CheckSquare, CheckCircle } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -16,6 +16,7 @@ const API = `${BACKEND_URL}/api`;
 const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda', colaboradores = [] }) => {
   const isEditing = !!order;
   const tipoLabel = orderType === 'orcamento' ? 'Orçamento' : 'Encomenda';
+  const tipoLabelFeminino = orderType === 'orcamento' ? 'o orçamento' : 'a encomenda';
   
   const [formData, setFormData] = useState({
     nome_cliente: '',
@@ -27,7 +28,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     observacoes: '',
     data_entrega_prevista: '',
     colaborador_id: '',
-    adiantamento: ''
+    adiantamento: '',
+    pago_totalidade: false
   });
 
   const [artigos, setArtigos] = useState([
@@ -49,7 +51,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
         data_entrega_prevista: order.data_entrega_prevista || '',
         colaborador_id: order.colaborador_id || '',
         status: order.status,
-        adiantamento: order.adiantamento || ''
+        adiantamento: order.adiantamento || '',
+        pago_totalidade: order.pago_totalidade || false
       });
       setArtigos(order.artigos || [{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
     } else {
@@ -68,7 +71,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
       observacoes: '',
       data_entrega_prevista: '',
       colaborador_id: '',
-      adiantamento: ''
+      adiantamento: '',
+      pago_totalidade: false
     });
     setArtigos([{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
   };
@@ -80,6 +84,10 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
 
   const handleSwitchChange = (checked) => {
     setFormData(prev => ({ ...prev, tem_entrega: checked }));
+  };
+
+  const handlePagoTotalidadeChange = (checked) => {
+    setFormData(prev => ({ ...prev, pago_totalidade: checked }));
   };
 
   const handleArtigoChange = (index, field, value) => {
@@ -133,8 +141,9 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     const total_final = subtotal_artigos + custo_entrega;
     const adiantamento = parseFloat(formData.adiantamento) || 0;
     const falta_pagar = total_final - adiantamento;
+    const pago_total = adiantamento >= total_final && total_final > 0;
 
-    return { subtotal_artigos, custo_entrega, total_final, adiantamento, falta_pagar };
+    return { subtotal_artigos, custo_entrega, total_final, adiantamento, falta_pagar, pago_total };
   };
 
   const handleSubmit = async (e) => {
@@ -147,6 +156,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           status: formData.status,
           observacoes: formData.observacoes || null,
           data_entrega_prevista: formData.data_entrega_prevista || null,
+          pago_totalidade: formData.pago_totalidade,
           artigos: artigos.map(art => ({
             codigo: art.codigo,
             designacao: art.designacao,
@@ -179,12 +189,12 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           return;
         }
 
-        const { subtotal_artigos, custo_entrega, total_final } = calculateTotals();
+        const { subtotal_artigos, custo_entrega, total_final, pago_total } = calculateTotals();
         const adiantamentoValue = parseFloat(formData.adiantamento) || 0;
 
         // Validação: Adiantamento obrigatório
-        if (adiantamentoValue <= 0) {
-          toast.error('O adiantamento é obrigatório. Por favor, introduza um valor.');
+        if (adiantamentoValue < 0) {
+          toast.error('O adiantamento não pode ser negativo.');
           setSubmitting(false);
           return;
         }
@@ -218,21 +228,22 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           data_entrega_prevista: formData.data_entrega_prevista || null,
           colaborador_id: formData.colaborador_id,
           tipo: orderType,
-          adiantamento: adiantamentoValue
+          adiantamento: adiantamentoValue,
+          pago_totalidade: pago_total
         };
 
         const response = await axios.post(`${API}/orders`, orderData);
-        toast.success(`${tipoLabel} criado com sucesso!`);
+        toast.success(`${tipoLabel} criada com sucesso!`);
         onSave(response.data);
       }
     } catch (error) {
-      toast.error(`Erro ao guardar ${tipoLabel.toLowerCase()}: ` + (error.response?.data?.detail || error.message));
+      toast.error(`Erro ao guardar ${tipoLabelFeminino}: ` + (error.response?.data?.detail || error.message));
     } finally {
       setSubmitting(false);
     }
   };
 
-  const { subtotal_artigos, custo_entrega, total_final, adiantamento, falta_pagar } = calculateTotals();
+  const { subtotal_artigos, custo_entrega, total_final, adiantamento, falta_pagar, pago_total } = calculateTotals();
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -242,7 +253,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             {isEditing ? `Editar ${tipoLabel}` : (orderType === 'orcamento' ? 'Novo Orçamento' : 'Nova Encomenda')}
           </DialogTitle>
           <DialogDescription>
-            {isEditing ? `Atualize os dados do ${tipoLabel.toLowerCase()}` : `Preencha os dados do novo ${tipoLabel.toLowerCase()}`}
+            {isEditing ? `Atualize os dados d${tipoLabelFeminino}` : `Preencha os dados da nova ${orderType === 'orcamento' ? 'orçamento' : 'encomenda'}`}
           </DialogDescription>
         </DialogHeader>
 
@@ -251,7 +262,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             <>
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                 <p className="text-sm text-orange-800">
-                  <strong>Nota:</strong> Em modo de edição, apenas pode alterar o <strong>estado</strong>, <strong>observações</strong>, <strong>data de entrega prevista</strong> e marcar artigos como <strong>separados</strong>.
+                  <strong>Nota:</strong> Em modo de edição, apenas pode alterar o <strong>estado</strong>, <strong>observações</strong>, <strong>data de entrega prevista</strong>, <strong>pago na totalidade</strong> e marcar artigos como <strong>separados</strong>.
                 </p>
               </div>
               
@@ -264,7 +275,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                         'status': 'Estado',
                         'observacoes': 'Observações',
                         'data_entrega_prevista': 'Data de Entrega Prevista',
-                        'data_levantada': 'Data de Levantamento'
+                        'data_levantada': 'Data de Levantamento',
+                        'pago_totalidade': 'Pago na Totalidade'
                       }[alt.campo_alterado] || alt.campo_alterado;
                       
                       return (
@@ -373,6 +385,31 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                   <SelectItem value="Cancelada">Cancelada</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+          )}
+
+          {/* Pago na Totalidade - apenas em edição */}
+          {isEditing && (
+            <div className={`p-4 rounded-lg border ${formData.pago_totalidade ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200'}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="pago_totalidade" className={`text-base font-semibold cursor-pointer ${formData.pago_totalidade ? 'text-green-800' : 'text-gray-700'}`}>
+                    Pago na Totalidade
+                  </Label>
+                  <p className="text-sm text-gray-600 mt-1">Marcar se o cliente já pagou o valor total</p>
+                </div>
+                <Switch
+                  id="pago_totalidade"
+                  checked={formData.pago_totalidade}
+                  onCheckedChange={handlePagoTotalidadeChange}
+                />
+              </div>
+              {formData.pago_totalidade && (
+                <div className="mt-2 flex items-center gap-2 text-green-700">
+                  <CheckCircle className="w-5 h-5" />
+                  <span className="font-semibold">Valor total pago pelo cliente</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -594,19 +631,19 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             </div>
           )}
 
-          {/* Adiantamento - obrigatório em criação */}
+          {/* Adiantamento - em criação */}
           {!isEditing && (
             <div className={`p-4 rounded-lg border ${adiantamento > total_final ? 'bg-red-50 border-red-300' : 'bg-green-50 border-green-200'}`}>
               <Label htmlFor="adiantamento" className={`text-base font-semibold ${adiantamento > total_final ? 'text-red-800' : 'text-green-800'}`}>
                 Adiantamento (€) *
               </Label>
-              <p className="text-sm text-green-700 mb-2">Valor pago antecipadamente pelo cliente (obrigatório)</p>
+              <p className="text-sm text-green-700 mb-2">Valor pago pelo cliente (0€ se nenhum adiantamento)</p>
               <Input
                 id="adiantamento"
                 name="adiantamento"
                 type="number"
                 step="0.01"
-                min="0.01"
+                min="0"
                 max={total_final}
                 value={formData.adiantamento}
                 onChange={handleInputChange}
@@ -654,18 +691,28 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                   <span className="font-bold text-orange-600">€{total_final.toFixed(2)}</span>
                 </div>
               </div>
-              {adiantamento > 0 && (
-                <div className="border-t border-green-300 pt-2 mt-2 bg-green-100 -mx-4 px-4 py-2 rounded-b-lg">
-                  <div className="flex justify-between items-center">
-                    <span className="text-green-800">Adiantamento:</span>
-                    <span className="font-semibold text-green-700">- €{adiantamento.toFixed(2)}</span>
+              
+              {/* Adiantamento e estado de pagamento */}
+              <div className="border-t border-green-300 pt-2 mt-2 bg-green-100 -mx-4 px-4 py-2 rounded-b-lg">
+                <div className="flex justify-between items-center">
+                  <span className="text-green-800">Adiantamento:</span>
+                  <span className="font-semibold text-green-700">€{adiantamento.toFixed(2)}</span>
+                </div>
+                {pago_total ? (
+                  <div className="flex justify-between items-center text-lg mt-1 bg-green-200 -mx-4 px-4 py-2 rounded-b-lg">
+                    <span className="font-bold text-green-800 flex items-center gap-2">
+                      <CheckCircle className="w-5 h-5" />
+                      Pago na Totalidade
+                    </span>
+                    <span className="font-bold text-green-700">✓</span>
                   </div>
-                  <div className="flex justify-between items-center text-lg mt-1">
+                ) : (
+                  <div className="flex justify-between items-center text-lg mt-1 bg-red-100 -mx-4 px-4 py-2 rounded-b-lg">
                     <span className="font-bold text-red-700">Falta Pagar:</span>
                     <span className="font-bold text-red-600">€{falta_pagar.toFixed(2)}</span>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           )}
 
