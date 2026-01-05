@@ -595,7 +595,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                       <Input
                         type="number"
                         step="0.01"
-                        min="0.01"
+                        min={orderType === 'orcamento' ? "0" : "0.01"}
                         value={artigo.preco_unitario}
                         onChange={(e) => handleArtigoChange(index, 'preco_unitario', e.target.value)}
                         className="mt-1 border-gray-300"
