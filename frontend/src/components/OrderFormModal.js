@@ -183,6 +183,12 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           return;
         }
 
+        if (artigos.some(art => parseFloat(art.preco_unitario) < 0.01)) {
+          toast.error('O preço unitário deve ser pelo menos €0.01');
+          setSubmitting(false);
+          return;
+        }
+
         if (formData.tem_entrega && (!formData.morada_entrega || !formData.distancia_kms)) {
           toast.error('Por favor, preencha os dados de entrega');
           setSubmitting(false);
