@@ -540,7 +540,7 @@ const Dashboard = () => {
               {createdOrder?.tipo === 'orcamento' ? 'Orçamento criado!' : 'Encomenda criada!'}
             </DialogTitle>
             {createdOrder?.numero_encomenda && (
-              <p className="text-3xl font-bold text-orange-600 mt-2">
+              <p className={`text-3xl font-bold mt-2 ${createdOrder?.tipo === 'orcamento' ? 'text-blue-700' : 'text-green-700'}`}>
                 #{createdOrder.numero_encomenda}
               </p>
             )}
