@@ -537,17 +537,17 @@ const Dashboard = () => {
       <Dialog open={showCreatedModal} onOpenChange={setShowCreatedModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-green-600 flex items-center gap-2">
-              <Package className="w-5 h-5" />
-              {createdOrder?.tipo === 'orcamento' ? 'Orçamento' : 'Encomenda'} Criado com Sucesso!
+            <DialogTitle className="text-green-600 flex items-center gap-2 text-xl">
+              <Package className="w-6 h-6" />
+              {createdOrder?.tipo === 'orcamento' ? 'Orçamento' : 'Encomenda'} Criado!
             </DialogTitle>
+            {createdOrder?.numero_encomenda && (
+              <p className="text-3xl font-bold text-orange-600 mt-2">
+                #{createdOrder.numero_encomenda}
+              </p>
+            )}
             <DialogDescription asChild>
-              <div className="space-y-2">
-                {createdOrder?.numero_encomenda && (
-                  <span className="block text-2xl font-bold text-orange-600 my-4">
-                    #{createdOrder.numero_encomenda}
-                  </span>
-                )}
+              <div className="space-y-2 mt-4">
                 <span className="block text-gray-600">
                   Cliente: <strong>{createdOrder?.nome_cliente}</strong>
                 </span>
@@ -555,12 +555,22 @@ const Dashboard = () => {
                   Colaborador: <strong className="text-purple-600">{createdOrder?.nome_colaborador}</strong>
                 </span>
                 <span className="block text-gray-600">
-                  Total: <strong className="text-orange-600">€{createdOrder?.total_final?.toFixed(2)}</strong>
+                  Total: <strong className="text-orange-600 text-lg">€{createdOrder?.total_final?.toFixed(2)}</strong>
                 </span>
+                {createdOrder?.adiantamento > 0 && (
+                  <>
+                    <span className="block text-green-700">
+                      Adiantamento: <strong>€{createdOrder.adiantamento.toFixed(2)}</strong>
+                    </span>
+                    <span className="block text-red-600 font-bold">
+                      Falta Pagar: €{(createdOrder.total_final - createdOrder.adiantamento).toFixed(2)}
+                    </span>
+                  </>
+                )}
               </div>
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex flex-col sm:flex-row gap-2">
+          <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
             <Button
               variant="outline"
               onClick={() => {
