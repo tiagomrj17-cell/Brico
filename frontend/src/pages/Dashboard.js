@@ -285,7 +285,7 @@ const Dashboard = () => {
                 <SelectItem value="Todos">Todos os Estados</SelectItem>
                 <SelectItem value="Pendente">Pendente</SelectItem>
                 <SelectItem value="Em Preparação">Em Preparação</SelectItem>
-                <SelectItem value="Pronta para Levantamento">Pronta para Levantamento</SelectItem>
+                <SelectItem value="Pronta para Levantamento">Pronto para Levantamento</SelectItem>
                 <SelectItem value="Entregue">Entregue</SelectItem>
                 <SelectItem value="Levantada">Levantada</SelectItem>
                 <SelectItem value="Cancelada">Cancelado</SelectItem>
