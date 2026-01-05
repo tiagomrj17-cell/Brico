@@ -313,31 +313,40 @@ const PrintPageInternal = () => {
             </tbody>
           </table>
           
-          {/* Adiantamento e Falta Pagar */}
-          {order.pago_totalidade ? (
-            <div style={{ marginTop: '5mm', paddingTop: '5mm', borderTop: '2px dashed #22c55e' }}>
-              <div style={{ backgroundColor: '#dcfce7', padding: '4mm', borderRadius: '2mm', textAlign: 'center' }}>
+          {/* Informação de Pagamento */}
+          <div style={{ marginTop: '5mm', paddingTop: '5mm', borderTop: '2px dashed #22c55e' }}>
+            <table style={{ width: '100%', fontSize: '12pt' }}>
+              <tbody>
+                <tr>
+                  <td style={{ padding: '2mm 0', color: '#166534', fontWeight: 'bold' }}>Valor Pago pelo Cliente:</td>
+                  <td style={{ padding: '2mm 0', textAlign: 'right', fontWeight: 'bold', color: '#166534' }}>
+                    €{(order.adiantamento || 0).toFixed(2)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            {order.pago_totalidade ? (
+              <div style={{ backgroundColor: '#dcfce7', padding: '4mm', borderRadius: '2mm', textAlign: 'center', marginTop: '3mm' }}>
                 <p style={{ margin: '0', fontSize: '16pt', fontWeight: 'bold', color: '#166534' }}>
                   ✓ PAGO NA TOTALIDADE
                 </p>
               </div>
-            </div>
-          ) : (
-            <div style={{ marginTop: '5mm', paddingTop: '5mm', borderTop: '2px dashed #22c55e' }}>
-              <table style={{ width: '100%', fontSize: '12pt' }}>
-                <tbody>
-                  <tr>
-                    <td style={{ padding: '2mm 0', color: '#166534' }}>Adiantamento Pago:</td>
-                    <td style={{ padding: '2mm 0', textAlign: 'right', fontWeight: 'bold', color: '#166534' }}>
-                      €{(order.adiantamento || 0).toFixed(2)}
-                    </td>
-                  </tr>
-                  <tr style={{ backgroundColor: '#fef2f2' }}>
-                    <td style={{ padding: '3mm', fontSize: '16pt', fontWeight: 'bold', color: '#dc2626' }}>FALTA PAGAR:</td>
-                    <td style={{ padding: '3mm', textAlign: 'right', fontSize: '18pt', fontWeight: 'bold', color: '#dc2626' }}>
-                      €{(order.total_final - (order.adiantamento || 0)).toFixed(2)}
-                    </td>
-                  </tr>
+            ) : (
+              <div style={{ backgroundColor: '#fef2f2', padding: '3mm', borderRadius: '2mm', marginTop: '3mm' }}>
+                <table style={{ width: '100%', fontSize: '12pt' }}>
+                  <tbody>
+                    <tr>
+                      <td style={{ padding: '2mm', fontSize: '16pt', fontWeight: 'bold', color: '#dc2626' }}>FALTA PAGAR:</td>
+                      <td style={{ padding: '2mm', textAlign: 'right', fontSize: '18pt', fontWeight: 'bold', color: '#dc2626' }}>
+                        €{(order.total_final - (order.adiantamento || 0)).toFixed(2)}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
                 </tbody>
               </table>
             </div>
