@@ -79,53 +79,68 @@ class OrderManagementAPITester:
         """Test root API endpoint"""
         return self.run_test("Root API Endpoint", "GET", "", 200)
 
-    def test_staff_login(self, username="admin", password="admin123"):
-        """Test staff login"""
+    def test_get_colaboradores(self):
+        """Test getting all colaboradores"""
+        return self.run_test("Get All Colaboradores", "GET", "colaboradores", 200)
+
+    def test_create_colaborador(self):
+        """Test creating a new colaborador"""
+        colaborador_data = {
+            "nome": "João Santos"
+        }
+        
         success, response = self.run_test(
-            "Staff Login",
+            "Create Colaborador",
             "POST",
-            "staff/login",
+            "colaboradores",
             200,
-            data={"username": username, "password": password}
+            data=colaborador_data
         )
         
-        if success and 'token' in response:
-            self.token = response['token']
-            self.log_test("Token Extraction", True, "JWT token obtained")
+        if success and 'id' in response:
+            self.created_colaborador_id = response['id']
             return True
-        else:
-            self.log_test("Token Extraction", False, "No token in response")
-            return False
+        return False
 
-    def test_staff_me(self):
-        """Test getting current staff info"""
-        if not self.token:
-            self.log_test("Staff Me (No Token)", False, "No authentication token available")
-            return False
-        
-        return self.run_test("Get Current Staff Info", "GET", "staff/me", 200)
+    def test_get_orders(self):
+        """Test getting all orders"""
+        return self.run_test("Get All Orders", "GET", "orders", 200)
 
     def test_create_order(self):
         """Test creating a new order"""
+        # First ensure we have a colaborador
+        if not self.created_colaborador_id:
+            self.log_test("Create Order (No Colaborador)", False, "No colaborador ID available")
+            return False
+            
         order_data = {
-            "nome_cliente": "João Silva",
-            "contacto": "+351 912 345 678",
-            "tem_entrega": True,
-            "morada_entrega": "Rua Example, 123, Lisboa",
-            "distancia_kms": 10.5,
-            "num_colaboradores": 2,
+            "nome_cliente": "Cliente Teste Final",
+            "contacto": "999888777",
+            "tem_entrega": False,
+            "colaborador_id": self.created_colaborador_id,
+            "tipo": "encomenda",
             "artigos": [
                 {
                     "codigo": "ART001",
                     "designacao": "Produto Teste",
                     "quantidade": 2,
                     "preco_unitario": 25.50,
-                    "preco_total": 51.00
+                    "preco_total": 51.00,
+                    "separado": False
+                },
+                {
+                    "codigo": "ART002", 
+                    "designacao": "Produto Teste 2",
+                    "quantidade": 1,
+                    "preco_unitario": 15.00,
+                    "preco_total": 15.00,
+                    "separado": False
                 }
             ],
-            "subtotal_artigos": 51.00,
-            "custo_entrega": 51.00,  # (10.5 * 2) + (2 * 15) = 21 + 30 = 51
-            "total_final": 102.00
+            "subtotal_artigos": 66.00,
+            "custo_entrega": 0.00,
+            "total_final": 66.00,
+            "observacoes": "Teste de criação de encomenda"
         }
         
         success, response = self.run_test(
@@ -138,24 +153,19 @@ class OrderManagementAPITester:
         
         if success and 'id' in response:
             self.created_order_id = response['id']
+            # Verify sequential numbering (2026-XXXX)
+            if 'numero_encomenda' in response:
+                numero = response['numero_encomenda']
+                if numero.startswith('2026-'):
+                    self.log_test("Sequential Numbering Check", True, f"Order number: {numero}")
+                else:
+                    self.log_test("Sequential Numbering Check", False, f"Invalid format: {numero}")
             return True
         return False
 
-    def test_get_orders(self):
-        """Test getting all orders (requires authentication)"""
-        if not self.token:
-            self.log_test("Get Orders (No Token)", False, "No authentication token available")
-            return False
-        
-        return self.run_test("Get All Orders", "GET", "orders", 200)
-
     def test_get_single_order(self):
         """Test getting a single order by ID"""
-        if not self.token:
-            self.log_test("Get Single Order (No Token)", False, "No authentication token available")
-            return False
-        
-        if not hasattr(self, 'created_order_id'):
+        if not self.created_order_id:
             self.log_test("Get Single Order (No Order ID)", False, "No order ID available from creation test")
             return False
         
@@ -167,81 +177,56 @@ class OrderManagementAPITester:
         )
 
     def test_update_order_status(self):
-        """Test updating order status"""
-        if not self.token:
-            self.log_test("Update Order Status (No Token)", False, "No authentication token available")
-            return False
-        
-        if not hasattr(self, 'created_order_id'):
+        """Test updating order status to 'Em Preparação'"""
+        if not self.created_order_id:
             self.log_test("Update Order Status (No Order ID)", False, "No order ID available from creation test")
             return False
         
         return self.run_test(
             "Update Order Status",
-            "PATCH",
+            "PUT",
             f"orders/{self.created_order_id}",
             200,
-            data={"status": "Entregue"}
+            data={"status": "Em Preparação"}
         )
 
-    def test_order_calculations(self):
-        """Test order calculation logic"""
-        # Test order without delivery
-        order_no_delivery = {
-            "nome_cliente": "Maria Santos",
-            "contacto": "+351 987 654 321",
-            "tem_entrega": False,
-            "morada_entrega": None,
-            "distancia_kms": None,
-            "num_colaboradores": None,
+    def test_create_orcamento(self):
+        """Test creating a new orçamento (quote)"""
+        if not self.created_colaborador_id:
+            self.log_test("Create Orçamento (No Colaborador)", False, "No colaborador ID available")
+            return False
+            
+        orcamento_data = {
+            "nome_cliente": "Cliente Orçamento Teste",
+            "contacto": "888777666",
+            "tem_entrega": True,
+            "morada_entrega": "Rua Teste, 123, Porto",
+            "distancia_kms": 5.0,
+            "num_colaboradores": 1,
+            "colaborador_id": self.created_colaborador_id,
+            "tipo": "orcamento",
             "artigos": [
                 {
-                    "codigo": "ART002",
-                    "designacao": "Produto Sem Entrega",
+                    "codigo": "ORC001",
+                    "designacao": "Serviço Orçamento",
                     "quantidade": 1,
                     "preco_unitario": 100.00,
-                    "preco_total": 100.00
+                    "preco_total": 100.00,
+                    "separado": False
                 }
             ],
             "subtotal_artigos": 100.00,
-            "custo_entrega": 0.00,
-            "total_final": 100.00
+            "custo_entrega": 20.00,  # 5km * 2 + 1 colaborador * 10
+            "total_final": 120.00
         }
         
         return self.run_test(
-            "Create Order Without Delivery",
+            "Create Orçamento",
             "POST",
             "orders",
             200,
-            data=order_no_delivery
+            data=orcamento_data
         )
-
-    def test_invalid_login(self):
-        """Test login with invalid credentials"""
-        return self.run_test(
-            "Invalid Staff Login",
-            "POST",
-            "staff/login",
-            401,
-            data={"username": "invalid", "password": "wrong"}
-        )
-
-    def test_unauthorized_access(self):
-        """Test accessing protected endpoint without token"""
-        # Temporarily remove token
-        original_token = self.token
-        self.token = None
-        
-        success, _ = self.run_test(
-            "Unauthorized Access to Orders",
-            "GET",
-            "orders",
-            401
-        )
-        
-        # Restore token
-        self.token = original_token
-        return success
 
     def run_all_tests(self):
         """Run all tests in sequence"""
