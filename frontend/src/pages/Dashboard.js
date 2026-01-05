@@ -348,7 +348,7 @@ const Dashboard = () => {
                         {order.tipo === 'orcamento' ? (
                           <Badge className="bg-blue-100 text-blue-800 text-xs">Orçamento</Badge>
                         ) : (
-                          <Badge className="bg-orange-100 text-orange-800 text-xs">Encomenda</Badge>
+                          <Badge className="bg-green-100 text-green-800 text-xs">Encomenda</Badge>
                         )}
                       </div>
                       
@@ -370,14 +370,10 @@ const Dashboard = () => {
                     </Badge>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3 text-sm">
+                  <div className="grid grid-cols-2 gap-3 mb-3 text-sm">
                     <div>
                       <p className="text-gray-600">Tipo</p>
                       <p className="font-semibold">{order.tem_entrega ? 'Entrega' : 'Levantamento'}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Artigos</p>
-                      <p className="font-semibold">{order.artigos.length}</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Total</p>
