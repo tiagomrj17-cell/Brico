@@ -59,6 +59,7 @@ class OrderCreate(BaseModel):
     data_entrega_prevista: Optional[str] = None
     colaborador_id: str
     tipo: str = "encomenda"  # encomenda ou orcamento
+    nome_colaborador: Optional[str] = None  # Compatibilidade com versões antigas
 
 class HistoricoAlteracao(BaseModel):
     data_hora: str
