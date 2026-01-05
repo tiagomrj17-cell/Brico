@@ -60,6 +60,7 @@ class OrderCreate(BaseModel):
     colaborador_id: str
     tipo: str = "encomenda"  # encomenda ou orcamento
     nome_colaborador: Optional[str] = None  # Compatibilidade com versões antigas
+    adiantamento: Optional[float] = None  # Valor do adiantamento pago
 
 class HistoricoAlteracao(BaseModel):
     data_hora: str
