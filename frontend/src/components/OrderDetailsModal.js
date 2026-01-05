@@ -50,7 +50,7 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
         <DialogHeader>
           <DialogTitle className="text-2xl">Detalhes {order.tipo === 'orcamento' ? 'do Orçamento' : 'da Encomenda'}</DialogTitle>
           <DialogDescription>
-            {order.numero_encomenda && <span className="text-orange-600 font-bold">#{order.numero_encomenda}</span>} - {order.nome_cliente}
+            {order.numero_encomenda && <span className={`font-bold ${order.tipo === 'orcamento' ? 'text-blue-700' : 'text-green-700'}`}>#{order.numero_encomenda}</span>} - {order.nome_cliente}
           </DialogDescription>
         </DialogHeader>
 
