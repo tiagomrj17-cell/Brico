@@ -366,19 +366,15 @@ const Dashboard = () => {
                       {/* Contacto */}
                       <p className="text-sm text-gray-600">Contacto: {order.contacto}</p>
                       
-                      {/* Data de atualização se diferente da criação */}
-                      {order.data_atualizacao && order.data_atualizacao !== order.data_criacao && (
-                        <p className="text-xs text-orange-600 font-medium mt-0.5">
-                          Última atualização: {formatDate(order.data_atualizacao)}
-                        </p>
-                      )}
+                      {/* Data/Hora abaixo do contacto */}
+                      <p className="text-xs text-gray-500 mt-0.5">{formatDate(order.data_criacao)}</p>
                     </div>
                     <Badge className={`status-badge ${getStatusColor(order.status)}`}>
                       {order.status}
                     </Badge>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-3 text-sm">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm">
                     <div>
                       <p className="text-gray-600">Tipo</p>
                       <p className="font-semibold">{order.tem_entrega ? 'Entrega' : 'Levantamento'}</p>
@@ -386,10 +382,6 @@ const Dashboard = () => {
                     <div>
                       <p className="text-gray-600">Artigos</p>
                       <p className="font-semibold">{order.artigos.length}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Data/Hora</p>
-                      <p className="font-semibold text-xs">{formatDate(order.data_criacao)}</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Valor Pago</p>
