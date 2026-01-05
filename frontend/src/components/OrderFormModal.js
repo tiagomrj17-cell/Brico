@@ -26,7 +26,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     num_colaboradores: 1,
     observacoes: '',
     data_entrega_prevista: '',
-    colaborador_id: ''
+    colaborador_id: '',
+    adiantamento: ''
   });
 
   const [artigos, setArtigos] = useState([
@@ -47,7 +48,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
         observacoes: order.observacoes || '',
         data_entrega_prevista: order.data_entrega_prevista || '',
         colaborador_id: order.colaborador_id || '',
-        status: order.status
+        status: order.status,
+        adiantamento: order.adiantamento || ''
       });
       setArtigos(order.artigos || [{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
     } else {
@@ -65,7 +67,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
       num_colaboradores: 1,
       observacoes: '',
       data_entrega_prevista: '',
-      colaborador_id: ''
+      colaborador_id: '',
+      adiantamento: ''
     });
     setArtigos([{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
   };
@@ -102,7 +105,6 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     }
   };
 
-  // Marcar todos os artigos como separados
   const handleTudoSeparado = () => {
     const newArtigos = artigos.map(art => ({ ...art, separado: true }));
     setArtigos(newArtigos);
@@ -117,33 +119,30 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
       const distancia = parseFloat(formData.distancia_kms) || 0;
       const colaboradoresEntrega = parseInt(formData.num_colaboradores) || 1;
       
-      // Nova fórmula: 10€ se distância < 10km
-      // Se >= 10km: 10€ + 2€ por cada km acima de 10km
       if (distancia < 10) {
         custo_entrega = 10;
       } else {
         custo_entrega = 10 + ((distancia - 10) * 2);
       }
       
-      // Adicionar custo de colaboradores adicionais
       if (colaboradoresEntrega > 1) {
         custo_entrega += (colaboradoresEntrega - 1) * 15;
       }
     }
 
     const total_final = subtotal_artigos + custo_entrega;
+    const adiantamento = parseFloat(formData.adiantamento) || 0;
+    const falta_pagar = total_final - adiantamento;
 
-    return { subtotal_artigos, custo_entrega, total_final };
+    return { subtotal_artigos, custo_entrega, total_final, adiantamento, falta_pagar };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setSubmitting(true);
 
     try {
       if (isEditing) {
-        // Para edição, apenas enviar campos que podem ser editados
         const updateData = {
           status: formData.status,
           observacoes: formData.observacoes || null,
@@ -162,7 +161,6 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
         toast.success(`${tipoLabel} atualizado com sucesso!`);
         onSave(response.data);
       } else {
-        // Para criar nova encomenda/orçamento
         if (!formData.nome_cliente || !formData.contacto || !formData.colaborador_id) {
           toast.error('Por favor, preencha nome do cliente, contacto e selecione um colaborador');
           setSubmitting(false);
@@ -182,6 +180,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
         }
 
         const { subtotal_artigos, custo_entrega, total_final } = calculateTotals();
+        const adiantamentoValue = parseFloat(formData.adiantamento) || null;
 
         const orderData = {
           nome_cliente: formData.nome_cliente,
@@ -204,7 +203,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           observacoes: formData.observacoes || null,
           data_entrega_prevista: formData.data_entrega_prevista || null,
           colaborador_id: formData.colaborador_id,
-          tipo: orderType
+          tipo: orderType,
+          adiantamento: adiantamentoValue
         };
 
         const response = await axios.post(`${API}/orders`, orderData);
@@ -218,7 +218,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     }
   };
 
-  const { subtotal_artigos, custo_entrega, total_final } = calculateTotals();
+  const { subtotal_artigos, custo_entrega, total_final, adiantamento, falta_pagar } = calculateTotals();
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -237,8 +237,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             <>
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                 <p className="text-sm text-orange-800">
-                  <strong>Nota:</strong> Em modo de edição, apenas pode alterar o <strong>estado</strong>, <strong>observações</strong>, <strong>data de entrega prevista</strong> e marcar artigos como <strong>separados</strong>. 
-                  Os dados do cliente e artigos não podem ser modificados.
+                  <strong>Nota:</strong> Em modo de edição, apenas pode alterar o <strong>estado</strong>, <strong>observações</strong>, <strong>data de entrega prevista</strong> e marcar artigos como <strong>separados</strong>.
                 </p>
               </div>
               
@@ -335,15 +334,11 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             </div>
           )}
 
-          {/* Colaborador em modo edição (apenas visualização) */}
+          {/* Colaborador em modo edição */}
           {isEditing && order.nome_colaborador && (
             <div>
               <Label>Colaborador</Label>
-              <Input
-                value={order.nome_colaborador}
-                className="mt-1 border-gray-300 bg-gray-50"
-                disabled
-              />
+              <Input value={order.nome_colaborador} className="mt-1 border-gray-300 bg-gray-50" disabled />
             </div>
           )}
 
@@ -375,7 +370,6 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                 type="date"
                 id="data_entrega_prevista"
                 name="data_entrega_prevista"
-                data-testid="input-data-prevista"
                 value={formData.data_entrega_prevista}
                 onChange={handleInputChange}
                 className="mt-1 border-gray-300 focus:border-orange-500"
@@ -401,172 +395,151 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                 />
               </div>
 
-            {formData.tem_entrega && (
-              <div className="space-y-4 pl-4 border-l-2 border-orange-500">
-                <div>
-                  <Label htmlFor="morada_entrega">Morada de Entrega *</Label>
-                  <Input
-                    id="morada_entrega"
-                    name="morada_entrega"
-                    data-testid="input-morada-entrega"
-                    value={formData.morada_entrega}
-                    onChange={handleInputChange}
-                    className="mt-1 border-gray-300 focus:border-orange-500"
-                    required
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+              {formData.tem_entrega && (
+                <div className="space-y-4 pl-4 border-l-2 border-orange-500">
                   <div>
-                    <Label htmlFor="distancia_kms">Distância (KMs) *</Label>
+                    <Label htmlFor="morada_entrega">Morada de Entrega *</Label>
                     <Input
-                      id="distancia_kms"
-                      name="distancia_kms"
-                      data-testid="input-distancia-kms"
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      value={formData.distancia_kms}
+                      id="morada_entrega"
+                      name="morada_entrega"
+                      value={formData.morada_entrega}
                       onChange={handleInputChange}
                       className="mt-1 border-gray-300 focus:border-orange-500"
                       required
                     />
                   </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="distancia_kms">Distância (KMs) *</Label>
+                      <Input
+                        id="distancia_kms"
+                        name="distancia_kms"
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        value={formData.distancia_kms}
+                        onChange={handleInputChange}
+                        className="mt-1 border-gray-300 focus:border-orange-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="num_colaboradores">Nº Colaboradores Entrega *</Label>
+                      <Input
+                        id="num_colaboradores"
+                        name="num_colaboradores"
+                        type="number"
+                        min="1"
+                        value={formData.num_colaboradores}
+                        onChange={handleInputChange}
+                        className="mt-1 border-gray-300 focus:border-orange-500"
+                        required
+                      />
+                    </div>
+                  </div>
                   <div>
-                    <Label htmlFor="num_colaboradores">Nº Colaboradores Entrega *</Label>
+                    <Label htmlFor="data_entrega_prevista">Data de Entrega Prevista</Label>
                     <Input
-                      id="num_colaboradores"
-                      name="num_colaboradores"
-                      data-testid="input-num-colaboradores"
-                      type="number"
-                      min="1"
-                      value={formData.num_colaboradores}
+                      type="date"
+                      id="data_entrega_prevista"
+                      name="data_entrega_prevista"
+                      value={formData.data_entrega_prevista}
                       onChange={handleInputChange}
                       className="mt-1 border-gray-300 focus:border-orange-500"
-                      required
                     />
                   </div>
                 </div>
-                <div>
-                  <Label htmlFor="data_entrega_prevista">Data de Entrega Prevista</Label>
-                  <Input
-                    type="date"
-                    id="data_entrega_prevista"
-                    name="data_entrega_prevista"
-                    data-testid="input-data-prevista"
-                    value={formData.data_entrega_prevista}
-                    onChange={handleInputChange}
-                    className="mt-1 border-gray-300 focus:border-orange-500"
-                  />
-                  {!formData.data_entrega_prevista && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      Se não tiver data, deixe em branco para combinar com o cliente posteriormente
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
           )}
 
           {/* Artigos - criação */}
           {!isEditing && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-lg">Artigos</h3>
-              <Button
-                type="button"
-                onClick={addArtigo}
-                data-testid="btn-adicionar-artigo"
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2 border-orange-500 text-orange-600 hover:bg-orange-50"
-              >
-                <Plus className="w-4 h-4" />
-                Adicionar
-              </Button>
-            </div>
-            {artigos.map((artigo, index) => (
-              <div key={index} className="p-4 bg-gray-50 rounded-lg space-y-3">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold text-gray-700">Artigo #{index + 1}</span>
-                  {artigos.length > 1 && (
-                    <Button
-                      type="button"
-                      onClick={() => removeArtigo(index)}
-                      data-testid={`btn-remover-artigo-${index}`}
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor={`codigo-${index}`}>Código *</Label>
-                    <Input
-                      id={`codigo-${index}`}
-                      data-testid={`input-codigo-${index}`}
-                      value={artigo.codigo}
-                      onChange={(e) => handleArtigoChange(index, 'codigo', e.target.value)}
-                      className="mt-1 border-gray-300"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`designacao-${index}`}>Designação *</Label>
-                    <Input
-                      id={`designacao-${index}`}
-                      data-testid={`input-designacao-${index}`}
-                      value={artigo.designacao}
-                      onChange={(e) => handleArtigoChange(index, 'designacao', e.target.value)}
-                      className="mt-1 border-gray-300"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`quantidade-${index}`}>Quantidade *</Label>
-                    <Input
-                      id={`quantidade-${index}`}
-                      data-testid={`input-quantidade-${index}`}
-                      type="number"
-                      min="1"
-                      value={artigo.quantidade}
-                      onChange={(e) => handleArtigoChange(index, 'quantidade', e.target.value)}
-                      className="mt-1 border-gray-300"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`preco_unitario-${index}`}>Preço Unitário (€) *</Label>
-                    <Input
-                      id={`preco_unitario-${index}`}
-                      data-testid={`input-preco-unitario-${index}`}
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={artigo.preco_unitario}
-                      onChange={(e) => handleArtigoChange(index, 'preco_unitario', e.target.value)}
-                      className="mt-1 border-gray-300"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="pt-2 border-t border-gray-300">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">Preço Total:</span>
-                    <span className="text-lg font-bold text-orange-600" data-testid={`preco-total-${index}`}>
-                      €{artigo.preco_total.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-lg">Artigos</h3>
+                <Button
+                  type="button"
+                  onClick={addArtigo}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2 border-orange-500 text-orange-600 hover:bg-orange-50"
+                >
+                  <Plus className="w-4 h-4" />
+                  Adicionar
+                </Button>
               </div>
-            ))}
-          </div>
+              {artigos.map((artigo, index) => (
+                <div key={index} className="p-4 bg-gray-50 rounded-lg space-y-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-gray-700">Artigo #{index + 1}</span>
+                    {artigos.length > 1 && (
+                      <Button
+                        type="button"
+                        onClick={() => removeArtigo(index)}
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Código *</Label>
+                      <Input
+                        value={artigo.codigo}
+                        onChange={(e) => handleArtigoChange(index, 'codigo', e.target.value)}
+                        className="mt-1 border-gray-300"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label>Designação *</Label>
+                      <Input
+                        value={artigo.designacao}
+                        onChange={(e) => handleArtigoChange(index, 'designacao', e.target.value)}
+                        className="mt-1 border-gray-300"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label>Quantidade *</Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={artigo.quantidade}
+                        onChange={(e) => handleArtigoChange(index, 'quantidade', e.target.value)}
+                        className="mt-1 border-gray-300"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label>Preço Unitário (€) *</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={artigo.preco_unitario}
+                        onChange={(e) => handleArtigoChange(index, 'preco_unitario', e.target.value)}
+                        className="mt-1 border-gray-300"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="pt-2 border-t border-gray-300">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-600">Preço Total:</span>
+                      <span className="text-lg font-bold text-orange-600">€{artigo.preco_total.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
 
-          {/* Artigos em edição - marcar como separado */}
+          {/* Artigos em edição */}
           {isEditing && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -607,16 +580,37 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             </div>
           )}
 
+          {/* Adiantamento - apenas em criação */}
+          {!isEditing && (
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <Label htmlFor="adiantamento" className="text-base font-semibold text-green-800">
+                Adiantamento (€)
+              </Label>
+              <p className="text-sm text-green-700 mb-2">Valor pago antecipadamente pelo cliente</p>
+              <Input
+                id="adiantamento"
+                name="adiantamento"
+                type="number"
+                step="0.01"
+                min="0"
+                max={total_final}
+                value={formData.adiantamento}
+                onChange={handleInputChange}
+                placeholder="0.00"
+                className="mt-1 border-green-300 focus:border-green-500"
+              />
+            </div>
+          )}
+
           {/* Observações */}
           <div>
             <Label htmlFor="observacoes">Observações</Label>
             <Textarea
               id="observacoes"
               name="observacoes"
-              data-testid="textarea-observacoes"
               value={formData.observacoes}
               onChange={handleInputChange}
-              placeholder={`Adicione notas ou observações sobre ${orderType === 'orcamento' ? 'o orçamento' : 'a encomenda'}...`}
+              placeholder={`Adicione notas ou observações...`}
               className="mt-1 border-gray-300 focus:border-orange-500"
               rows={3}
             />
@@ -624,39 +618,44 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
 
           {/* Resumo de Custos */}
           {!isEditing && (
-          <div className="p-4 bg-orange-50 rounded-lg space-y-2">
-            <h3 className="font-semibold text-lg mb-2">Resumo de Custos</h3>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-700">Subtotal Artigos:</span>
-              <span className="font-semibold" data-testid="subtotal-artigos">€{subtotal_artigos.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-700">Custo de Entrega:</span>
-              <span className="font-semibold" data-testid="custo-entrega">€{custo_entrega.toFixed(2)}</span>
-            </div>
-            <div className="border-t-2 border-orange-300 pt-2 mt-2">
-              <div className="flex justify-between items-center text-xl">
-                <span className="font-bold text-gray-900">Total Final:</span>
-                <span className="font-bold text-orange-600" data-testid="total-final">€{total_final.toFixed(2)}</span>
+            <div className="p-4 bg-orange-50 rounded-lg space-y-2">
+              <h3 className="font-semibold text-lg mb-2">Resumo de Custos</h3>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700">Subtotal Artigos:</span>
+                <span className="font-semibold">€{subtotal_artigos.toFixed(2)}</span>
               </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700">Custo de Entrega:</span>
+                <span className="font-semibold">€{custo_entrega.toFixed(2)}</span>
+              </div>
+              <div className="border-t-2 border-orange-300 pt-2 mt-2">
+                <div className="flex justify-between items-center text-xl">
+                  <span className="font-bold text-gray-900">Total Final:</span>
+                  <span className="font-bold text-orange-600">€{total_final.toFixed(2)}</span>
+                </div>
+              </div>
+              {adiantamento > 0 && (
+                <div className="border-t border-green-300 pt-2 mt-2 bg-green-100 -mx-4 px-4 py-2 rounded-b-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-green-800">Adiantamento:</span>
+                    <span className="font-semibold text-green-700">- €{adiantamento.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-lg mt-1">
+                    <span className="font-bold text-red-700">Falta Pagar:</span>
+                    <span className="font-bold text-red-600">€{falta_pagar.toFixed(2)}</span>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
           )}
 
           {/* Buttons */}
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-            <Button
-              type="button"
-              onClick={onClose}
-              variant="outline"
-              data-testid="btn-cancelar"
-              className="border-gray-300"
-            >
+            <Button type="button" onClick={onClose} variant="outline" className="border-gray-300">
               Cancelar
             </Button>
             <Button
               type="submit"
-              data-testid="btn-guardar"
               disabled={submitting || (!isEditing && colaboradores.length === 0)}
               className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
             >
