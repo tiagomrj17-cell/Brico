@@ -13,8 +13,9 @@ import { Trash2, Plus } from 'lucide-react';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const OrderFormModal = ({ open, onClose, onSave, order }) => {
+const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda', colaboradores = [] }) => {
   const isEditing = !!order;
+  const tipoLabel = orderType === 'orcamento' ? 'Orçamento' : 'Encomenda';
   
   const [formData, setFormData] = useState({
     nome_cliente: '',
@@ -25,7 +26,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
     num_colaboradores: 1,
     observacoes: '',
     data_entrega_prevista: '',
-    nome_colaborador: ''
+    colaborador_id: ''
   });
 
   const [artigos, setArtigos] = useState([
@@ -45,7 +46,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
         num_colaboradores: order.num_colaboradores || 1,
         observacoes: order.observacoes || '',
         data_entrega_prevista: order.data_entrega_prevista || '',
-        nome_colaborador: order.nome_colaborador || '',
+        colaborador_id: order.colaborador_id || '',
         status: order.status
       });
       setArtigos(order.artigos || [{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
@@ -64,7 +65,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
       num_colaboradores: 1,
       observacoes: '',
       data_entrega_prevista: '',
-      nome_colaborador: ''
+      colaborador_id: ''
     });
     setArtigos([{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
   };
@@ -107,7 +108,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
     let custo_entrega = 0;
     if (formData.tem_entrega) {
       const distancia = parseFloat(formData.distancia_kms) || 0;
-      const colaboradores = parseInt(formData.num_colaboradores) || 1;
+      const colaboradoresEntrega = parseInt(formData.num_colaboradores) || 1;
       
       // Nova fórmula: 10€ se distância < 10km
       // Se >= 10km: 10€ + 2€ por cada km acima de 10km
@@ -118,8 +119,8 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
       }
       
       // Adicionar custo de colaboradores adicionais
-      if (colaboradores > 1) {
-        custo_entrega += (colaboradores - 1) * 15;
+      if (colaboradoresEntrega > 1) {
+        custo_entrega += (colaboradoresEntrega - 1) * 15;
       }
     }
 
@@ -151,11 +152,11 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
         };
         
         await axios.put(`${API}/orders/${order.id}`, updateData);
-        toast.success('Encomenda atualizada com sucesso!');
+        toast.success(`${tipoLabel} atualizado com sucesso!`);
       } else {
-        // Para criar nova encomenda
-        if (!formData.nome_cliente || !formData.contacto || !formData.nome_colaborador) {
-          toast.error('Por favor, preencha nome do cliente, contacto e colaborador');
+        // Para criar nova encomenda/orçamento
+        if (!formData.nome_cliente || !formData.contacto || !formData.colaborador_id) {
+          toast.error('Por favor, preencha nome do cliente, contacto e selecione um colaborador');
           setSubmitting(false);
           return;
         }
@@ -194,16 +195,17 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
           total_final,
           observacoes: formData.observacoes || null,
           data_entrega_prevista: formData.data_entrega_prevista || null,
-          nome_colaborador: formData.nome_colaborador
+          colaborador_id: formData.colaborador_id,
+          tipo: orderType
         };
 
         await axios.post(`${API}/orders`, orderData);
-        toast.success('Encomenda criada com sucesso!');
+        toast.success(`${tipoLabel} criado com sucesso!`);
       }
       
       onSave();
     } catch (error) {
-      toast.error('Erro ao guardar encomenda: ' + (error.response?.data?.detail || error.message));
+      toast.error(`Erro ao guardar ${tipoLabel.toLowerCase()}: ` + (error.response?.data?.detail || error.message));
     } finally {
       setSubmitting(false);
     }
@@ -216,10 +218,10 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">
-            {isEditing ? 'Editar Encomenda' : 'Nova Encomenda'}
+            {isEditing ? `Editar ${tipoLabel}` : `Novo ${tipoLabel}`}
           </DialogTitle>
           <DialogDescription>
-            {isEditing ? 'Atualize os dados da encomenda' : 'Preencha os dados da nova encomenda'}
+            {isEditing ? `Atualize os dados do ${tipoLabel.toLowerCase()}` : `Preencha os dados do novo ${tipoLabel.toLowerCase()}`}
           </DialogDescription>
         </DialogHeader>
 
@@ -228,7 +230,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
             <>
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                 <p className="text-sm text-orange-800">
-                  <strong>Nota:</strong> Em modo de edição, apenas pode alterar o <strong>estado</strong>, <strong>observações</strong> e <strong>data de entrega prevista</strong>. 
+                  <strong>Nota:</strong> Em modo de edição, apenas pode alterar o <strong>estado</strong>, <strong>observações</strong>, <strong>data de entrega prevista</strong> e marcar artigos como <strong>separados</strong>. 
                   Os dados do cliente e artigos não podem ser modificados.
                 </p>
               </div>
@@ -298,26 +300,50 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
             </div>
           </div>
 
-          {/* Nome do Colaborador */}
-          <div>
-            <Label htmlFor="nome_colaborador">Nome do Colaborador *</Label>
-            <Input
-              id="nome_colaborador"
-              name="nome_colaborador"
-              data-testid="input-nome-colaborador"
-              value={formData.nome_colaborador}
-              onChange={handleInputChange}
-              className="mt-1 border-gray-300 focus:border-orange-500"
-              disabled={isEditing}
-              placeholder="Ex: Maria Silva"
-              required={!isEditing}
-            />
-          </div>
+          {/* Colaborador - Dropdown */}
+          {!isEditing && (
+            <div>
+              <Label htmlFor="colaborador_id">Colaborador *</Label>
+              {colaboradores.length === 0 ? (
+                <div className="mt-1 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    Nenhum colaborador cadastrado. Por favor, adicione colaboradores primeiro em "Gerir Colaboradores".
+                  </p>
+                </div>
+              ) : (
+                <Select 
+                  value={formData.colaborador_id} 
+                  onValueChange={(value) => setFormData(prev => ({...prev, colaborador_id: value}))}
+                >
+                  <SelectTrigger className="mt-1 border-gray-300" data-testid="select-colaborador">
+                    <SelectValue placeholder="Selecione um colaborador" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {colaboradores.map((colab) => (
+                      <SelectItem key={colab.id} value={colab.id}>{colab.nome}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          )}
+
+          {/* Colaborador em modo edição (apenas visualização) */}
+          {isEditing && order.nome_colaborador && (
+            <div>
+              <Label>Colaborador</Label>
+              <Input
+                value={order.nome_colaborador}
+                className="mt-1 border-gray-300 bg-gray-50"
+                disabled
+              />
+            </div>
+          )}
 
           {/* Estado - apenas em edição */}
           {isEditing && (
             <div>
-              <Label htmlFor="status">Estado da Encomenda *</Label>
+              <Label htmlFor="status">Estado *</Label>
               <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({...prev, status: value}))}>
                 <SelectTrigger className="mt-1 border-gray-300" data-testid="select-status">
                   <SelectValue />
@@ -334,7 +360,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
             </div>
           )}
 
-          {/* Data de entrega prevista - apenas em edição */}
+          {/* Data de entrega prevista - apenas em edição se tem entrega */}
           {isEditing && order.tem_entrega && (
             <div>
               <Label htmlFor="data_entrega_prevista">Data de Entrega Prevista</Label>
@@ -399,7 +425,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="num_colaboradores">Nº Colaboradores *</Label>
+                    <Label htmlFor="num_colaboradores">Nº Colaboradores Entrega *</Label>
                     <Input
                       id="num_colaboradores"
                       name="num_colaboradores"
@@ -435,7 +461,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
           </div>
           )}
 
-          {/* Artigos */}
+          {/* Artigos - criação */}
           {!isEditing && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -527,24 +553,39 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
                       €{artigo.preco_total.toFixed(2)}
                     </span>
                   </div>
-                  {isEditing && (
-                    <div className="flex items-center gap-2 mt-2">
+                </div>
+              </div>
+            ))}
+          </div>
+          )}
+
+          {/* Artigos em edição - apenas marcar como separado */}
+          {isEditing && (
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">Artigos (marcar como separado)</h3>
+              {artigos.map((artigo, index) => (
+                <div key={index} className="p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">{artigo.codigo} - {artigo.designacao}</p>
+                      <p className="text-sm text-gray-600">Qtd: {artigo.quantidade} × €{artigo.preco_unitario.toFixed(2)} = €{artigo.preco_total.toFixed(2)}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
                       <input
                         type="checkbox"
                         id={`separado-${index}`}
                         checked={artigo.separado || false}
                         onChange={(e) => handleArtigoChange(index, 'separado', e.target.checked)}
-                        className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                        className="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
                       />
-                      <Label htmlFor={`separado-${index}`} className="text-sm cursor-pointer">
-                        Artigo já está separado
+                      <Label htmlFor={`separado-${index}`} className="text-sm cursor-pointer font-medium">
+                        Separado
                       </Label>
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
           )}
 
           {/* Observações */}
@@ -556,7 +597,7 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
               data-testid="textarea-observacoes"
               value={formData.observacoes}
               onChange={handleInputChange}
-              placeholder="Adicione notas ou observações sobre a encomenda..."
+              placeholder={`Adicione notas ou observações sobre ${orderType === 'orcamento' ? 'o orçamento' : 'a encomenda'}...`}
               className="mt-1 border-gray-300 focus:border-orange-500"
               rows={3}
             />
@@ -597,10 +638,10 @@ const OrderFormModal = ({ open, onClose, onSave, order }) => {
             <Button
               type="submit"
               data-testid="btn-guardar"
-              disabled={submitting}
+              disabled={submitting || (!isEditing && colaboradores.length === 0)}
               className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
             >
-              {submitting ? 'A guardar...' : isEditing ? 'Atualizar Encomenda' : 'Criar Encomenda'}
+              {submitting ? 'A guardar...' : isEditing ? `Atualizar ${tipoLabel}` : `Criar ${tipoLabel}`}
             </Button>
           </div>
         </form>
