@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Trash2, Plus, CheckSquare, CheckCircle } from 'lucide-react';
+import { Trash2, Plus, CheckSquare, CheckCircle, Hash } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -17,6 +17,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
   const isEditing = !!order;
   const tipoLabel = orderType === 'orcamento' ? 'Orçamento' : 'Encomenda';
   const tipoLabelFeminino = orderType === 'orcamento' ? 'o orçamento' : 'a encomenda';
+  
+  const [nextNumber, setNextNumber] = useState(null);
   
   const [formData, setFormData] = useState({
     nome_cliente: '',
@@ -37,6 +39,22 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
   ]);
 
   const [submitting, setSubmitting] = useState(false);
+
+  // Buscar próximo número quando modal abre para criação
+  useEffect(() => {
+    if (open && !order) {
+      fetchNextNumber();
+    }
+  }, [open, order, orderType]);
+
+  const fetchNextNumber = async () => {
+    try {
+      const response = await axios.get(`${API}/orders/next-number/${orderType}`);
+      setNextNumber(response.data.next_number);
+    } catch (error) {
+      console.error('Erro ao buscar próximo número:', error);
+    }
+  };
 
   useEffect(() => {
     if (order) {
