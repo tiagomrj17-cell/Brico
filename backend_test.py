@@ -7,10 +7,11 @@ class OrderManagementAPITester:
     def __init__(self, base_url="https://ordersystem-12.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
-        self.token = None
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
+        self.created_colaborador_id = None
+        self.created_order_id = None
 
     def log_test(self, name, success, details=""):
         """Log test result"""
@@ -36,9 +37,6 @@ class OrderManagementAPITester:
         url = f"{self.api_url}/{endpoint}"
         test_headers = {'Content-Type': 'application/json'}
         
-        if self.token:
-            test_headers['Authorization'] = f'Bearer {self.token}'
-        
         if headers:
             test_headers.update(headers)
 
@@ -47,8 +45,10 @@ class OrderManagementAPITester:
                 response = requests.get(url, headers=test_headers, timeout=10)
             elif method == 'POST':
                 response = requests.post(url, json=data, headers=test_headers, timeout=10)
-            elif method == 'PATCH':
-                response = requests.patch(url, json=data, headers=test_headers, timeout=10)
+            elif method == 'PUT':
+                response = requests.put(url, json=data, headers=test_headers, timeout=10)
+            elif method == 'DELETE':
+                response = requests.delete(url, headers=test_headers, timeout=10)
 
             success = response.status_code == expected_status
             details = f"Status: {response.status_code}"
