@@ -292,7 +292,7 @@ const Dashboard = () => {
           </div>
           
           <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-purple-600" />
+            <Users className="w-5 h-5 text-gray-700" />
             <Select value={colaboradorFilter} onValueChange={setColaboradorFilter}>
               <SelectTrigger className="w-52 border-purple-300" data-testid="filter-colaborador">
                 <SelectValue placeholder="Filtrar por colaborador" />
