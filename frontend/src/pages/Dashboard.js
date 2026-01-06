@@ -187,7 +187,7 @@ const Dashboard = () => {
               <Button
                 onClick={() => navigate('/colaboradores')}
                 variant="outline"
-                className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
+                className="flex items-center gap-2 border-gray-400 text-gray-700 hover:bg-gray-50"
               >
                 <Users className="w-4 h-4" />
                 Gerir Colaboradores
