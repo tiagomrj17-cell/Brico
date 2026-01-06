@@ -58,7 +58,11 @@ const Dashboard = () => {
       filtered = filtered.filter(order => 
         order.nome_cliente.toLowerCase().includes(search) ||
         (order.nome_colaborador && order.nome_colaborador.toLowerCase().includes(search)) ||
-        (order.numero_encomenda && order.numero_encomenda.toLowerCase().includes(search))
+        (order.numero_encomenda && order.numero_encomenda.toLowerCase().includes(search)) ||
+        (order.artigos && order.artigos.some(art => 
+          (art.codigo && art.codigo.toLowerCase().includes(search)) ||
+          (art.designacao && art.designacao.toLowerCase().includes(search))
+        ))
       );
     }
     
