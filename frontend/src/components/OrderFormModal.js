@@ -342,15 +342,16 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <h4 className="font-semibold text-sm mb-2 text-blue-900">Histórico de Alterações</h4>
                   <div className="space-y-1 max-h-40 overflow-y-auto">
-                    {order.historico.map((alt, idx) => {
+                    {order.historico
+                      .filter(alt => alt.campo_alterado !== 'artigos_separados')
+                      .map((alt, idx) => {
                       const nomeCampo = {
                         'status': 'Estado',
                         'observacoes': 'Observações',
                         'data_entrega_prevista': 'Data de Entrega Prevista',
                         'data_levantada': 'Data de Levantamento',
                         'pago_totalidade': 'Pago na Totalidade',
-                        'artigos': 'Artigos',
-                        'artigos_separados': 'Artigos Separados'
+                        'artigos': 'Artigos'
                       }[alt.campo_alterado] || alt.campo_alterado;
                       
                       // Formatar valores para campos especiais
