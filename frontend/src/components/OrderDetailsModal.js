@@ -142,7 +142,7 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
               </div>
             </div>
           ) : (
-            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <h3 className="font-semibold text-lg">Levantamento</h3>
               <p className="text-gray-600 mt-1">Cliente irá levantar a encomenda</p>
             </div>
