@@ -103,7 +103,7 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
               <p><span className="font-medium text-gray-600">Nome:</span> {order.nome_cliente}</p>
               <p><span className="font-medium text-gray-600">Contacto:</span> {order.contacto}</p>
               {order.nome_colaborador && (
-                <p><span className="font-medium text-gray-600">Colaborador:</span> <span className="text-purple-700 font-semibold">{order.nome_colaborador}</span></p>
+                <p><span className="font-medium text-gray-600">Colaborador:</span> <span className="text-gray-900 font-semibold">{order.nome_colaborador}</span></p>
               )}
             </div>
           </div>
