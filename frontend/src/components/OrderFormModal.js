@@ -375,28 +375,25 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                         }
                       };
                       
-                      if (alt.campo_alterado === 'artigos_separados') {
-                        valorAnterior = '';
-                        valorNovo = `✓ ${alt.valor_novo}`;
-                      } else if (alt.campo_alterado === 'artigos' || alt.campo_alterado === 'pago_totalidade') {
+                      if (alt.campo_alterado === 'artigos' || alt.campo_alterado === 'pago_totalidade') {
                         valorAnterior = formatarValor(alt.valor_anterior);
                         valorNovo = formatarValor(alt.valor_novo);
                       }
                       
                       return (
-                        <div key={idx} className={`text-xs bg-white p-2 rounded border ${alt.campo_alterado === 'artigos_separados' ? 'border-green-200 bg-green-50' : 'border-blue-100'}`}>
+                        <div key={idx} className="text-xs bg-white p-2 rounded border border-blue-100">
                           <div className="font-medium text-blue-900">{new Date(alt.data_hora).toLocaleString('pt-PT')}</div>
                           <div className="text-gray-700 mt-1">
-                            <span className={`font-semibold ${alt.campo_alterado === 'artigos_separados' ? 'text-green-700' : 'text-blue-800'}`}>{nomeCampo}:</span>
+                            <span className="font-semibold text-blue-800">{nomeCampo}:</span>
                             <div className="mt-0.5">
-                              {valorAnterior && valorAnterior !== '(vazio)' && alt.campo_alterado !== 'artigos_separados' && (
+                              {valorAnterior && valorAnterior !== '(vazio)' && (
                                 <>
                                   <span className="text-red-600">Antes: {valorAnterior}</span>
                                   <span className="mx-2">→</span>
                                 </>
                               )}
-                              <span className={`font-medium ${alt.campo_alterado === 'artigos_separados' ? 'text-green-700' : 'text-green-700'}`}>
-                                {alt.campo_alterado === 'artigos_separados' ? valorNovo : `Agora: ${valorNovo}`}
+                              <span className="font-medium text-green-700">
+                                Agora: {valorNovo}
                               </span>
                             </div>
                           </div>
