@@ -125,7 +125,7 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
               {order.data_levantada && (
                 <div>
                   <p className="text-sm text-gray-600">Data de Levantamento:</p>
-                  <p className="font-medium text-purple-700">{formatDate(order.data_levantada)}</p>
+                  <p className="font-medium text-gray-900">{formatDate(order.data_levantada)}</p>
                 </div>
               )}
             </div>
