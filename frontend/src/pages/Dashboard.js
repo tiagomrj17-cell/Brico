@@ -418,14 +418,15 @@ const Dashboard = () => {
                     <div className="mb-3 p-2 bg-blue-50 rounded text-sm border border-blue-200">
                       <p className="text-blue-800 font-medium mb-1">Últimas Alterações:</p>
                       <div className="text-xs text-blue-700 space-y-1">
-                        {order.historico.slice(-3).reverse().map((alt, idx) => {
+                        {order.historico
+                          .filter(alt => alt.campo_alterado !== 'artigos_separados')
+                          .slice(-3).reverse().map((alt, idx) => {
                           const nomeCampo = {
                             'status': 'Estado',
                             'observacoes': 'Observações',
                             'data_entrega_prevista': 'Data Prevista',
                             'data_levantada': 'Levantamento',
                             'artigos': 'Artigos',
-                            'artigos_separados': 'Artigos Separados',
                             'pago_totalidade': 'Pago na Totalidade'
                           }[alt.campo_alterado] || alt.campo_alterado;
                           
@@ -442,9 +443,7 @@ const Dashboard = () => {
                             }
                           }
                           
-                          if (alt.campo_alterado === 'artigos_separados') {
-                            valorFormatado = `✓ ${alt.valor_novo}`;
-                          } else if (alt.campo_alterado === 'artigos' && Array.isArray(valorParsed)) {
+                          if (alt.campo_alterado === 'artigos' && Array.isArray(valorParsed)) {
                             valorFormatado = valorParsed.map(a => `${a.designacao || a.codigo} (x${a.quantidade})`).join(', ');
                           } else if (alt.campo_alterado === 'pago_totalidade') {
                             valorFormatado = (valorParsed === true || valorParsed === 'True' || valorParsed === 'true') ? 'Sim' : 'Não';
@@ -455,7 +454,7 @@ const Dashboard = () => {
                           }
                           
                           return (
-                            <p key={idx} className={`truncate ${alt.campo_alterado === 'artigos_separados' ? 'text-green-700' : ''}`}>
+                            <p key={idx} className="truncate">
                               <span className="font-medium">{nomeCampo}:</span> {valorFormatado}
                             </p>
                           );
