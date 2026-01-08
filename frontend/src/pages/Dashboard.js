@@ -309,7 +309,7 @@ const Dashboard = () => {
           <div className="flex-1 max-w-md">
             <Input
               type="text"
-              placeholder="Pesquisar por cliente, colaborador ou nº..."
+              placeholder="Pesquisar por nº, cliente, colaborador ou código artigo..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               className="border-gray-300"
