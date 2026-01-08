@@ -89,19 +89,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteOrder = async () => {
-    if (!deletingOrder) return;
-
-    try {
-      await axios.delete(`${API}/orders/${deletingOrder.id}`);
-      toast.success('Eliminado com sucesso!');
-      setDeletingOrder(null);
-      fetchOrders();
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Erro ao eliminar');
-    }
-  };
-
   const handlePrintInterno = (order) => {
     window.open(`/print-interno/${order.id}`, '_blank', 'noopener,noreferrer');
   };
