@@ -531,20 +531,16 @@ const Dashboard = () => {
         order={viewingOrder}
       />
 
-      <DeleteConfirmDialog
-        open={!!deletingOrder}
-        onClose={() => setDeletingOrder(null)}
-        onConfirm={handleDeleteOrder}
-        orderName={deletingOrder ? `${deletingOrder.numero_encomenda ? '#' + deletingOrder.numero_encomenda + ' - ' : ''}${deletingOrder.nome_cliente}` : ''}
-      />
-
-      {/* Modal de Sucesso após Criação */}
+      {/* Modal de Sucesso após Criação/Edição */}
       <Dialog open={showCreatedModal} onOpenChange={setShowCreatedModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-green-600 flex items-center gap-2 text-xl">
               <Package className="w-6 h-6" />
-              {createdOrder?.tipo === 'orcamento' ? 'Orçamento criado!' : 'Encomenda criada!'}
+              {isEditSuccess 
+                ? (createdOrder?.tipo === 'orcamento' ? 'Orçamento alterado!' : 'Encomenda alterada!')
+                : (createdOrder?.tipo === 'orcamento' ? 'Orçamento criado!' : 'Encomenda criada!')
+              }
             </DialogTitle>
             {createdOrder?.numero_encomenda && (
               <p className={`text-3xl font-bold mt-2 ${createdOrder?.tipo === 'orcamento' ? 'text-blue-700' : 'text-green-700'}`}>
@@ -557,52 +553,26 @@ const Dashboard = () => {
                   Cliente: <strong>{createdOrder?.nome_cliente}</strong>
                 </span>
                 <span className="block text-gray-600">
-                  Colaborador: <strong className="text-gray-800">{createdOrder?.nome_colaborador}</strong>
-                </span>
-                <span className="block text-gray-600">
                   Total: <strong className="text-orange-600 text-lg">€{createdOrder?.total_final?.toFixed(2)}</strong>
                 </span>
-                {createdOrder?.pago_totalidade ? (
-                  <span className="block text-green-700 font-bold flex items-center gap-2">
-                    ✓ Pago na totalidade
-                  </span>
-                ) : (
-                  <>
-                    <span className="block text-green-700">
-                      Adiantamento: <strong>€{(createdOrder?.adiantamento || 0).toFixed(2)}</strong>
+                {createdOrder?.total_final > 0 && (
+                  createdOrder?.pago_totalidade ? (
+                    <span className="block text-green-700 font-bold flex items-center gap-2">
+                      ✓ Pago na totalidade
                     </span>
+                  ) : (
                     <span className="block text-red-600 font-bold">
                       Falta Pagar: €{(createdOrder?.total_final - (createdOrder?.adiantamento || 0)).toFixed(2)}
                     </span>
-                  </>
+                  )
                 )}
               </div>
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
-            <Button
-              variant="outline"
-              onClick={() => {
-                handlePrintCliente(createdOrder);
-              }}
-              className="flex items-center gap-2"
-            >
-              <Printer className="w-4 h-4" />
-              Imprimir Cliente
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                handlePrintInterno(createdOrder);
-              }}
-              className="flex items-center gap-2"
-            >
-              <Printer className="w-4 h-4" />
-              Imprimir Interno
-            </Button>
+          <DialogFooter className="mt-4">
             <Button
               onClick={() => setShowCreatedModal(false)}
-              className="bg-orange-500 hover:bg-orange-600 text-white"
+              className="bg-orange-500 hover:bg-orange-600 text-white w-full"
             >
               Fechar
             </Button>
