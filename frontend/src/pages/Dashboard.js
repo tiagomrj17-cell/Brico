@@ -30,11 +30,11 @@ const Dashboard = () => {
   const [orderType, setOrderType] = useState('encomenda');
   const [editingOrder, setEditingOrder] = useState(null);
   const [viewingOrder, setViewingOrder] = useState(null);
-  const [deletingOrder, setDeletingOrder] = useState(null);
   
   // Estado para mostrar modal de sucesso após criação
   const [createdOrder, setCreatedOrder] = useState(null);
   const [showCreatedModal, setShowCreatedModal] = useState(false);
+  const [isEditSuccess, setIsEditSuccess] = useState(false);
 
   useEffect(() => {
     fetchOrders();
