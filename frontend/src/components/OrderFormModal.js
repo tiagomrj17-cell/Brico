@@ -284,7 +284,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
 
         const response = await axios.post(`${API}/orders`, orderData);
         toast.success(`${tipoLabel} criada com sucesso!`);
-        onSave(response.data);
+        onSave(response.data, false); // false = foi criação
       }
     } catch (error) {
       toast.error(`Erro ao guardar ${tipoLabelFeminino}: ` + (error.response?.data?.detail || error.message));
