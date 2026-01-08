@@ -494,17 +494,6 @@ const Dashboard = () => {
                       Editar
                     </Button>
                     
-                    {/* Botão Eliminar - sempre ativo */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setDeletingOrder(order)}
-                      className="flex items-center gap-2 border-red-300 text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Eliminar
-                    </Button>
-                    
                     {/* Dropdown de Impressão */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
