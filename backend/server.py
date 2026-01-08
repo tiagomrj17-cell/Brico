@@ -30,40 +30,20 @@ api_router = APIRouter(prefix="/api")
 # ============================================
 # SISTEMA DE GERAÇÃO DE CÓDIGOS ÚNICOS
 # ============================================
-# Este sistema garante que cada encomenda/orçamento tenha um código único
-# mesmo com criação simultânea por múltiplos utilizadores.
-#
-# Formato: PREFIXO + ANO(2 dígitos) + SEQUENCIAL(4 dígitos) + SUFIXO ÚNICO(4 caracteres)
-# Exemplo: ENC25-0001-A7B3, ORC25-0042-X9K2
-#
-# Componentes:
-# - Prefixo: ENC (encomenda) ou ORC (orçamento)
-# - Ano: 2 dígitos do ano atual
-# - Sequencial: Contador diário/mensal (4 dígitos)
-# - Sufixo: 4 caracteres alfanuméricos aleatórios (para garantir unicidade)
+# Formato: PREFIXO + 4 DÍGITOS
+# Exemplo: ENC0001, ORC0042
 #
 # A unicidade é garantida por:
 # 1. Índice UNIQUE no MongoDB no campo 'numero_encomenda'
-# 2. Sufixo aleatório de 4 caracteres (36^4 = 1.679.616 combinações)
-# 3. Retry logic em caso de colisão (extremamente rara)
+# 2. Operação atómica de busca e incremento
+# 3. Retry logic em caso de colisão
 # ============================================
 
-def generate_unique_suffix(length: int = 4) -> str:
-    """
-    Gera um sufixo alfanumérico único.
-    Usa secrets para geração criptograficamente segura.
-    """
-    alphabet = string.ascii_uppercase + string.digits
-    # Remove caracteres ambíguos (0, O, I, 1, L)
-    alphabet = alphabet.replace('0', '').replace('O', '').replace('I', '').replace('1', '').replace('L', '')
-    return ''.join(secrets.choice(alphabet) for _ in range(length))
-
-async def generate_unique_order_code(tipo: str = "encomenda", max_retries: int = 5) -> str:
+async def generate_unique_order_code(tipo: str = "encomenda", max_retries: int = 10) -> str:
     """
     Gera um código único para encomenda ou orçamento.
     
-    Formato: PREFIXO + ANO + "-" + SEQUENCIAL + "-" + SUFIXO
-    Exemplo: ENC25-0001-A7B3
+    Formato: PREFIXO + 4 DÍGITOS (ENC0001, ORC0042)
     
     Args:
         tipo: "encomenda" ou "orcamento"
@@ -71,45 +51,32 @@ async def generate_unique_order_code(tipo: str = "encomenda", max_retries: int =
     
     Returns:
         Código único garantido
-    
-    Raises:
-        HTTPException: Se não conseguir gerar código único após max_retries
     """
     prefix = "ORC" if tipo == "orcamento" else "ENC"
-    year = datetime.now().strftime("%y")  # 2 dígitos do ano (25 para 2025)
     
     for attempt in range(max_retries):
-        # Buscar o último número sequencial do mesmo tipo e ano
-        pattern = f"^{prefix}{year}-"
+        # Buscar o último número sequencial do mesmo tipo
         last_order = await db.orders.find_one(
-            {"numero_encomenda": {"$regex": pattern}},
+            {"numero_encomenda": {"$regex": f"^{prefix}"}},
             {"_id": 0, "numero_encomenda": 1},
             sort=[("numero_encomenda", -1)]
         )
         
         if last_order and last_order.get('numero_encomenda'):
             try:
-                # Extrair o número sequencial (ex: de "ENC25-0042-A7B3" extrair "0042")
-                parts = last_order['numero_encomenda'].split('-')
-                if len(parts) >= 2:
-                    seq_num = int(parts[1]) + 1
-                else:
-                    seq_num = 1
+                # Extrair o número (ex: de "ENC0042" extrair "0042")
+                num_str = last_order['numero_encomenda'].replace(prefix, "")
+                seq_num = int(num_str) + 1
             except (ValueError, IndexError):
                 seq_num = 1
         else:
             seq_num = 1
         
-        # Formatar número sequencial com 4 dígitos
+        # Formatar número com 4 dígitos
         seq_str = str(seq_num).zfill(4)
+        codigo = f"{prefix}{seq_str}"
         
-        # Gerar sufixo único
-        suffix = generate_unique_suffix(4)
-        
-        # Montar código completo
-        codigo = f"{prefix}{year}-{seq_str}-{suffix}"
-        
-        # Verificar se já existe (double-check antes de inserir)
+        # Verificar se já existe
         existing = await db.orders.find_one(
             {"numero_encomenda": codigo},
             {"_id": 1}
@@ -118,32 +85,41 @@ async def generate_unique_order_code(tipo: str = "encomenda", max_retries: int =
         if not existing:
             return codigo
         
-        # Se existir, tentar novamente com novo sufixo
-        logging.warning(f"Colisão de código detectada: {codigo}. Tentativa {attempt + 1}/{max_retries}")
+        # Se existir, incrementar e tentar novamente
+        logging.warning(f"Código {codigo} já existe. Tentativa {attempt + 1}/{max_retries}")
     
-    # Se chegou aqui, não conseguiu gerar código único
-    # Usar UUID como fallback absoluto
-    fallback_code = f"{prefix}{year}-{uuid.uuid4().hex[:8].upper()}"
-    logging.error(f"Usando código fallback: {fallback_code}")
-    return fallback_code
+    # Fallback: usar número mais alto + 1
+    all_orders = await db.orders.find(
+        {"numero_encomenda": {"$regex": f"^{prefix}"}},
+        {"_id": 0, "numero_encomenda": 1}
+    ).to_list(10000)
+    
+    max_num = 0
+    for order in all_orders:
+        try:
+            num = int(order['numero_encomenda'].replace(prefix, ""))
+            if num > max_num:
+                max_num = num
+        except:
+            pass
+    
+    return f"{prefix}{str(max_num + 1).zfill(4)}"
 
 async def ensure_unique_index():
     """
     Cria índice único no campo numero_encomenda.
-    Deve ser chamado na inicialização da aplicação.
     """
     try:
         await db.orders.create_index(
             "numero_encomenda",
             unique=True,
-            sparse=True,  # Permite documentos sem o campo
+            sparse=True,
             name="unique_numero_encomenda"
         )
         logging.info("Índice único 'numero_encomenda' criado/verificado com sucesso")
     except Exception as e:
         logging.warning(f"Erro ao criar índice único: {e}")
 
-# Startup event para criar índice
 @app.on_event("startup")
 async def startup_event():
     await ensure_unique_index()
