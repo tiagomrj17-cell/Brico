@@ -691,23 +691,66 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                 </Button>
               </div>
               {artigos.map((artigo, index) => (
-                <div key={index} className="p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div>
+                <div key={index} className={`p-3 rounded-lg border ${
+                  artigo.status === 'Entregue' ? 'bg-green-50 border-green-300' :
+                  artigo.status === 'Cancelado' ? 'bg-red-50 border-red-300' :
+                  'bg-gray-50 border-gray-200'
+                }`}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
                       <p className="font-medium">{artigo.codigo} - {artigo.designacao}</p>
                       <p className="text-sm text-gray-600">Qtd: {artigo.quantidade} × €{artigo.preco_unitario.toFixed(2)} = €{artigo.preco_total.toFixed(2)}</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id={`separado-${index}`}
-                        checked={artigo.separado || false}
-                        onChange={(e) => handleArtigoChange(index, 'separado', e.target.checked)}
-                        className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                      />
-                      <Label htmlFor={`separado-${index}`} className="text-sm cursor-pointer font-medium">
-                        Separado
-                      </Label>
+                    <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
+                      {/* Status dropdown */}
+                      <div className="flex flex-col">
+                        <Label className="text-xs text-gray-500 mb-1">Estado</Label>
+                        <Select 
+                          value={artigo.status || 'Pendente'} 
+                          onValueChange={(value) => handleArtigoChange(index, 'status', value)}
+                        >
+                          <SelectTrigger className={`w-[130px] h-8 text-sm ${
+                            artigo.status === 'Entregue' ? 'border-green-500 bg-green-100' :
+                            artigo.status === 'Cancelado' ? 'border-red-500 bg-red-100' :
+                            'border-gray-300'
+                          }`}>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Pendente">
+                              <span className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
+                                Pendente
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="Entregue">
+                              <span className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                                Entregue
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="Cancelado">
+                              <span className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                                Cancelado
+                              </span>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {/* Separado checkbox */}
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id={`separado-${index}`}
+                          checked={artigo.separado || false}
+                          onChange={(e) => handleArtigoChange(index, 'separado', e.target.checked)}
+                          className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                        />
+                        <Label htmlFor={`separado-${index}`} className="text-sm cursor-pointer font-medium">
+                          Separado
+                        </Label>
+                      </div>
                     </div>
                   </div>
                 </div>
