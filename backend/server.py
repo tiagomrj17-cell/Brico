@@ -141,6 +141,7 @@ class ArticleItem(BaseModel):
     preco_unitario: float
     preco_total: float
     separado: bool = False
+    status: str = "Pendente"  # Pendente, Entregue, Cancelado
 
 class OrderCreate(BaseModel):
     nome_cliente: str
