@@ -626,16 +626,28 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-lg">Artigos</h3>
-                <Button
-                  type="button"
-                  onClick={handleTudoSeparado}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2 border-green-500 text-green-600 hover:bg-green-50"
-                >
-                  <CheckSquare className="w-4 h-4" />
-                  Tudo Separado
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    onClick={handleTudoEntregue}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2 border-blue-500 text-blue-600 hover:bg-blue-50"
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    Tudo Entregue
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleTudoSeparado}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2 border-green-500 text-green-600 hover:bg-green-50"
+                  >
+                    <CheckSquare className="w-4 h-4" />
+                    Tudo Separado
+                  </Button>
+                </div>
               </div>
               {artigos.map((artigo, index) => (
                 <div key={index} className={`p-3 rounded-lg border ${
