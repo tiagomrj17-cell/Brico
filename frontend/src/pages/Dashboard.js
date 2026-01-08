@@ -569,10 +569,30 @@ const Dashboard = () => {
               </div>
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="mt-4">
+          <DialogFooter className={`mt-4 ${!isEditSuccess ? 'flex flex-col sm:flex-row gap-2' : ''}`}>
+            {!isEditSuccess && (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => handlePrintCliente(createdOrder)}
+                  className="flex items-center gap-2"
+                >
+                  <Printer className="w-4 h-4" />
+                  Imprimir Cliente
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => handlePrintInterno(createdOrder)}
+                  className="flex items-center gap-2"
+                >
+                  <Printer className="w-4 h-4" />
+                  Imprimir Interno
+                </Button>
+              </>
+            )}
             <Button
               onClick={() => setShowCreatedModal(false)}
-              className="bg-orange-500 hover:bg-orange-600 text-white w-full"
+              className="bg-orange-500 hover:bg-orange-600 text-white"
             >
               Fechar
             </Button>
