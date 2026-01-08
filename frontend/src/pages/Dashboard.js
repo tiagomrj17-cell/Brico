@@ -109,10 +109,11 @@ const Dashboard = () => {
     setOrderFormOpen(true);
   };
 
-  const handleOrderCreated = (newOrder) => {
+  const handleOrderCreated = (newOrder, wasEditing = false) => {
     setOrderFormOpen(false);
     setEditingOrder(null);
     setCreatedOrder(newOrder);
+    setIsEditSuccess(wasEditing);
     setShowCreatedModal(true);
     fetchOrders();
     fetchColaboradores();
