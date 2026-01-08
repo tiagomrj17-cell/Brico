@@ -1,23 +1,36 @@
 # Test Results - Sistema de Gestão de Encomendas
 
 ## Testing Protocol
-- Date: 2026-01-05
-- Testing Focus: UI/Logic changes - Status labels, optional fields for quotes, OrderDetailsModal cleanup
+- Date: 2026-01-08
+- Testing Focus: Per-item Status feature (Pendente, Entregue, Cancelado)
 
-## Latest Changes (Fork Session)
+## Latest Changes (Current Fork Session)
 
-### OrderFormModal.js
-- [x] Campos opcionais para Orçamentos (nome, contacto, artigos, adiantamento não são obrigatórios)
-- [x] Apenas "Nome do Cliente" e "Colaborador" são obrigatórios para orçamentos
-- [x] Etiquetas atualizadas: "Pronto para Levantamento", "Cancelado"
+### Per-Item Status Feature Implementation
+- [ ] Backend: Added `status` field to ArticleItem model (Pendente/Entregue/Cancelado)
+- [ ] OrderFormModal: Status dropdown for each article in edit mode
+- [ ] OrderDetailsModal: Display status badge for each article
+- [ ] PrintPageCliente: Status column in articles table
+- [ ] PrintPageInternal: Status column in articles table
 
-### OrderDetailsModal.js
-- [x] Removido "Última atualização" da secção de Datas
-- [x] "Custo de Entrega" só aparece se o pedido tem entrega
+### Files Modified
+- `/app/backend/server.py` - ArticleItem model updated
+- `/app/frontend/src/components/OrderFormModal.js` - Status dropdown in edit mode
+- `/app/frontend/src/components/OrderDetailsModal.js` - Status badges display
+- `/app/frontend/src/pages/PrintPageCliente.js` - Status column added
+- `/app/frontend/src/pages/PrintPageInternal.js` - Status column added
 
-### Dashboard.js
-- [x] Cards de estatística: "Pronto", "Concluído", "Cancelado"
-- [x] Dropdown de filtro: "Pronto para Levantamento", "Cancelado"
+## Test Cases
+1. Create new order - verify default status is "Pendente"
+2. Edit order - change item status to "Entregue" and save
+3. Edit order - change item status to "Cancelado" and save
+4. View order details - verify status badges displayed
+5. Print page - verify status column shows correctly
+
+## Incorporate User Feedback
+- User requested per-item status tracking
+- Status options: Pendente (default), Entregue, Cancelado
+- Visual indicators: Yellow for Pendente, Green for Entregue, Red for Cancelado
 
 ## Previous Completed Features
 
@@ -27,7 +40,7 @@
 - [x] Colaborador aparece antes do contacto
 - [x] "Criada:" removido (não duplicado)
 - [x] "Falta Pagar" exibido quando há adiantamento
-- [x] Botão Eliminar sempre ativo (mesmo para Levantada/Entregue/Cancelada)
+- [x] Botão Eliminar removido (funcionalidade removida)
 - [x] Botão Editar desativado para estados finais
 
 ### Formulário de Criação
@@ -36,11 +49,9 @@
 - [x] Dropdown de colaboradores funcional
 - [x] "Nova Encomenda" / "Novo Orçamento" no menu
 
-### Modal de Sucesso (após criação)
-- [x] Número da encomenda como sub-título
-- [x] Cliente, Colaborador, Total
-- [x] Adiantamento e "Falta Pagar" exibidos
-- [x] Botões "Imprimir Cliente" e "Imprimir Interno"
+### Modal de Sucesso
+- [x] Após criação: mostra botões de impressão
+- [x] Após edição: NÃO mostra botões de impressão (apenas "Fechar")
 
 ### Páginas de Impressão
 - [x] Botões "Imprimir" e "Download PDF"
@@ -51,9 +62,10 @@
 
 ### Backend
 - [x] Campo adiantamento no modelo
-- [x] Eliminação permitida para todos os status
-- [x] Numeração sequencial 2026-XXXX
+- [x] Numeração sequencial ENC/ORC + 4 dígitos
+- [x] Índice único no numero_encomenda
 
 ## Tests Passed
-All major features implemented and tested successfully.
+Pending testing via testing agent.
+Exit code: 0
 
