@@ -7,11 +7,11 @@
 ## Latest Changes (Current Fork Session)
 
 ### Per-Item Status Feature Implementation
-- [ ] Backend: Added `status` field to ArticleItem model (Pendente/Entregue/Cancelado)
-- [ ] OrderFormModal: Status dropdown for each article in edit mode
-- [ ] OrderDetailsModal: Display status badge for each article
-- [ ] PrintPageCliente: Status column in articles table
-- [ ] PrintPageInternal: Status column in articles table
+- [x] Backend: Added `status` field to ArticleItem model (Pendente/Entregue/Cancelado) - WORKING
+- [ ] OrderFormModal: Status dropdown for each article in edit mode - NOT TESTED (Frontend)
+- [ ] OrderDetailsModal: Display status badge for each article - NOT TESTED (Frontend)
+- [ ] PrintPageCliente: Status column in articles table - NOT TESTED (Frontend)
+- [ ] PrintPageInternal: Status column in articles table - NOT TESTED (Frontend)
 
 ### Files Modified
 - `/app/backend/server.py` - ArticleItem model updated
