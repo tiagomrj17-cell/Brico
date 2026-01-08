@@ -145,6 +145,12 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     toast.success('Todos os artigos marcados como separados');
   };
 
+  const handleTudoEntregue = () => {
+    const newArtigos = artigos.map(art => ({ ...art, status: 'Entregue' }));
+    setArtigos(newArtigos);
+    toast.success('Todos os artigos marcados como entregues');
+  };
+
   const calculateTotals = () => {
     const subtotal_artigos = artigos.reduce((sum, art) => sum + (parseFloat(art.preco_total) || 0), 0);
     
