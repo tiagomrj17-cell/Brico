@@ -394,31 +394,6 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             </>
           )}
 
-          {/* Aviso de Modo Alterar Tudo */}
-          {isEditing && fullEditMode && (
-            <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm text-yellow-800 font-semibold">
-                    ⚠️ Modo Alteração Completa Ativo
-                  </p>
-                  <p className="text-xs text-yellow-700 mt-1">
-                    Pode alterar artigos, preços, adiantamento e entrega. Tenha cuidado ao fazer alterações.
-                  </p>
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setFullEditMode(false)}
-                  className="ml-4 border-yellow-500 text-yellow-700 hover:bg-yellow-100"
-                >
-                  Cancelar Alteração
-                </Button>
-              </div>
-            </div>
-          )}
-
           {/* Dados do Cliente */}
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Dados do Cliente</h3>
