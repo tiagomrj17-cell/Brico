@@ -270,40 +270,49 @@ async def delete_colaborador(colaborador_id: str):
 
 # Order routes (sem autenticação)
 async def get_next_order_number(tipo: str = "encomenda"):
-    # Definir prefixo baseado no tipo
+    """
+    DEPRECATED: Usar generate_unique_order_code() para produção.
+    Esta função é mantida apenas para preview do próximo número.
+    """
     prefix = "ORC" if tipo == "orcamento" else "ENC"
+    year = datetime.now().strftime("%y")
     
-    # Buscar o último número do mesmo tipo (ENC ou ORC)
+    # Buscar o último número do mesmo tipo e ano
+    pattern = f"^{prefix}{year}-"
     last_order = await db.orders.find_one(
-        {"numero_encomenda": {"$regex": f"^{prefix}"}},
+        {"numero_encomenda": {"$regex": pattern}},
         {"_id": 0, "numero_encomenda": 1},
         sort=[("numero_encomenda", -1)]
     )
     
     if last_order and last_order.get('numero_encomenda'):
-        # Extrair número e incrementar
         try:
-            last_num = int(last_order['numero_encomenda'].replace(prefix, ""))
-            next_num = last_num + 1
-        except (ValueError, IndexError, AttributeError):
-            next_num = 4000
+            parts = last_order['numero_encomenda'].split('-')
+            if len(parts) >= 2:
+                seq_num = int(parts[1]) + 1
+            else:
+                seq_num = 1
+        except (ValueError, IndexError):
+            seq_num = 1
     else:
-        next_num = 4000
+        seq_num = 1
     
-    return f"{prefix}{next_num}"
+    seq_str = str(seq_num).zfill(4)
+    # Para preview, mostrar com placeholder
+    return f"{prefix}{year}-{seq_str}-XXXX"
 
 @api_router.get("/orders/next-number/{tipo}")
 async def get_next_number(tipo: str):
-    """Retorna o próximo número sequencial para encomenda ou orçamento"""
+    """Retorna preview do próximo número (o sufixo real será gerado na criação)"""
     next_number = await get_next_order_number(tipo)
-    return {"next_number": next_number}
+    return {"next_number": next_number, "note": "O sufixo final será gerado na criação"}
 
 @api_router.post("/orders", response_model=Order)
 async def create_order(order_data: OrderCreate):
     order_dict = order_data.model_dump()
     
-    # Gerar número de encomenda baseado no tipo
-    order_dict['numero_encomenda'] = await get_next_order_number(order_data.tipo)
+    # Gerar código único garantido
+    order_dict['numero_encomenda'] = await generate_unique_order_code(order_data.tipo)
     
     # Buscar nome do colaborador
     colaborador = await db.colaboradores.find_one({"id": order_data.colaborador_id})
@@ -316,7 +325,21 @@ async def create_order(order_data: OrderCreate):
     doc['data_criacao'] = doc['data_criacao'].isoformat()
     doc['data_atualizacao'] = doc['data_atualizacao'].isoformat()
     
-    await db.orders.insert_one(doc)
+    # Inserir com tratamento de erro de duplicação
+    try:
+        await db.orders.insert_one(doc)
+    except Exception as e:
+        if "duplicate key" in str(e).lower() or "E11000" in str(e):
+            # Tentar novamente com novo código (caso extremamente raro)
+            order_dict['numero_encomenda'] = await generate_unique_order_code(order_data.tipo)
+            order_obj = Order(**order_dict)
+            doc = order_obj.model_dump()
+            doc['data_criacao'] = doc['data_criacao'].isoformat()
+            doc['data_atualizacao'] = doc['data_atualizacao'].isoformat()
+            await db.orders.insert_one(doc)
+        else:
+            raise HTTPException(status_code=500, detail=f"Erro ao criar encomenda: {str(e)}")
+    
     return order_obj
 
 @api_router.get("/orders", response_model=List[Order])
