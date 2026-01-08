@@ -130,7 +130,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
   };
 
   const addArtigo = () => {
-    setArtigos([...artigos, { codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
+    setArtigos([...artigos, { codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false, status: 'Pendente' }]);
   };
 
   const removeArtigo = (index) => {
