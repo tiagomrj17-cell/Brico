@@ -326,73 +326,12 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                 <p className="text-sm text-orange-800">
                   <strong>Nota:</strong> Pode alterar o <strong>estado</strong>, <strong>observações</strong>, <strong>data de entrega prevista</strong>, <strong>pago na totalidade</strong> e marcar artigos como <strong>separados</strong>, <strong>entregues</strong> ou <strong>cancelados</strong>.
                 </p>
+                {order.data_atualizacao && (
+                  <p className="text-xs text-orange-600 mt-2">
+                    Última alteração: {new Date(order.data_atualizacao).toLocaleString('pt-PT')}
+                  </p>
+                )}
               </div>
-              
-              {order.historico && order.historico.length > 0 && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-sm mb-2 text-blue-900">Histórico de Alterações</h4>
-                  <div className="space-y-1 max-h-40 overflow-y-auto">
-                    {order.historico
-                      .filter(alt => alt.campo_alterado !== 'artigos_separados')
-                      .map((alt, idx) => {
-                      const nomeCampo = {
-                        'status': 'Estado',
-                        'observacoes': 'Observações',
-                        'data_entrega_prevista': 'Data de Entrega Prevista',
-                        'data_levantada': 'Data de Levantamento',
-                        'pago_totalidade': 'Pago na Totalidade',
-                        'artigos': 'Artigos'
-                      }[alt.campo_alterado] || alt.campo_alterado;
-                      
-                      // Formatar valores para campos especiais
-                      let valorAnterior = alt.valor_anterior || '(vazio)';
-                      let valorNovo = alt.valor_novo;
-                      
-                      // Tentar fazer parse se for string JSON
-                      const formatarValor = (valor) => {
-                        if (!valor || valor === '(vazio)') return valor;
-                        try {
-                          const parsed = JSON.parse(valor.replace(/'/g, '"').replace(/True/g, 'true').replace(/False/g, 'false'));
-                          if (Array.isArray(parsed)) {
-                            return parsed.map(a => `${a.designacao || a.codigo} (x${a.quantidade})`).join(', ');
-                          }
-                          return valor;
-                        } catch (e) {
-                          // Verificar se é True/False simples
-                          if (valor === 'True' || valor === 'true') return 'Sim';
-                          if (valor === 'False' || valor === 'false') return 'Não';
-                          return valor;
-                        }
-                      };
-                      
-                      if (alt.campo_alterado === 'artigos' || alt.campo_alterado === 'pago_totalidade') {
-                        valorAnterior = formatarValor(alt.valor_anterior);
-                        valorNovo = formatarValor(alt.valor_novo);
-                      }
-                      
-                      return (
-                        <div key={idx} className="text-xs bg-white p-2 rounded border border-blue-100">
-                          <div className="font-medium text-blue-900">{new Date(alt.data_hora).toLocaleString('pt-PT')}</div>
-                          <div className="text-gray-700 mt-1">
-                            <span className="font-semibold text-blue-800">{nomeCampo}:</span>
-                            <div className="mt-0.5">
-                              {valorAnterior && valorAnterior !== '(vazio)' && (
-                                <>
-                                  <span className="text-red-600">Antes: {valorAnterior}</span>
-                                  <span className="mx-2">→</span>
-                                </>
-                              )}
-                              <span className="font-medium text-green-700">
-                                Agora: {valorNovo}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
             </>
           )}
 
