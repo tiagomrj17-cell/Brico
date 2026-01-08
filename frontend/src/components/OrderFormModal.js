@@ -195,7 +195,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
         
         const response = await axios.put(`${API}/orders/${order.id}`, updateData);
         toast.success(`${tipoLabel} atualizado com sucesso!`);
-        onSave(response.data);
+        onSave(response.data, true); // true = foi edição
       } else {
         // Validações - Orçamento tem menos campos obrigatórios
         if (!formData.nome_cliente || !formData.colaborador_id) {
