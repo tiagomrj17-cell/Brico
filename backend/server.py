@@ -247,41 +247,32 @@ async def delete_colaborador(colaborador_id: str):
 # Order routes (sem autenticação)
 async def get_next_order_number(tipo: str = "encomenda"):
     """
-    DEPRECATED: Usar generate_unique_order_code() para produção.
-    Esta função é mantida apenas para preview do próximo número.
+    Retorna preview do próximo número sequencial.
     """
     prefix = "ORC" if tipo == "orcamento" else "ENC"
-    year = datetime.now().strftime("%y")
     
-    # Buscar o último número do mesmo tipo e ano
-    pattern = f"^{prefix}{year}-"
     last_order = await db.orders.find_one(
-        {"numero_encomenda": {"$regex": pattern}},
+        {"numero_encomenda": {"$regex": f"^{prefix}"}},
         {"_id": 0, "numero_encomenda": 1},
         sort=[("numero_encomenda", -1)]
     )
     
     if last_order and last_order.get('numero_encomenda'):
         try:
-            parts = last_order['numero_encomenda'].split('-')
-            if len(parts) >= 2:
-                seq_num = int(parts[1]) + 1
-            else:
-                seq_num = 1
+            num_str = last_order['numero_encomenda'].replace(prefix, "")
+            seq_num = int(num_str) + 1
         except (ValueError, IndexError):
             seq_num = 1
     else:
         seq_num = 1
     
-    seq_str = str(seq_num).zfill(4)
-    # Para preview, mostrar com placeholder
-    return f"{prefix}{year}-{seq_str}-XXXX"
+    return f"{prefix}{str(seq_num).zfill(4)}"
 
 @api_router.get("/orders/next-number/{tipo}")
 async def get_next_number(tipo: str):
-    """Retorna preview do próximo número (o sufixo real será gerado na criação)"""
+    """Retorna preview do próximo número"""
     next_number = await get_next_order_number(tipo)
-    return {"next_number": next_number, "note": "O sufixo final será gerado na criação"}
+    return {"next_number": next_number}
 
 @api_router.post("/orders", response_model=Order)
 async def create_order(order_data: OrderCreate):
