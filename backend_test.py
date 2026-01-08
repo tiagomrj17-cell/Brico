@@ -12,6 +12,7 @@ class OrderManagementAPITester:
         self.test_results = []
         self.created_colaborador_id = None
         self.created_order_id = None
+        self.status_test_order_id = None
 
     def log_test(self, name, success, details=""):
         """Log test result"""
