@@ -85,6 +85,12 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                 <p className="text-sm text-gray-600">Criada em:</p>
                 <p className="font-medium">{formatDate(order.data_criacao)}</p>
               </div>
+              {order.data_atualizacao && order.data_atualizacao !== order.data_criacao && (
+                <div>
+                  <p className="text-sm text-gray-600">Última alteração:</p>
+                  <p className="font-medium">{formatDate(order.data_atualizacao)}</p>
+                </div>
+              )}
               {order.data_entrega_prevista && (
                 <div>
                   <p className="text-sm text-gray-600">Entrega Prevista:</p>
