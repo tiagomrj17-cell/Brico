@@ -103,6 +103,26 @@ All per-item status backend functionality is working correctly. The API properly
 - Persists status changes correctly
 - Supports all three status values (Pendente, Entregue, Cancelado)
 
+## Agent Communication
+
+### Testing Agent → Main Agent (2026-01-08)
+**Per-Item Status Feature Backend Testing Complete**
+
+✅ **BACKEND FULLY FUNCTIONAL**: All per-item status APIs working correctly
+- Article status field implemented with default "Pendente" 
+- PUT /api/orders/{id} successfully updates article statuses
+- All three status values (Pendente/Entregue/Cancelado) working
+- Status changes persist correctly
+- Mixed status updates work properly
+
+🔍 **FRONTEND TESTING REQUIRED**: Cannot test frontend components (OrderFormModal, OrderDetailsModal, Print pages) due to system limitations
+
+📋 **NEXT STEPS**: Frontend testing needed to verify:
+- Status dropdown in edit modal
+- Status badges in details modal  
+- Status column in print pages
+- Visual indicators (colors) for different statuses
+
 ## Tests Passed
 Backend testing completed successfully via testing agent.
 Per-item status feature backend implementation: ✅ WORKING
