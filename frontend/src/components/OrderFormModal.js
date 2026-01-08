@@ -318,24 +318,12 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-          {isEditing && !fullEditMode && (
+          {isEditing && (
             <>
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                <div className="flex justify-between items-start">
-                  <p className="text-sm text-orange-800">
-                    <strong>Nota:</strong> Em modo de edição, apenas pode alterar o <strong>estado</strong>, <strong>observações</strong>, <strong>data de entrega prevista</strong>, <strong>pago na totalidade</strong> e marcar artigos como <strong>separados</strong>.
-                  </p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setFullEditMode(true)}
-                    className="ml-4 flex items-center gap-2 border-orange-400 text-orange-700 hover:bg-orange-100 whitespace-nowrap"
-                  >
-                    <Edit3 className="w-4 h-4" />
-                    Alterar Tudo
-                  </Button>
-                </div>
+                <p className="text-sm text-orange-800">
+                  <strong>Nota:</strong> Pode alterar o <strong>estado</strong>, <strong>observações</strong>, <strong>data de entrega prevista</strong>, <strong>pago na totalidade</strong> e marcar artigos como <strong>separados</strong>, <strong>entregues</strong> ou <strong>cancelados</strong>.
+                </p>
               </div>
               
               {order.historico && order.historico.length > 0 && (
