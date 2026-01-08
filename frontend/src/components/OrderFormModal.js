@@ -656,17 +656,6 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                 <div key={index} className="p-4 bg-gray-50 rounded-lg space-y-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-semibold text-gray-700">Artigo #{index + 1}</span>
-                    {artigos.length > 1 && (
-                      <Button
-                        type="button"
-                        onClick={() => removeArtigo(index)}
-                        variant="ghost"
-                        size="sm"
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    )}
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
