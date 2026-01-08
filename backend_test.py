@@ -653,6 +653,14 @@ class OrderManagementAPITester:
         self.test_get_single_order()
         self.test_update_order_status()
         
+        # Per-Item Status Feature Tests
+        print("\n🔍 Testing Per-Item Status Feature...")
+        self.test_article_status_field()
+        self.test_update_article_status_to_entregue()
+        self.test_update_article_status_to_cancelado()
+        self.test_create_order_with_status_fields()
+        self.test_mixed_article_status_update()
+        
         # Orçamento test
         self.test_create_orcamento()
         
