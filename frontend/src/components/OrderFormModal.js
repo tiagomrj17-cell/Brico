@@ -653,7 +653,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                 <div key={index} className={`p-3 rounded-lg border ${
                   artigo.status === 'Entregue' ? 'bg-green-50 border-green-300' :
                   artigo.status === 'Cancelado' ? 'bg-red-50 border-red-300' :
-                  'bg-gray-50 border-gray-200'
+                  'bg-yellow-50 border-yellow-300'
                 }`}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
@@ -671,7 +671,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                           <SelectTrigger className={`w-[130px] h-8 text-sm ${
                             artigo.status === 'Entregue' ? 'border-green-500 bg-green-100' :
                             artigo.status === 'Cancelado' ? 'border-red-500 bg-red-100' :
-                            'border-gray-300'
+                            'border-yellow-500 bg-yellow-100'
                           }`}>
                             <SelectValue />
                           </SelectTrigger>
