@@ -152,26 +152,42 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
           <div>
             <h3 className="font-semibold text-lg mb-3">Artigos</h3>
             <div className="space-y-3">
-              {order.artigos.map((artigo, idx) => (
-                <div key={idx} className="bg-white border border-gray-200 p-4 rounded-lg">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <p className="font-semibold text-lg">{artigo.designacao}</p>
-                      <p className="text-sm text-gray-600">Código: {artigo.codigo}</p>
-                      {artigo.separado && (
-                        <p className="text-xs text-green-700 font-medium mt-1 bg-green-50 inline-block px-2 py-1 rounded">
-                          ✓ Separado
-                        </p>
-                      )}
+              {order.artigos.map((artigo, idx) => {
+                const statusColor = artigo.status === 'Entregue' ? 'bg-green-50 border-green-300' :
+                                   artigo.status === 'Cancelado' ? 'bg-red-50 border-red-300' :
+                                   'bg-white border-gray-200';
+                const statusBadge = artigo.status === 'Entregue' ? 'bg-green-100 text-green-800' :
+                                   artigo.status === 'Cancelado' ? 'bg-red-100 text-red-800' :
+                                   'bg-yellow-100 text-yellow-800';
+                return (
+                  <div key={idx} className={`border p-4 rounded-lg ${statusColor}`}>
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <p className="font-semibold text-lg">{artigo.designacao}</p>
+                        <p className="text-sm text-gray-600">Código: {artigo.codigo}</p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {/* Status badge */}
+                          <span className={`text-xs font-medium px-2 py-1 rounded ${statusBadge}`}>
+                            {artigo.status === 'Entregue' ? '✓ Entregue' : 
+                             artigo.status === 'Cancelado' ? '✗ Cancelado' : 
+                             '⏳ Pendente'}
+                          </span>
+                          {artigo.separado && (
+                            <span className="text-xs text-green-700 font-medium bg-green-50 px-2 py-1 rounded border border-green-200">
+                              ✓ Separado
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <Badge variant="secondary" className="text-sm">x{artigo.quantidade}</Badge>
                     </div>
-                    <Badge variant="secondary" className="text-sm">x{artigo.quantidade}</Badge>
+                    <div className="flex justify-between text-sm mt-2 pt-2 border-t border-gray-200">
+                      <span className="text-gray-600">Preço Unitário: €{artigo.preco_unitario.toFixed(2)}</span>
+                      <span className="font-semibold text-orange-600">Total: €{artigo.preco_total.toFixed(2)}</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between text-sm mt-2 pt-2 border-t border-gray-200">
-                    <span className="text-gray-600">Preço Unitário: €{artigo.preco_unitario.toFixed(2)}</span>
-                    <span className="font-semibold text-orange-600">Total: €{artigo.preco_total.toFixed(2)}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
