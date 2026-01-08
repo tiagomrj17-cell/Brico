@@ -130,7 +130,7 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
               {order.artigos.map((artigo, idx) => {
                 const statusColor = artigo.status === 'Entregue' ? 'bg-green-50 border-green-300' :
                                    artigo.status === 'Cancelado' ? 'bg-red-50 border-red-300' :
-                                   'bg-white border-gray-200';
+                                   'bg-yellow-50 border-yellow-300';
                 const statusBadge = artigo.status === 'Entregue' ? 'bg-green-100 text-green-800' :
                                    artigo.status === 'Cancelado' ? 'bg-red-100 text-red-800' :
                                    'bg-yellow-100 text-yellow-800';
