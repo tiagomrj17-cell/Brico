@@ -12,7 +12,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Package, Filter, Plus, Edit, Printer, Users, ChevronDown, FileText } from 'lucide-react';
 import OrderFormModal from '@/components/OrderFormModal';
 import OrderDetailsModal from '@/components/OrderDetailsModal';
-import DeleteConfirmDialog from '@/components/DeleteConfirmDialog';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
