@@ -369,6 +369,272 @@ class OrderManagementAPITester:
             self.log_test("Orders Data Structure Validation", False, "Response is not a list or request failed")
             return False
 
+    def test_article_status_field(self):
+        """Test that articles have status field with default 'Pendente'"""
+        if not self.created_order_id:
+            self.log_test("Article Status Field Test (No Order ID)", False, "No order ID available")
+            return False
+        
+        success, response = self.run_test(
+            "Get Order for Article Status Check",
+            "GET",
+            f"orders/{self.created_order_id}",
+            200
+        )
+        
+        if success and 'artigos' in response:
+            artigos = response['artigos']
+            if len(artigos) > 0:
+                # Check if articles have status field
+                article = artigos[0]
+                if 'status' in article:
+                    status = article['status']
+                    if status == "Pendente":
+                        self.log_test("Article Status Field Test", True, f"Article has status field with default value: {status}")
+                        return True
+                    else:
+                        self.log_test("Article Status Field Test", False, f"Article status is not 'Pendente': {status}")
+                        return False
+                else:
+                    self.log_test("Article Status Field Test", False, "Article does not have status field")
+                    return False
+            else:
+                self.log_test("Article Status Field Test", False, "No articles found in order")
+                return False
+        else:
+            self.log_test("Article Status Field Test", False, "Could not get order or no artigos field")
+            return False
+
+    def test_update_article_status_to_entregue(self):
+        """Test updating article status to 'Entregue'"""
+        if not self.created_order_id:
+            self.log_test("Update Article Status to Entregue (No Order ID)", False, "No order ID available")
+            return False
+        
+        # First get the current order
+        success, response = self.run_test(
+            "Get Order for Status Update",
+            "GET",
+            f"orders/{self.created_order_id}",
+            200
+        )
+        
+        if not success or 'artigos' not in response:
+            self.log_test("Update Article Status to Entregue - Get Failed", False, "Could not get order")
+            return False
+        
+        # Update the first article status to 'Entregue'
+        artigos = response['artigos']
+        if len(artigos) > 0:
+            artigos[0]['status'] = 'Entregue'
+            
+            update_data = {
+                "artigos": artigos
+            }
+            
+            success, update_response = self.run_test(
+                "Update Article Status to Entregue",
+                "PUT",
+                f"orders/{self.created_order_id}",
+                200,
+                data=update_data
+            )
+            
+            if success and 'artigos' in update_response:
+                updated_artigos = update_response['artigos']
+                if len(updated_artigos) > 0 and updated_artigos[0]['status'] == 'Entregue':
+                    self.log_test("Verify Article Status Updated to Entregue", True, "Article status successfully updated to Entregue")
+                    return True
+                else:
+                    self.log_test("Verify Article Status Updated to Entregue", False, f"Status not updated correctly: {updated_artigos[0].get('status', 'missing')}")
+                    return False
+            else:
+                self.log_test("Update Article Status to Entregue - Update Failed", False, "Update request failed")
+                return False
+        else:
+            self.log_test("Update Article Status to Entregue - No Articles", False, "No articles in order")
+            return False
+
+    def test_update_article_status_to_cancelado(self):
+        """Test updating article status to 'Cancelado'"""
+        if not self.created_order_id:
+            self.log_test("Update Article Status to Cancelado (No Order ID)", False, "No order ID available")
+            return False
+        
+        # First get the current order
+        success, response = self.run_test(
+            "Get Order for Cancelado Status Update",
+            "GET",
+            f"orders/{self.created_order_id}",
+            200
+        )
+        
+        if not success or 'artigos' not in response:
+            self.log_test("Update Article Status to Cancelado - Get Failed", False, "Could not get order")
+            return False
+        
+        # Update the second article status to 'Cancelado' (if exists)
+        artigos = response['artigos']
+        if len(artigos) > 1:
+            artigos[1]['status'] = 'Cancelado'
+            
+            update_data = {
+                "artigos": artigos
+            }
+            
+            success, update_response = self.run_test(
+                "Update Article Status to Cancelado",
+                "PUT",
+                f"orders/{self.created_order_id}",
+                200,
+                data=update_data
+            )
+            
+            if success and 'artigos' in update_response:
+                updated_artigos = update_response['artigos']
+                if len(updated_artigos) > 1 and updated_artigos[1]['status'] == 'Cancelado':
+                    self.log_test("Verify Article Status Updated to Cancelado", True, "Article status successfully updated to Cancelado")
+                    return True
+                else:
+                    self.log_test("Verify Article Status Updated to Cancelado", False, f"Status not updated correctly: {updated_artigos[1].get('status', 'missing')}")
+                    return False
+            else:
+                self.log_test("Update Article Status to Cancelado - Update Failed", False, "Update request failed")
+                return False
+        else:
+            self.log_test("Update Article Status to Cancelado - Insufficient Articles", False, "Need at least 2 articles for this test")
+            return False
+
+    def test_create_order_with_status_fields(self):
+        """Test creating a new order specifically for per-item status testing"""
+        if not self.created_colaborador_id:
+            self.log_test("Create Order with Status Fields (No Colaborador)", False, "No colaborador ID available")
+            return False
+            
+        order_data = {
+            "nome_cliente": "Ana Pereira",
+            "contacto": "987654321",
+            "tem_entrega": False,
+            "colaborador_id": self.created_colaborador_id,
+            "tipo": "encomenda",
+            "artigos": [
+                {
+                    "codigo": "STATUS001",
+                    "designacao": "Produto Status Teste 1",
+                    "quantidade": 1,
+                    "preco_unitario": 30.00,
+                    "preco_total": 30.00,
+                    "separado": False,
+                    "status": "Pendente"  # Explicitly set status
+                },
+                {
+                    "codigo": "STATUS002", 
+                    "designacao": "Produto Status Teste 2",
+                    "quantidade": 2,
+                    "preco_unitario": 20.00,
+                    "preco_total": 40.00,
+                    "separado": False,
+                    "status": "Pendente"  # Explicitly set status
+                },
+                {
+                    "codigo": "STATUS003", 
+                    "designacao": "Produto Status Teste 3",
+                    "quantidade": 1,
+                    "preco_unitario": 50.00,
+                    "preco_total": 50.00,
+                    "separado": False,
+                    "status": "Pendente"  # Explicitly set status
+                }
+            ],
+            "subtotal_artigos": 120.00,
+            "custo_entrega": 0.00,
+            "total_final": 120.00,
+            "observacoes": "Encomenda para teste de status por artigo"
+        }
+        
+        success, response = self.run_test(
+            "Create Order with Status Fields",
+            "POST",
+            "orders",
+            200,
+            data=order_data
+        )
+        
+        if success and 'id' in response:
+            self.status_test_order_id = response['id']
+            # Verify all articles have status field
+            if 'artigos' in response:
+                artigos = response['artigos']
+                all_have_status = all('status' in artigo for artigo in artigos)
+                all_pendente = all(artigo.get('status') == 'Pendente' for artigo in artigos)
+                
+                if all_have_status and all_pendente:
+                    self.log_test("Verify Created Order Articles Have Status", True, f"All {len(artigos)} articles have status 'Pendente'")
+                    return True
+                else:
+                    self.log_test("Verify Created Order Articles Have Status", False, "Not all articles have correct status")
+                    return False
+            else:
+                self.log_test("Create Order with Status Fields - No Articles", False, "No articles in response")
+                return False
+        return False
+
+    def test_mixed_article_status_update(self):
+        """Test updating multiple articles with different statuses"""
+        if not hasattr(self, 'status_test_order_id'):
+            self.log_test("Mixed Article Status Update (No Status Test Order)", False, "No status test order ID available")
+            return False
+        
+        # Get the order
+        success, response = self.run_test(
+            "Get Order for Mixed Status Update",
+            "GET",
+            f"orders/{self.status_test_order_id}",
+            200
+        )
+        
+        if not success or 'artigos' not in response:
+            self.log_test("Mixed Article Status Update - Get Failed", False, "Could not get order")
+            return False
+        
+        # Update articles with different statuses
+        artigos = response['artigos']
+        if len(artigos) >= 3:
+            artigos[0]['status'] = 'Entregue'    # First article: Entregue
+            artigos[1]['status'] = 'Cancelado'   # Second article: Cancelado  
+            artigos[2]['status'] = 'Pendente'    # Third article: Keep Pendente
+            
+            update_data = {
+                "artigos": artigos
+            }
+            
+            success, update_response = self.run_test(
+                "Update Mixed Article Statuses",
+                "PUT",
+                f"orders/{self.status_test_order_id}",
+                200,
+                data=update_data
+            )
+            
+            if success and 'artigos' in update_response:
+                updated_artigos = update_response['artigos']
+                if (len(updated_artigos) >= 3 and 
+                    updated_artigos[0]['status'] == 'Entregue' and
+                    updated_artigos[1]['status'] == 'Cancelado' and
+                    updated_artigos[2]['status'] == 'Pendente'):
+                    self.log_test("Verify Mixed Article Status Update", True, "All articles updated with correct mixed statuses")
+                    return True
+                else:
+                    statuses = [art.get('status', 'missing') for art in updated_artigos[:3]]
+                    self.log_test("Verify Mixed Article Status Update", False, f"Incorrect statuses: {statuses}")
+                    return False
+            else:
+                self.log_test("Mixed Article Status Update - Update Failed", False, "Update request failed")
+                return False
+        else:
+            self.log_test("Mixed Article Status Update - Insufficient Articles", False, f"Need at least 3 articles, got {len(artigos)}")
+            return False
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("🚀 Starting Order Management System API Tests")
