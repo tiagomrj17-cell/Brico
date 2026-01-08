@@ -100,7 +100,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
       adiantamento: '',
       pago_totalidade: false
     });
-    setArtigos([{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
+    setArtigos([{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false, status: 'Pendente' }]);
   };
 
   const handleInputChange = (e) => {
