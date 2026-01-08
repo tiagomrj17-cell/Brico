@@ -436,7 +436,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
               {colaboradores.length === 0 ? (
                 <div className="mt-1 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <p className="text-sm text-yellow-800">
-                    Nenhum colaborador cadastrado. Por favor, adicione colaboradores primeiro em "Gerir Colaboradores".
+                    Nenhum colaborador cadastrado. Por favor, adicione colaboradores primeiro em &quot;Gerir Colaboradores&quot;.
                   </p>
                 </div>
               ) : (
