@@ -340,21 +340,32 @@ const PrintPageInternal = () => {
                 <th style={{ padding: '2mm', textAlign: 'right', border: '1px solid #ddd', fontSize: '10pt' }}>P. Unit.</th>
                 <th style={{ padding: '2mm', textAlign: 'right', border: '1px solid #ddd', fontSize: '10pt' }}>Total</th>
                 <th style={{ padding: '2mm', textAlign: 'center', border: '1px solid #ddd', fontSize: '10pt' }}>Separado</th>
+                <th style={{ padding: '2mm', textAlign: 'center', border: '1px solid #ddd', fontSize: '10pt' }}>Estado</th>
               </tr>
             </thead>
             <tbody>
-              {order.artigos.map((artigo, idx) => (
-                <tr key={idx} style={{ backgroundColor: idx % 2 === 0 ? '#f9f9f9' : 'white' }}>
-                  <td style={{ padding: '2mm', border: '1px solid #ddd', fontSize: '10pt' }}>{artigo.codigo || '-'}</td>
-                  <td style={{ padding: '2mm', border: '1px solid #ddd', fontSize: '10pt' }}>{artigo.designacao || '-'}</td>
-                  <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'center', fontSize: '10pt' }}>{artigo.quantidade}</td>
-                  <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'right', fontSize: '10pt' }}>€{(artigo.preco_unitario || 0).toFixed(2)}</td>
-                  <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'right', fontWeight: 'bold', fontSize: '10pt' }}>€{(artigo.preco_total || 0).toFixed(2)}</td>
-                  <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'center', color: artigo.separado ? '#16a34a' : '#999', fontWeight: artigo.separado ? 'bold' : 'normal', fontSize: '10pt' }}>
-                    {artigo.separado ? '✓ SIM' : '—'}
-                  </td>
-                </tr>
-              ))}
+              {order.artigos.map((artigo, idx) => {
+                const statusStyle = artigo.status === 'Entregue' ? { color: '#16a34a', fontWeight: 'bold' } :
+                                   artigo.status === 'Cancelado' ? { color: '#dc2626', fontWeight: 'bold' } :
+                                   { color: '#ca8a04' };
+                return (
+                  <tr key={idx} style={{ backgroundColor: idx % 2 === 0 ? '#f9f9f9' : 'white' }}>
+                    <td style={{ padding: '2mm', border: '1px solid #ddd', fontSize: '10pt' }}>{artigo.codigo || '-'}</td>
+                    <td style={{ padding: '2mm', border: '1px solid #ddd', fontSize: '10pt' }}>{artigo.designacao || '-'}</td>
+                    <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'center', fontSize: '10pt' }}>{artigo.quantidade}</td>
+                    <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'right', fontSize: '10pt' }}>€{(artigo.preco_unitario || 0).toFixed(2)}</td>
+                    <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'right', fontWeight: 'bold', fontSize: '10pt' }}>€{(artigo.preco_total || 0).toFixed(2)}</td>
+                    <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'center', color: artigo.separado ? '#16a34a' : '#999', fontWeight: artigo.separado ? 'bold' : 'normal', fontSize: '10pt' }}>
+                      {artigo.separado ? '✓ SIM' : '—'}
+                    </td>
+                    <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'center', fontSize: '10pt', ...statusStyle }}>
+                      {artigo.status === 'Entregue' ? '✓ Entregue' : 
+                       artigo.status === 'Cancelado' ? '✗ Cancelado' : 
+                       'Pendente'}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
