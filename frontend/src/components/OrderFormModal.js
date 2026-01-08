@@ -36,7 +36,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
   });
 
   const [artigos, setArtigos] = useState([
-    { codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }
+    { codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false, status: 'Pendente' }
   ]);
 
   const [submitting, setSubmitting] = useState(false);
