@@ -323,16 +323,16 @@ const Dashboard = () => {
         </div>
 
         {/* Filtros com tipo adicionado */}
-        <div className="mb-6 flex flex-col gap-4 relative z-10 bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200">
-          <div className="flex items-center gap-2 text-gray-700 mb-2">
-            <Filter className="w-5 h-5" />
-            <span className="font-medium">Filtros</span>
+        <div className="mb-4 flex flex-col gap-3 relative z-10 bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center gap-2 text-gray-700">
+            <Filter className="w-4 h-4" />
+            <span className="font-medium text-sm">Filtros</span>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3">
             {/* Filtro por Tipo */}
             <Select value={tipoFilter} onValueChange={setTipoFilter}>
-              <SelectTrigger className="w-full border-gray-300 min-h-[44px]" data-testid="filter-tipo">
+              <SelectTrigger className="w-full border-gray-300 min-h-[38px] text-sm" data-testid="filter-tipo">
                 <SelectValue placeholder="Tipo" />
               </SelectTrigger>
               <SelectContent className="z-50">
@@ -343,14 +343,14 @@ const Dashboard = () => {
             </Select>
             
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full border-gray-300 min-h-[44px]" data-testid="filter-status">
+              <SelectTrigger className="w-full border-gray-300 min-h-[38px] text-sm" data-testid="filter-status">
                 <SelectValue placeholder="Estado" />
               </SelectTrigger>
               <SelectContent className="z-50">
                 <SelectItem value="Todos">Todos os Estados</SelectItem>
                 <SelectItem value="Pendente">Pendente</SelectItem>
                 <SelectItem value="Em Preparação">Em Preparação</SelectItem>
-                <SelectItem value="Pronta para Levantamento">Pronto para Levantamento</SelectItem>
+                <SelectItem value="Pronta para Levantamento">Pronto</SelectItem>
                 <SelectItem value="Entregue">Entregue</SelectItem>
                 <SelectItem value="Levantada">Levantada</SelectItem>
                 <SelectItem value="Cancelada">Cancelado</SelectItem>
@@ -358,24 +358,24 @@ const Dashboard = () => {
             </Select>
           
             <Select value={colaboradorFilter} onValueChange={setColaboradorFilter}>
-              <SelectTrigger className="w-full border-gray-300 min-h-[44px]" data-testid="filter-colaborador">
+              <SelectTrigger className="w-full border-gray-300 min-h-[38px] text-sm" data-testid="filter-colaborador">
                 <SelectValue placeholder="Colaborador" />
               </SelectTrigger>
               <SelectContent className="z-50">
-                <SelectItem value="Todos">Todos os Colaboradores</SelectItem>
+                <SelectItem value="Todos">Todos</SelectItem>
                 {colaboradores.map((colab) => (
                   <SelectItem key={colab.id} value={colab.id}>{colab.nome}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           
-            <div className="sm:col-span-2">
+            <div className="col-span-2">
               <Input
                 type="text"
-                placeholder="Pesquisar por nº, cliente, código..."
+                placeholder="Pesquisar..."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                className="border-gray-300 min-h-[44px]"
+                className="border-gray-300 min-h-[38px] text-sm"
                 data-testid="search-input"
               />
             </div>
