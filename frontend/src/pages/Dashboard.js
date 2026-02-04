@@ -342,21 +342,21 @@ const Dashboard = () => {
                         )}
                       </div>
                       
-                      {/* Nome do Cliente */}
-                      <p className="text-base font-semibold text-gray-900 mb-0.5">{order.nome_cliente}</p>
+                      {/* Nome do Cliente - negrito */}
+                      <p className="text-base font-bold text-gray-900 mb-0.5">{order.nome_cliente}</p>
                       
-                      {/* Colaborador */}
+                      {/* Contacto - negrito */}
+                      <p className="text-sm font-semibold text-gray-800">Contacto: {order.contacto}</p>
+                      
+                      {/* Colaborador - light */}
                       {order.nome_colaborador && (
-                        <p className="text-sm text-gray-700 font-medium">
+                        <p className="text-sm text-gray-500 font-normal">
                           Colaborador: {order.nome_colaborador}
                         </p>
                       )}
                       
-                      {/* Contacto abaixo do colaborador */}
-                      <p className="text-sm text-gray-600">Contacto: {order.contacto}</p>
-                      
-                      {/* Data/Hora abaixo do contacto */}
-                      <p className="text-xs text-gray-500 mt-0.5">{formatDate(order.data_criacao)}</p>
+                      {/* Data/Hora - light */}
+                      <p className="text-xs text-gray-500 font-normal mt-0.5">{formatDate(order.data_criacao)}</p>
                     </div>
                     <Badge className={`status-badge ${getStatusColor(order.status)}`}>
                       {order.status}
