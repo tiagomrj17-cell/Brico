@@ -179,24 +179,24 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header com sombra suave */}
       <div className="no-print bg-white shadow-md border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             {/* Título */}
             <div className="fade-in">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
                 Encomendas e Orçamentos
               </h1>
-              <p className="text-sm text-gray-500 mt-1 hidden sm:block">
+              <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">
                 Gestão completa das suas encomendas
               </p>
             </div>
             
             {/* Botões de ação */}
-            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto flex-wrap">
+            <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
               <Button
                 onClick={() => navigate('/entregas')}
                 variant="outline"
-                className="flex items-center gap-2 border-orange-400 text-orange-600 hover:bg-orange-50 hover:border-orange-500 transition-all flex-1 sm:flex-none justify-center min-h-[44px]"
+                className="flex items-center gap-1.5 border-orange-400 text-orange-600 hover:bg-orange-50 hover:border-orange-500 transition-all flex-1 sm:flex-none justify-center min-h-[38px] text-sm"
               >
                 <Truck className="w-5 h-5" />
                 <span className="sm:inline">Entregas</span>
