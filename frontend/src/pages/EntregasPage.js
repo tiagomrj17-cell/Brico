@@ -507,13 +507,7 @@ const EntregasPage = () => {
                               <CheckCircle className="w-3.5 h-3.5" /> Entregue
                             </Button>
                           </>
-                        )}}
-                        
-                        {/* Total inline */}
-                        <div className="ml-auto flex items-center gap-2 text-xs">
-                          <span className="text-gray-500">{order.artigos?.length || 0} art.</span>
-                          <span className="font-bold text-orange-600 text-sm">€{order.total_final?.toFixed(2) || '0.00'}</span>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>
