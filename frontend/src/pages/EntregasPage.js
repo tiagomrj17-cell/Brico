@@ -283,87 +283,92 @@ const EntregasPage = () => {
           </Card>
           
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Por Agendar' ? 'ring-2 ring-gray-500' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Por Agendar' ? 'ring-2 ring-gray-500 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Por Agendar')}
+            style={{animationDelay: '50ms'}}
           >
-            <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-gray-600">{counts.porAgendar}</p>
-              <p className="text-sm text-gray-500">Por Agendar</p>
+            <CardContent className="p-4 sm:p-5 text-center">
+              <p className="text-3xl sm:text-4xl font-bold text-gray-600">{counts.porAgendar}</p>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">Por Agendar</p>
             </CardContent>
           </Card>
           
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Agendada' ? 'ring-2 ring-blue-500' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Agendada' ? 'ring-2 ring-blue-500 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Agendada')}
+            style={{animationDelay: '100ms'}}
           >
-            <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-blue-600">{counts.agendada}</p>
-              <p className="text-sm text-gray-500">Agendadas</p>
+            <CardContent className="p-4 sm:p-5 text-center">
+              <p className="text-3xl sm:text-4xl font-bold text-blue-600">{counts.agendada}</p>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">Agendadas</p>
             </CardContent>
           </Card>
           
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Em Trânsito' ? 'ring-2 ring-orange-500' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Em Trânsito' ? 'ring-2 ring-orange-500 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Em Trânsito')}
+            style={{animationDelay: '150ms'}}
           >
-            <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-orange-600">{counts.emTransito}</p>
-              <p className="text-sm text-gray-500">Em Trânsito</p>
+            <CardContent className="p-4 sm:p-5 text-center">
+              <p className="text-3xl sm:text-4xl font-bold text-orange-600">{counts.emTransito}</p>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">Em Trânsito</p>
             </CardContent>
           </Card>
           
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Atrasada' ? 'ring-2 ring-red-500' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Atrasada' ? 'ring-2 ring-red-500 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Atrasada')}
+            style={{animationDelay: '200ms'}}
           >
-            <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-red-600">{counts.atrasada}</p>
-              <p className="text-sm text-gray-500">Atrasadas</p>
+            <CardContent className="p-4 sm:p-5 text-center">
+              <p className="text-3xl sm:text-4xl font-bold text-red-600">{counts.atrasada}</p>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">Atrasadas</p>
             </CardContent>
           </Card>
           
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Entregue' ? 'ring-2 ring-green-500' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Entregue' ? 'ring-2 ring-green-500 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Entregue')}
+            style={{animationDelay: '250ms'}}
           >
-            <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-green-600">{counts.entregue}</p>
-              <p className="text-sm text-gray-500">Entregues</p>
+            <CardContent className="p-4 sm:p-5 text-center">
+              <p className="text-3xl sm:text-4xl font-bold text-green-600">{counts.entregue}</p>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">Entregues</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <Filter className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Filtros</span>
+        {/* Filters - melhorados para mobile */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-6 fade-in">
+          <div className="flex items-center gap-2 mb-4">
+            <Filter className="w-5 h-5 text-gray-500" />
+            <span className="text-base font-medium text-gray-700">Filtros</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <Label className="text-xs text-gray-500 mb-1 block">Pesquisar</Label>
+              <Label className="text-xs text-gray-500 mb-2 block">Pesquisar</Label>
               <Input
                 placeholder="Cliente, nº, morada..."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                className="border-gray-300"
+                className="border-gray-300 min-h-[44px]"
               />
             </div>
             
             <div>
-              <Label className="text-xs text-gray-500 mb-1 block">Data de Entrega</Label>
+              <Label className="text-xs text-gray-500 mb-2 block">Data de Entrega</Label>
               <Input
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="border-gray-300"
+                className="border-gray-300 min-h-[44px]"
               />
             </div>
             
             <div>
-              <Label className="text-xs text-gray-500 mb-1 block">Colaborador</Label>
+              <Label className="text-xs text-gray-500 mb-2 block">Colaborador</Label>
               <Select value={colaboradorFilter} onValueChange={setColaboradorFilter}>
-                <SelectTrigger className="border-gray-300">
+                <SelectTrigger className="border-gray-300 min-h-[44px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
