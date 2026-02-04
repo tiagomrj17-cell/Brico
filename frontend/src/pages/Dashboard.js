@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Package, Filter, Plus, Edit, Printer, Users, ChevronDown, FileText, Truck } from 'lucide-react';
+import { Package, Filter, Plus, Edit, Printer, Users, ChevronDown, FileText, Truck, Phone, Store, Calendar } from 'lucide-react';
 import OrderFormModal from '@/components/OrderFormModal';
 import OrderDetailsModal from '@/components/OrderDetailsModal';
 
