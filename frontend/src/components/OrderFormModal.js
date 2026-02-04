@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, CheckSquare, CheckCircle, Hash, ChevronRight, ChevronLeft, User, Truck, Package, FileText, Trash2 } from 'lucide-react';
+import { Plus, CheckSquare, CheckCircle, Hash, ChevronRight, ChevronLeft, User, Truck, Package, FileText, Trash2, Check } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
