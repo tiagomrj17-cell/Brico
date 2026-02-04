@@ -624,29 +624,33 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
   // Fase 3: Observações e Finalização
   const renderStep3 = () => (
     <div className="space-y-5">
-      {/* Adiantamento */}
-      <div className={`p-4 rounded-lg border ${adiantamento > total_final ? 'bg-red-50 border-red-300' : 'bg-green-50 border-green-200'}`}>
-        <Label htmlFor="adiantamento" className={`text-base font-semibold ${adiantamento > total_final ? 'text-red-800' : 'text-green-800'}`}>
-          Adiantamento (€) {orderType !== 'orcamento' ? '*' : ''}
-        </Label>
-        <p className="text-sm text-green-700 mb-2">Valor pago pelo cliente (0€ se nenhum)</p>
-        <Input
-          id="adiantamento"
-          name="adiantamento"
-          type="number"
-          step="0.01"
-          min="0"
-          max={total_final}
-          value={formData.adiantamento}
-          onChange={handleInputChange}
-          placeholder="0.00"
-          className={`mt-1 ${adiantamento > total_final ? 'border-red-500' : 'border-green-300'}`}
-        />
-        {adiantamento > total_final && (
-          <p className="text-sm text-red-600 font-semibold mt-2">
-            ⚠️ O adiantamento não pode ser superior ao total (€{total_final.toFixed(2)})
-          </p>
-        )}
+      {/* Pago na Totalidade - Toggle */}
+      <div className={`p-4 rounded-lg border ${formData.pago_totalidade ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200'}`}>
+        <div className="flex items-center justify-between">
+          <div>
+            <Label className={`text-base font-semibold ${formData.pago_totalidade ? 'text-green-800' : 'text-gray-700'}`}>
+              Estado do Pagamento
+            </Label>
+            <p className="text-sm text-gray-600 mt-1">
+              {formData.pago_totalidade ? 'Cliente pagou o valor total' : 'Pagamento pendente'}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setFormData(prev => ({ ...prev, pago_totalidade: !prev.pago_totalidade }))}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all ${
+              formData.pago_totalidade 
+                ? 'bg-green-600 text-white hover:bg-green-700' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            {formData.pago_totalidade ? (
+              <><CheckCircle className="w-5 h-5" /> Pago</>
+            ) : (
+              <>Não Pago</>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Observações */}
@@ -681,23 +685,18 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           </div>
         </div>
         
-        <div className="border-t border-green-300 pt-2 mt-2">
-          <div className="flex justify-between items-center">
-            <span className="text-green-800">Adiantamento:</span>
-            <span className="font-semibold text-green-700">€{adiantamento.toFixed(2)}</span>
+        {formData.pago_totalidade ? (
+          <div className="flex justify-between items-center text-lg mt-2 p-2 bg-green-200 rounded">
+            <span className="font-bold text-green-800 flex items-center gap-2">
+              <CheckCircle className="w-5 h-5" />
+              Pago na Totalidade
+            </span>
+            <span className="font-bold text-green-700"><Check className="w-5 h-5" /></span>
           </div>
-          {pago_total ? (
-            <div className="flex justify-between items-center text-lg mt-2 p-2 bg-green-200 rounded">
-              <span className="font-bold text-green-800 flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
-                Pago na Totalidade
-              </span>
-              <span className="font-bold text-green-700"><Check className="w-5 h-5" /></span>
-            </div>
-          ) : (
-            <div className="flex justify-between items-center text-lg mt-2 p-2 bg-red-100 rounded">
-              <span className="font-bold text-red-700">Falta Pagar:</span>
-              <span className="font-bold text-red-600">€{falta_pagar.toFixed(2)}</span>
+        ) : (
+          <div className="flex justify-between items-center text-lg mt-2 p-2 bg-red-100 rounded">
+            <span className="font-bold text-red-700">Por Pagar:</span>
+            <span className="font-bold text-red-600">€{total_final.toFixed(2)}</span>
             </div>
           )}
         </div>
