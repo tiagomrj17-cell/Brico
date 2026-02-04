@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#ff6b35"/>
+  <g fill="white">
+    <!-- Document icon -->
+    <path d="M160 80h128l80 80v272c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V112c0-17.7 14.3-32 32-32z"/>
+    <path d="M288 80v80h80" fill="none" stroke="white" stroke-width="16"/>
+    <!-- Lines representing text -->
+    <rect x="160" y="200" width="160" height="16" rx="4" fill="#ff6b35"/>
+    <rect x="160" y="240" width="120" height="16" rx="4" fill="#ff6b35"/>
+    <rect x="160" y="280" width="140" height="16" rx="4" fill="#ff6b35"/>
+    <rect x="160" y="320" width="100" height="16" rx="4" fill="#ff6b35"/>
+    <!-- Checkmark -->
+    <circle cx="380" cy="380" r="80" fill="#22c55e"/>
+    <path d="M340 380l25 25 50-50" fill="none" stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
