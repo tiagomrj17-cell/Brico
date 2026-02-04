@@ -399,13 +399,13 @@ const EntregasPage = () => {
 
         {/* Delivery Cards */}
         {filteredOrders.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 sm:p-16 text-center fade-in">
-            <Truck className="w-20 h-20 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-900 mb-2">Nenhuma entrega encontrada</h3>
-            <p className="text-gray-500">Não há entregas que correspondam aos filtros selecionados.</p>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center fade-in">
+            <Truck className="w-16 h-16 text-gray-300 mx-auto mb-3" />
+            <h3 className="text-lg font-medium text-gray-900 mb-1">Nenhuma entrega encontrada</h3>
+            <p className="text-gray-500 text-sm">Não há entregas que correspondam aos filtros.</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {filteredOrders.map((order, index) => {
               const deliveryStatus = getDeliveryStatus(order);
               const isDelivered = deliveryStatus === 'Entregue';
@@ -421,83 +421,72 @@ const EntregasPage = () => {
                     deliveryStatus === 'Em Trânsito' ? 'bg-orange-50 border-orange-200' :
                     'bg-white'
                   }`}
-                  style={{animationDelay: `${index * 50}ms`}}
+                  style={{animationDelay: `${index * 30}ms`}}
                 >
-                  <CardContent className="p-4 sm:p-5">
-                    <div className="flex flex-col gap-4">
-                      {/* Header do card */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <span className="text-xl sm:text-2xl font-bold text-green-600">
-                            #{order.numero_encomenda}
-                          </span>
-                          {getStatusBadge(deliveryStatus)}
-                        </div>
+                  <CardContent className="p-0">
+                    {/* Header compacto */}
+                    <div className="px-3 py-2 bg-green-50 border-b border-green-100 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base font-bold text-green-600">#{order.numero_encomenda}</span>
+                        <span className="text-sm font-semibold text-gray-800 truncate">{order.nome_cliente}</span>
                       </div>
-                        
-                      {/* Info grid - responsivo */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                        <div className="flex items-center gap-2 text-gray-700 bg-gray-50 p-3 rounded-lg">
-                          <User className="w-5 h-5 text-gray-400" />
-                          <span className="font-semibold">{order.nome_cliente}</span>
-                        </div>
-                        
-                        <div className="flex items-center gap-2 text-gray-600 bg-gray-50 p-3 rounded-lg">
-                          <Phone className="w-5 h-5 text-gray-400" />
-                          <span className="font-medium">{order.contacto}</span>
-                        </div>
-                        
-                        <div className="flex items-start gap-2 text-gray-600 sm:col-span-2 bg-blue-50 p-3 rounded-lg">
-                          <MapPin className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
-                          <span className="flex-1">{order.morada_entrega}</span>
-                          {order.distancia_kms && (
-                            <Badge variant="outline" className="ml-2 text-xs bg-white">
-                              {order.distancia_kms} km
-                            </Badge>
+                      {getStatusBadge(deliveryStatus)}
+                    </div>
+                    
+                    {/* Corpo compacto */}
+                    <div className="px-3 py-2">
+                      {/* Info linha 1 */}
+                      <div className="flex items-center justify-between text-xs text-gray-600 mb-2">
+                        <div className="flex items-center gap-3">
+                          <span className="flex items-center gap-1">
+                            <Phone className="w-3 h-3" /> {order.contacto}
+                          </span>
+                          {order.nome_colaborador && (
+                            <span className="hidden sm:flex items-center gap-1 text-gray-500">
+                              <Package className="w-3 h-3" /> {order.nome_colaborador}
+                            </span>
                           )}
                         </div>
-                        
-                        <div className="flex items-center gap-2 text-gray-600 bg-gray-50 p-3 rounded-lg">
-                          <Calendar className="w-5 h-5 text-gray-400" />
-                          <span className="font-medium">
-                            {order.data_entrega_prevista 
-                              ? formatDate(order.data_entrega_prevista)
-                              : <span className="text-gray-400 italic">Sem data</span>
-                            }
-                          </span>
-                        </div>
-                        
-                        {order.nome_colaborador && (
-                          <div className="flex items-center gap-2 text-gray-600 bg-gray-50 p-3 rounded-lg">
-                            <Package className="w-5 h-5 text-gray-400" />
-                            <span>{order.nome_colaborador}</span>
-                          </div>
+                        <span className="flex items-center gap-1 text-blue-600 font-medium">
+                          <Calendar className="w-3 h-3" />
+                          {order.data_entrega_prevista ? formatDate(order.data_entrega_prevista) : 'Sem data'}
+                        </span>
+                      </div>
+                      
+                      {/* Morada */}
+                      <div className="flex items-center justify-between py-1.5 border-t border-gray-100 text-xs">
+                        <span className="flex items-center gap-1 text-gray-700">
+                          <MapPin className="w-3.5 h-3.5 text-blue-500" />
+                          <span className="truncate max-w-[200px] sm:max-w-none">{order.morada_entrega}</span>
+                        </span>
+                        {order.distancia_kms && (
+                          <Badge variant="outline" className="text-xs py-0 px-1.5 h-5 bg-white">
+                            {order.distancia_kms} km
+                          </Badge>
                         )}
                       </div>
                       
-                      {/* Ações - responsivas */}
-                      <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-200">
+                      {/* Botões compactos */}
+                      <div className="flex items-center gap-1.5 pt-2 border-t border-gray-100">
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant="ghost"
                           onClick={() => handleViewDetails(order)}
-                          className="flex items-center gap-2 border-gray-300 min-h-[40px] flex-1 sm:flex-none justify-center"
+                          className="flex items-center gap-1 text-gray-600 hover:bg-gray-100 h-7 px-2 text-xs"
                         >
-                          <Eye className="w-4 h-4" />
-                          <span>Detalhes</span>
+                          <Eye className="w-3.5 h-3.5" /> Detalhes
                         </Button>
                         
                         {!isDelivered && !isCancelled && (
                           <>
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="ghost"
                               onClick={() => handleSchedule(order)}
-                              className="flex items-center gap-2 border-blue-300 text-blue-600 hover:bg-blue-50 min-h-[40px] flex-1 sm:flex-none justify-center"
+                              className="flex items-center gap-1 text-blue-600 hover:bg-blue-50 h-7 px-2 text-xs"
                             >
-                              <CalendarPlus className="w-4 h-4" />
-                              <span>
-                                {order.data_entrega_prevista ? 'Reagendar' : 'Agendar'}
+                              <CalendarPlus className="w-3.5 h-3.5" />
+                              {order.data_entrega_prevista ? 'Reagendar' : 'Agendar'}
                               </span>
                             </Button>
                             
