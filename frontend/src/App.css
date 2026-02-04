@@ -28,13 +28,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
   min-height: 100vh;
-  line-height: 1.6;
+  line-height: 1.5;
   color: #1f2937;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Inter', sans-serif;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .App {
@@ -42,21 +42,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   TRANSIÇÕES GLOBAIS - Efeitos Minimalistas
+   TRANSIÇÕES GLOBAIS - Efeitos Micro-Interações
    ============================================ */
 
 button, a, input, select, textarea, .card, [class*="Card"] {
-  transition: all 0.2s ease-out;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Efeito hover suave em botões */
+/* Efeito hover em botões - mais suave e profissional */
 button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  filter: brightness(1.05);
 }
 
+/* Efeito active/click em botões - resposta tátil */
 button:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  filter: brightness(0.95);
 }
 
 /* Efeito focus acessível e visível */
@@ -65,36 +69,92 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 a:focus-visible {
-  outline: 3px solid #f97316;
+  outline: 2px solid #f97316;
   outline-offset: 2px;
 }
 
 /* ============================================
-   CARDS - Efeitos de Hover
+   BOTÕES - Estilos Específicos
    ============================================ */
 
-.card-hover {
-  transition: all 0.25s ease-out;
+/* Botão primário com gradiente */
+.btn-primary {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  transition: all 0.2s ease;
 }
 
-.card-hover:hover {
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 25px rgba(249, 115, 22, 0.3);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 10px rgba(249, 115, 22, 0.2);
+}
+
+/* Botão outline com efeito de preenchimento */
+.btn-outline {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn-outline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: currentColor;
+  opacity: 0.1;
+  transition: width 0.3s ease;
+  z-index: -1;
+}
+
+.btn-outline:hover::before {
+  width: 100%;
 }
 
 /* ============================================
-   STATUS BADGES - Cores claras e legíveis
+   CARDS - Efeitos de Hover Melhorados
+   ============================================ */
+
+.card-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.card-hover:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   STATUS BADGES - Mais compactos
    ============================================ */
 
 .status-badge {
-  padding: 0.5rem 1rem;
+  padding: 0.35rem 0.75rem;
   border-radius: 9999px;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  transition: all 0.2s ease;
+  gap: 0.25rem;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.status-badge:hover {
+  transform: scale(1.02);
 }
 
 .status-pendente {
@@ -134,49 +194,54 @@ a:focus-visible {
 }
 
 /* ============================================
-   RESPONSIVIDADE MOBILE
+   RESPONSIVIDADE MOBILE - Padding Compacto
    ============================================ */
 
-/* Melhorar toque em mobile */
-@media (max-width: 768px) {
+/* Mobile */
+@media (max-width: 640px) {
   button, 
   a, 
   [role="button"],
   .clickable {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 40px;
+    min-width: 40px;
   }
   
-  /* Aumentar espaçamento para dedos */
   input, select, textarea {
-    padding: 0.875rem 1rem;
-    font-size: 1rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.9375rem;
   }
   
-  /* Cards em coluna única */
   .grid-responsive {
     grid-template-columns: 1fr !important;
   }
   
-  /* Esconder texto em botões pequenos, manter ícones */
-  .hide-text-mobile span:not(.sr-only) {
-    display: none;
-  }
-  
-  /* Header responsivo */
   h1 {
-    font-size: 1.5rem !important;
+    font-size: 1.375rem !important;
   }
   
   h2 {
-    font-size: 1.25rem !important;
+    font-size: 1.125rem !important;
+  }
+  
+  /* Padding compacto em mobile */
+  .container, .max-w-7xl {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
   }
 }
 
 /* Tablets */
-@media (min-width: 768px) and (max-width: 1024px) {
+@media (min-width: 640px) and (max-width: 1024px) {
   .grid-responsive {
     grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
   }
 }
 
@@ -184,13 +249,11 @@ a:focus-visible {
    ACESSIBILIDADE
    ============================================ */
 
-/* Texto selecionável com cor de destaque */
 ::selection {
   background: #fdba74;
   color: #1f2937;
 }
 
-/* Reduzir movimento para quem prefere */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -203,7 +266,6 @@ a:focus-visible {
   }
 }
 
-/* Alto contraste para texto */
 .high-contrast {
   color: #111827;
   font-weight: 500;
@@ -214,7 +276,7 @@ a:focus-visible {
    ============================================ */
 
 .loading-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @keyframes pulse {
@@ -222,12 +284,12 @@ a:focus-visible {
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 }
 
 .loading-spin {
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -240,17 +302,17 @@ a:focus-visible {
 }
 
 /* ============================================
-   ANIMAÇÕES DE ENTRADA - Suaves
+   ANIMAÇÕES DE ENTRADA - Rápidas e Suaves
    ============================================ */
 
 .fade-in {
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.2s ease-out;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -259,13 +321,13 @@ a:focus-visible {
 }
 
 .slide-up {
-  animation: slideUp 0.4s ease-out;
+  animation: slideUp 0.25s ease-out;
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -273,23 +335,51 @@ a:focus-visible {
   }
 }
 
+/* Efeito de ripple ao clicar */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.4s, opacity 0.6s;
+}
+
+.ripple:active::after {
+  transform: scale(0, 0);
+  opacity: 1;
+  transition: 0s;
+}
+
 /* ============================================
-   SCROLLBAR PERSONALIZADA
+   SCROLLBAR PERSONALIZADA - Mais fina
    ============================================ */
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
   background: #f1f5f9;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -297,13 +387,13 @@ a:focus-visible {
 }
 
 /* ============================================
-   FORMULÁRIOS - Melhor UX
+   FORMULÁRIOS - Mais Compactos
    ============================================ */
 
 input, select, textarea {
-  font-size: 1rem;
-  border-radius: 0.5rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-size: 0.9375rem;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 input:hover, select:hover, textarea:hover {
@@ -312,31 +402,30 @@ input:hover, select:hover, textarea:hover {
 
 input:focus, select:focus, textarea:focus {
   border-color: #f97316;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.15);
 }
 
-/* Placeholder mais visível */
 ::placeholder {
   color: #9ca3af;
   opacity: 1;
 }
 
 /* ============================================
-   BOTÕES - Tamanhos Acessíveis
+   BOTÕES - Tamanhos Compactos
    ============================================ */
 
 .btn-large {
-  padding: 0.875rem 1.5rem;
-  font-size: 1.125rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 1rem;
   font-weight: 600;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
 }
 
 .btn-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.375rem;
 }
 
 /* ============================================
@@ -353,14 +442,72 @@ input:focus, select:focus, textarea:focus {
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  padding: 0.5rem 0.75rem;
+  padding: 0.375rem 0.625rem;
   background: #1f2937;
   color: white;
-  font-size: 0.75rem;
-  border-radius: 0.375rem;
+  font-size: 0.6875rem;
+  border-radius: 0.25rem;
   white-space: nowrap;
   z-index: 50;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
+  animation: tooltipFade 0.15s ease;
+}
+
+@keyframes tooltipFade {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ============================================
+   MICRO-INTERAÇÕES - Efeitos Subtis
+   ============================================ */
+
+/* Efeito de brilho ao passar o mouse */
+.shine-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.shine-effect:hover::before {
+  left: 100%;
+}
+
+/* Efeito de glow em elementos importantes */
+.glow-effect:hover {
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+}
+
+/* Efeito de shake para erros */
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
 }
 
 /* ============================================
@@ -382,12 +529,31 @@ input:focus, select:focus, textarea:focus {
   
   @page {
     size: A4;
-    margin: 2cm;
+    margin: 1.5cm;
   }
   
-  /* Remover efeitos em impressão */
   * {
     transition: none !important;
     animation: none !important;
+  }
+}
+
+/* ============================================
+   UTILITÁRIOS - Padding Compacto Global
+   ============================================ */
+
+.compact-padding {
+  padding: 0.75rem !important;
+}
+
+@media (min-width: 640px) {
+  .compact-padding {
+    padding: 1rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .compact-padding {
+    padding: 1.25rem !important;
   }
 }
