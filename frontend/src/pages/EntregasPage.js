@@ -512,16 +512,16 @@ const EntregasPage = () => {
                           </>
                         )}
                       </div>
-                    </div>
                     
-                    {/* Total */}
-                    <div className="mt-3 pt-3 border-t border-gray-200 flex items-center justify-between">
-                      <span className="text-sm text-gray-500">
-                        {order.artigos?.length || 0} artigo(s) • Custo entrega: €{order.custo_entrega?.toFixed(2) || '0.00'}
-                      </span>
-                      <span className="text-lg font-bold text-gray-900">
-                        Total: €{order.total_final?.toFixed(2) || '0.00'}
-                      </span>
+                      {/* Total */}
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-3 border-t border-gray-200 bg-gray-50 -mx-4 sm:-mx-5 px-4 sm:px-5 -mb-4 sm:-mb-5 pb-4 sm:pb-5 mt-4 rounded-b-xl">
+                        <span className="text-sm text-gray-500">
+                          {order.artigos?.length || 0} artigo(s) • Custo entrega: €{order.custo_entrega?.toFixed(2) || '0.00'}
+                        </span>
+                        <span className="text-xl font-bold text-orange-600">
+                          Total: €{order.total_final?.toFixed(2) || '0.00'}
+                        </span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -533,7 +533,7 @@ const EntregasPage = () => {
 
       {/* Modal de Agendamento */}
       <Dialog open={scheduleModalOpen} onOpenChange={setScheduleModalOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md mx-4">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-blue-600" />
