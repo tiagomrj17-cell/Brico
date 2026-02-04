@@ -196,30 +196,24 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
           </div>
 
           {/* Informação de Pagamento */}
-          <div className={`p-4 rounded-lg border-2 ${order.pago_totalidade ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200'}`}>
-            <h3 className="font-semibold text-lg mb-3">Informação de Pagamento</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-700">Valor Pago pelo Cliente:</span>
-                <span className="font-semibold text-green-700">€{adiantamento.toFixed(2)}</span>
+          <div className={`p-4 rounded-lg border-2 ${order.pago_totalidade ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-200'}`}>
+            <h3 className="font-semibold text-lg mb-3">Estado do Pagamento</h3>
+            
+            {order.pago_totalidade ? (
+              <div className="bg-green-100 p-3 rounded-lg">
+                <div className="flex items-center gap-2 text-green-800">
+                  <CheckCircle className="w-5 h-5" />
+                  <span className="font-bold text-lg">PAGO NA TOTALIDADE</span>
+                </div>
               </div>
-              
-              {order.pago_totalidade ? (
-                <div className="bg-green-100 p-3 rounded-lg mt-2">
-                  <div className="flex items-center gap-2 text-green-800">
-                    <CheckCircle className="w-5 h-5" />
-                    <span className="font-bold text-lg">PAGO NA TOTALIDADE</span>
-                  </div>
+            ) : (
+              <div className="bg-red-100 p-3 rounded-lg border border-red-200">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-red-700">Por Pagar:</span>
+                  <span className="font-bold text-red-600 text-xl">€{order.total_final?.toFixed(2)}</span>
                 </div>
-              ) : (
-                <div className="bg-red-50 p-3 rounded-lg mt-2 border border-red-200">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-red-700">Falta Pagar:</span>
-                    <span className="font-bold text-red-600 text-xl">€{faltaPagar.toFixed(2)}</span>
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
