@@ -2,9 +2,57 @@
 
 ## Testing Protocol
 - Date: 2026-02-04
-- Testing Focus: UI/UX Improvements - Colors, Icons, Labels
+- Testing Focus: UI/UX Improvements + Backend Super Logic
 
 ## Latest Changes (Current Fork Session)
+
+### Entregas Dashboard - Cores de Fundo nos Cards de Status (2026-02-04)
+- [x] Total: Branco com borda cinza
+- [x] Por Agendar: Fundo cinza claro
+- [x] Agendadas: Fundo azul claro
+- [x] Em Trânsito: Fundo laranja claro
+- [x] Atrasadas: Fundo vermelho claro
+- [x] Entregues: Fundo verde claro
+
+### Backend Super Logic - Implementação Completa (2026-02-04)
+**Sistemas de Proteção e Procedimentos invisíveis ao utilizador:**
+
+1. **Rate Limiting**: 
+   - Limite de 200 requests por minuto por IP
+   - Proteção contra DDoS básico
+   - Headers de resposta com limite restante
+
+2. **Sanitização de Inputs**:
+   - Prevenção de XSS (Cross-Site Scripting)
+   - Proteção contra injeção NoSQL
+   - Validação de todos os campos de entrada
+   - Escapamento de HTML automático
+
+3. **Auditoria Completa**:
+   - Log de todas as ações (CREATE, UPDATE, DELETE)
+   - Registo de IP e timestamp
+   - Logs de segurança separados
+   - TTL automático (30 dias audit, 90 dias security)
+
+4. **Validações de Negócio**:
+   - Estados válidos de encomenda
+   - Transições de estado controladas
+   - Verificação de totais e preços
+   - Limites máximos de valores
+
+5. **Integridade de Dados**:
+   - Checksums em encomendas
+   - Verificação de referências (colaboradores)
+   - Índices otimizados na base de dados
+
+6. **Logging Avançado**:
+   - Tempo de processamento por request
+   - IP real do cliente (X-Forwarded-For)
+   - Níveis de log detalhados
+
+7. **Health Check Endpoint**:
+   - `/api/health` para monitorização
+   - Verificação de conexão MongoDB
 
 ### UI/UX Improvements (2026-02-04)
 - [x] **Cor das Encomendas alterada para VERDE** (Orçamentos mantêm AZUL)
