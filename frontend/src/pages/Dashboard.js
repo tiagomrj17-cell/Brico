@@ -491,7 +491,9 @@ const Dashboard = () => {
 
                   {order.observacoes && (
                     <div className="mb-4 p-3 bg-yellow-50 rounded-lg text-sm border border-yellow-100">
-                      <p className="text-gray-700 font-medium mb-1">📝 Observações:</p>
+                      <p className="text-gray-700 font-medium mb-1 flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-yellow-600" /> Observações:
+                      </p>
                       <p className="text-gray-600">{order.observacoes}</p>
                     </div>
                   )}
