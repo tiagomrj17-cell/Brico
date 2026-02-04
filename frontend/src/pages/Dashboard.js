@@ -658,7 +658,7 @@ const Dashboard = () => {
                 {createdOrder?.total_final > 0 && (
                   createdOrder?.pago_totalidade ? (
                     <span className="block text-green-700 font-bold flex items-center gap-2">
-                      ✓ Pago na totalidade
+                      <CheckCircle className="w-4 h-4" /> Pago na totalidade
                     </span>
                   ) : (
                     <span className="block text-red-600 font-bold">
