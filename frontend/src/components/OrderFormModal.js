@@ -238,6 +238,13 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Só permite submissão na fase 3 (última fase)
+    if (currentStep < totalSteps) {
+      // Se estiver numa fase anterior, apenas avança para a próxima
+      nextStep();
+      return;
+    }
+    
     if (!validateStep(currentStep)) return;
     
     setSubmitting(true);
