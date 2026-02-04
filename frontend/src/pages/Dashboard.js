@@ -468,7 +468,7 @@ const Dashboard = () => {
                               <Check className="w-3 h-3" /> Pago
                             </p>
                           ) : (
-                            <p className="text-xs text-red-600 font-semibold mt-1">
+                            <p className="text-xs text-red-600 font-semibold">
                               Falta: €{(order.total_final - (order.adiantamento || 0)).toFixed(2)}
                             </p>
                           )}
@@ -478,27 +478,27 @@ const Dashboard = () => {
                   </div>
 
                   {order.data_entrega_prevista && (
-                    <div className="mb-4 p-3 bg-blue-50 rounded-lg text-sm border border-blue-100">
+                    <div className="mb-3 p-2 bg-blue-50 rounded-lg text-sm border border-blue-100">
                       <p className="text-blue-800 flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        <span className="font-medium">Entrega Prevista:</span> {order.data_entrega_prevista}
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span className="font-medium">Entrega:</span> {order.data_entrega_prevista}
                       </p>
                     </div>
                   )}
 
                   {order.observacoes && (
-                    <div className="mb-4 p-3 bg-yellow-50 rounded-lg text-sm border border-yellow-100">
-                      <p className="text-gray-700 font-medium mb-1 flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-yellow-600" /> Observações:
+                    <div className="mb-3 p-2 bg-yellow-50 rounded-lg text-sm border border-yellow-100">
+                      <p className="text-gray-700 font-medium mb-0.5 flex items-center gap-1.5 text-xs">
+                        <FileText className="w-3.5 h-3.5 text-yellow-600" /> Observações:
                       </p>
-                      <p className="text-gray-600">{order.observacoes}</p>
+                      <p className="text-gray-600 text-xs">{order.observacoes}</p>
                     </div>
                   )}
 
                   {order.historico && order.historico.length > 0 && (
-                    <div className="mb-4 p-3 bg-blue-50 rounded-lg text-sm border border-blue-200">
-                      <p className="text-blue-800 font-medium mb-2 flex items-center gap-2">
-                        <ClipboardList className="w-4 h-4" /> Últimas Alterações:
+                    <div className="mb-3 p-2 bg-blue-50 rounded-lg text-xs border border-blue-200">
+                      <p className="text-blue-800 font-medium mb-1 flex items-center gap-1.5">
+                        <ClipboardList className="w-3.5 h-3.5" /> Alterações:
                       </p>
                       <div className="text-xs text-blue-700 space-y-1">
                         {order.historico
