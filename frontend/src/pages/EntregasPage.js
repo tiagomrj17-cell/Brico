@@ -433,57 +433,58 @@ const EntregasPage = () => {
                           </span>
                           {getStatusBadge(deliveryStatus)}
                         </div>
+                      </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                          <div className="flex items-center gap-2 text-gray-700">
-                            <User className="w-4 h-4 text-gray-400" />
-                            <span className="font-medium">{order.nome_cliente}</span>
-                          </div>
-                          
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <Phone className="w-4 h-4 text-gray-400" />
-                            <span>{order.contacto}</span>
-                          </div>
-                          
-                          <div className="flex items-start gap-2 text-gray-600 md:col-span-2">
-                            <MapPin className="w-4 h-4 text-gray-400 mt-0.5" />
-                            <span>{order.morada_entrega}</span>
-                            {order.distancia_kms && (
-                              <Badge variant="outline" className="ml-2 text-xs">
-                                {order.distancia_kms} km
-                              </Badge>
-                            )}
-                          </div>
-                          
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <Calendar className="w-4 h-4 text-gray-400" />
-                            <span>
-                              {order.data_entrega_prevista 
-                                ? formatDate(order.data_entrega_prevista)
-                                : <span className="text-gray-400 italic">Sem data</span>
-                              }
-                            </span>
-                          </div>
-                          
-                          {order.nome_colaborador && (
-                            <div className="flex items-center gap-2 text-gray-600">
-                              <Package className="w-4 h-4 text-gray-400" />
-                              <span>{order.nome_colaborador}</span>
-                            </div>
+                      {/* Info grid - responsivo */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                        <div className="flex items-center gap-2 text-gray-700 bg-gray-50 p-3 rounded-lg">
+                          <User className="w-5 h-5 text-gray-400" />
+                          <span className="font-semibold">{order.nome_cliente}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 text-gray-600 bg-gray-50 p-3 rounded-lg">
+                          <Phone className="w-5 h-5 text-gray-400" />
+                          <span className="font-medium">{order.contacto}</span>
+                        </div>
+                        
+                        <div className="flex items-start gap-2 text-gray-600 sm:col-span-2 bg-blue-50 p-3 rounded-lg">
+                          <MapPin className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                          <span className="flex-1">{order.morada_entrega}</span>
+                          {order.distancia_kms && (
+                            <Badge variant="outline" className="ml-2 text-xs bg-white">
+                              {order.distancia_kms} km
+                            </Badge>
                           )}
                         </div>
+                        
+                        <div className="flex items-center gap-2 text-gray-600 bg-gray-50 p-3 rounded-lg">
+                          <Calendar className="w-5 h-5 text-gray-400" />
+                          <span className="font-medium">
+                            {order.data_entrega_prevista 
+                              ? formatDate(order.data_entrega_prevista)
+                              : <span className="text-gray-400 italic">Sem data</span>
+                            }
+                          </span>
+                        </div>
+                        
+                        {order.nome_colaborador && (
+                          <div className="flex items-center gap-2 text-gray-600 bg-gray-50 p-3 rounded-lg">
+                            <Package className="w-5 h-5 text-gray-400" />
+                            <span>{order.nome_colaborador}</span>
+                          </div>
+                        )}
                       </div>
                       
-                      {/* Ações */}
-                      <div className="flex flex-row md:flex-col gap-2">
+                      {/* Ações - responsivas */}
+                      <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-200">
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => handleViewDetails(order)}
-                          className="flex items-center gap-1 border-gray-300"
+                          className="flex items-center gap-2 border-gray-300 min-h-[40px] flex-1 sm:flex-none justify-center"
                         >
                           <Eye className="w-4 h-4" />
-                          <span className="hidden sm:inline">Detalhes</span>
+                          <span>Detalhes</span>
                         </Button>
                         
                         {!isDelivered && !isCancelled && (
@@ -492,10 +493,10 @@ const EntregasPage = () => {
                               size="sm"
                               variant="outline"
                               onClick={() => handleSchedule(order)}
-                              className="flex items-center gap-1 border-blue-300 text-blue-600 hover:bg-blue-50"
+                              className="flex items-center gap-2 border-blue-300 text-blue-600 hover:bg-blue-50 min-h-[40px] flex-1 sm:flex-none justify-center"
                             >
                               <CalendarPlus className="w-4 h-4" />
-                              <span className="hidden sm:inline">
+                              <span>
                                 {order.data_entrega_prevista ? 'Reagendar' : 'Agendar'}
                               </span>
                             </Button>
@@ -503,10 +504,10 @@ const EntregasPage = () => {
                             <Button
                               size="sm"
                               onClick={() => handleMarkDelivered(order)}
-                              className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white"
+                              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white min-h-[40px] flex-1 sm:flex-none justify-center"
                             >
                               <CheckCircle className="w-4 h-4" />
-                              <span className="hidden sm:inline">Entregue</span>
+                              <span>Entregue</span>
                             </Button>
                           </>
                         )}
