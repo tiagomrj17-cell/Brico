@@ -286,12 +286,16 @@ const Dashboard = () => {
         </div>
 
         {/* Filtros com melhor responsividade */}
-        <div className="mb-6 flex flex-col gap-4 relative z-10 bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-          <div className="flex items-center gap-2 text-gray-700">
+        <div className="mb-6 flex flex-col gap-4 relative z-10 bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center gap-2 text-gray-700 mb-2">
             <Filter className="w-5 h-5" />
+            <span className="font-medium">Filtros</span>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-52 border-gray-300" data-testid="filter-status">
-                <SelectValue placeholder="Filtrar por status" />
+              <SelectTrigger className="w-full border-gray-300 min-h-[44px]" data-testid="filter-status">
+                <SelectValue placeholder="Estado" />
               </SelectTrigger>
               <SelectContent className="z-50">
                 <SelectItem value="Todos">Todos os Estados</SelectItem>
@@ -303,13 +307,10 @@ const Dashboard = () => {
                 <SelectItem value="Cancelada">Cancelado</SelectItem>
               </SelectContent>
             </Select>
-          </div>
           
-          <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-gray-700" />
             <Select value={colaboradorFilter} onValueChange={setColaboradorFilter}>
-              <SelectTrigger className="w-52 border-gray-400" data-testid="filter-colaborador">
-                <SelectValue placeholder="Filtrar por colaborador" />
+              <SelectTrigger className="w-full border-gray-300 min-h-[44px]" data-testid="filter-colaborador">
+                <SelectValue placeholder="Colaborador" />
               </SelectTrigger>
               <SelectContent className="z-50">
                 <SelectItem value="Todos">Todos os Colaboradores</SelectItem>
@@ -318,32 +319,33 @@ const Dashboard = () => {
                 ))}
               </SelectContent>
             </Select>
-          </div>
           
-          <div className="flex-1 max-w-md">
-            <Input
-              type="text"
-              placeholder="Pesquisar por nº, cliente, colaborador ou código artigo..."
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              className="border-gray-300"
-              data-testid="search-input"
-            />
+            <div className="sm:col-span-2">
+              <Input
+                type="text"
+                placeholder="Pesquisar por nº, cliente, código..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="border-gray-300 min-h-[44px]"
+                data-testid="search-input"
+              />
+            </div>
           </div>
         </div>
 
         {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600">A carregar...</p>
+          <div className="text-center py-16">
+            <div className="loading-spin rounded-full h-14 w-14 border-4 border-orange-200 border-t-orange-500 mx-auto"></div>
+            <p className="mt-4 text-gray-600 text-lg">A carregar encomendas...</p>
           </div>
         ) : filteredOrders.length === 0 ? (
-          <Card className="text-center py-12 bg-white border-gray-200">
+          <Card className="text-center py-16 bg-white border-gray-200 shadow-sm fade-in">
             <CardContent>
-              <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 text-lg mb-4">Nenhuma encomenda encontrada</p>
-              <Button onClick={handleCreateEncomenda} className="bg-orange-500 hover:bg-orange-600 text-white">
-                <Plus className="w-4 h-4 mr-2" />
+              <Package className="w-20 h-20 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-600 text-xl mb-2">Nenhuma encomenda encontrada</p>
+              <p className="text-gray-400 mb-6">Comece criando a sua primeira encomenda</p>
+              <Button onClick={handleCreateEncomenda} className="bg-orange-500 hover:bg-orange-600 text-white min-h-[48px] px-6 text-base">
+                <Plus className="w-5 h-5 mr-2" />
                 Criar Primeira Encomenda
               </Button>
             </CardContent>
