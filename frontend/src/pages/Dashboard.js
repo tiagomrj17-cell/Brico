@@ -480,60 +480,54 @@ const Dashboard = () => {
                     
                     {/* Botões compactos */}
                     <div className="flex items-center gap-1.5 pt-2 border-t border-gray-100">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setViewingOrder(order)}
-                      className="flex items-center gap-1.5 border-gray-300 hover:bg-gray-100 min-h-[36px] text-xs px-2.5"
-                    >
-                      <Eye className="w-3.5 h-3.5" /> Detalhes
-                    </Button>
-                    
-                    {/* Botão Editar */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      data-testid="btn-editar"
-                      onClick={() => {
-                        if (!canEdit(order)) {
-                          toast.error('Não é possível editar encomendas finalizadas');
-                          return;
-                        }
-                        setEditingOrder(order);
-                        setOrderType(order.tipo || 'encomenda');
-                        setOrderFormOpen(true);
-                      }}
-                      disabled={!canEdit(order)}
-                      className={`flex items-center gap-1.5 border-blue-300 text-blue-600 hover:bg-blue-50 min-h-[36px] text-xs px-2.5 ${!canEdit(order) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                      Editar
-                    </Button>
-                    
-                    {/* Dropdown de Impressão */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex items-center gap-1.5 border-orange-300 text-orange-600 hover:bg-orange-50 min-h-[36px] text-xs px-2.5"
-                        >
-                          <Printer className="w-3.5 h-3.5" />
-                          Imprimir
-                          <ChevronDown className="w-3 h-3" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-44">
-                        <DropdownMenuItem onClick={() => handlePrintCliente(order)} className="cursor-pointer py-2 hover:bg-gray-50 text-sm">
-                          <FileText className="w-3.5 h-3.5 mr-2" />
-                          Versão Cliente
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handlePrintInterno(order)} className="cursor-pointer py-2 hover:bg-gray-50 text-sm">
-                          <Package className="w-3.5 h-3.5 mr-2" />
-                          Versão Interna
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setViewingOrder(order)}
+                        className="flex items-center gap-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 h-7 px-2 text-xs"
+                      >
+                        <Eye className="w-3.5 h-3.5" /> Detalhes
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        data-testid="btn-editar"
+                        onClick={() => {
+                          if (!canEdit(order)) {
+                            toast.error('Não é possível editar encomendas finalizadas');
+                            return;
+                          }
+                          setEditingOrder(order);
+                          setOrderType(order.tipo || 'encomenda');
+                          setOrderFormOpen(true);
+                        }}
+                        disabled={!canEdit(order)}
+                        className={`flex items-center gap-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 h-7 px-2 text-xs ${!canEdit(order) ? 'opacity-40 cursor-not-allowed' : ''}`}
+                      >
+                        <Edit className="w-3.5 h-3.5" /> Editar
+                      </Button>
+                      
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="flex items-center gap-1 text-orange-600 hover:text-orange-800 hover:bg-orange-50 h-7 px-2 text-xs"
+                          >
+                            <Printer className="w-3.5 h-3.5" /> Imprimir
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40">
+                          <DropdownMenuItem onClick={() => handlePrintCliente(order)} className="cursor-pointer py-1.5 text-xs">
+                            <FileText className="w-3 h-3 mr-2" /> Cliente
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handlePrintInterno(order)} className="cursor-pointer py-1.5 text-xs">
+                            <Package className="w-3 h-3 mr-2" /> Interno
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
