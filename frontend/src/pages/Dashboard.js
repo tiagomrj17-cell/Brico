@@ -253,11 +253,11 @@ const Dashboard = () => {
             className={`bg-white border-gray-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Todos' ? 'ring-2 ring-gray-400' : ''}`} 
             style={{animationDelay: '0ms'}}
           >
-            <CardHeader className="pb-2 pt-4">
-              <CardDescription className="text-xs sm:text-sm font-medium">Total</CardDescription>
+            <CardHeader className="pb-1 pt-2 px-2">
+              <CardDescription className="text-xs font-medium">Total</CardDescription>
             </CardHeader>
-            <CardContent className="pb-4">
-              <p className="text-3xl sm:text-4xl font-bold text-gray-900" data-testid="total-encomendas">{counts.total}</p>
+            <CardContent className="pb-2 px-2">
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900" data-testid="total-encomendas">{counts.total}</p>
             </CardContent>
           </Card>
           <Card 
@@ -265,11 +265,11 @@ const Dashboard = () => {
             className={`bg-yellow-50 border-yellow-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Pendente' ? 'ring-2 ring-yellow-500' : ''}`} 
             style={{animationDelay: '50ms'}}
           >
-            <CardHeader className="pb-2 pt-4">
-              <CardDescription className="text-xs sm:text-sm font-medium text-yellow-700">Pendente</CardDescription>
+            <CardHeader className="pb-1 pt-2 px-2">
+              <CardDescription className="text-xs font-medium text-yellow-700">Pendente</CardDescription>
             </CardHeader>
-            <CardContent className="pb-4">
-              <p className="text-3xl sm:text-4xl font-bold text-yellow-700">{counts.pendente}</p>
+            <CardContent className="pb-2 px-2">
+              <p className="text-2xl sm:text-3xl font-bold text-yellow-700">{counts.pendente}</p>
             </CardContent>
           </Card>
           <Card 
@@ -277,11 +277,11 @@ const Dashboard = () => {
             className={`bg-blue-50 border-blue-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Em Preparação' ? 'ring-2 ring-blue-500' : ''}`} 
             style={{animationDelay: '100ms'}}
           >
-            <CardHeader className="pb-2 pt-4">
-              <CardDescription className="text-xs sm:text-sm font-medium text-blue-700">Em Preparação</CardDescription>
+            <CardHeader className="pb-1 pt-2 px-2">
+              <CardDescription className="text-xs font-medium text-blue-700">Preparação</CardDescription>
             </CardHeader>
-            <CardContent className="pb-4">
-              <p className="text-3xl sm:text-4xl font-bold text-blue-700">{counts.emPreparacao}</p>
+            <CardContent className="pb-2 px-2">
+              <p className="text-2xl sm:text-3xl font-bold text-blue-700">{counts.emPreparacao}</p>
             </CardContent>
           </Card>
           <Card 
@@ -289,11 +289,11 @@ const Dashboard = () => {
             className={`bg-indigo-50 border-indigo-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Pronta para Levantamento' ? 'ring-2 ring-indigo-500' : ''}`} 
             style={{animationDelay: '150ms'}}
           >
-            <CardHeader className="pb-2 pt-4">
-              <CardDescription className="text-xs sm:text-sm font-medium text-indigo-700">Pronto</CardDescription>
+            <CardHeader className="pb-1 pt-2 px-2">
+              <CardDescription className="text-xs font-medium text-indigo-700">Pronto</CardDescription>
             </CardHeader>
-            <CardContent className="pb-4">
-              <p className="text-3xl sm:text-4xl font-bold text-indigo-700">{counts.prontaLevantamento}</p>
+            <CardContent className="pb-2 px-2">
+              <p className="text-2xl sm:text-3xl font-bold text-indigo-700">{counts.prontaLevantamento}</p>
             </CardContent>
           </Card>
           <Card 
@@ -301,11 +301,11 @@ const Dashboard = () => {
             className={`bg-green-50 border-green-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Entregue' ? 'ring-2 ring-green-500' : ''}`} 
             style={{animationDelay: '200ms'}}
           >
-            <CardHeader className="pb-2 pt-4">
-              <CardDescription className="text-xs sm:text-sm font-medium text-green-700">Concluído</CardDescription>
+            <CardHeader className="pb-1 pt-2 px-2">
+              <CardDescription className="text-xs font-medium text-green-700">Concluído</CardDescription>
             </CardHeader>
-            <CardContent className="pb-4">
-              <p className="text-3xl sm:text-4xl font-bold text-green-700">{counts.entregue + counts.levantada}</p>
+            <CardContent className="pb-2 px-2">
+              <p className="text-2xl sm:text-3xl font-bold text-green-700">{counts.entregue + counts.levantada}</p>
             </CardContent>
           </Card>
           <Card 
@@ -313,11 +313,11 @@ const Dashboard = () => {
             className={`bg-red-50 border-red-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Cancelada' ? 'ring-2 ring-red-500' : ''}`} 
             style={{animationDelay: '250ms'}}
           >
-            <CardHeader className="pb-2 pt-4">
-              <CardDescription className="text-xs sm:text-sm font-medium text-red-700">Cancelado</CardDescription>
+            <CardHeader className="pb-1 pt-2 px-2">
+              <CardDescription className="text-xs font-medium text-red-700">Cancelado</CardDescription>
             </CardHeader>
-            <CardContent className="pb-4">
-              <p className="text-3xl sm:text-4xl font-bold text-red-700">{counts.cancelada}</p>
+            <CardContent className="pb-2 px-2">
+              <p className="text-2xl sm:text-3xl font-bold text-red-700">{counts.cancelada}</p>
             </CardContent>
           </Card>
         </div>
