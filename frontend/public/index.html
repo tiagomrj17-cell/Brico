@@ -5,10 +5,194 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#ff6b35" />
         <meta name="description" content="Sistema de Gestão de Encomendas e Orçamentos" />
+        
+        <!-- PWA Meta Tags -->
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Encomendas" />
+        
+        <!-- Manifest -->
+        <link rel="manifest" href="/manifest.json" />
+        
+        <!-- Icons -->
+        <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        
         <title>Encomendas e Orçamentos</title>
+        
+        <style>
+            /* Offline indicator */
+            .offline-indicator {
+                display: none;
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                background: #ef4444;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 14px;
+                z-index: 9999;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+            .offline-indicator.show {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            /* Install prompt */
+            .install-prompt {
+                display: none;
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #ff6b35;
+                color: white;
+                padding: 16px 20px;
+                border-radius: 12px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 14px;
+                z-index: 9999;
+                box-shadow: 0 4px 20px rgba(255,107,53,0.3);
+                max-width: 320px;
+            }
+            .install-prompt.show {
+                display: block;
+            }
+            .install-prompt h4 {
+                margin: 0 0 8px 0;
+                font-size: 16px;
+            }
+            .install-prompt p {
+                margin: 0 0 12px 0;
+                opacity: 0.9;
+            }
+            .install-prompt-buttons {
+                display: flex;
+                gap: 8px;
+            }
+            .install-prompt button {
+                padding: 8px 16px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .install-btn {
+                background: white;
+                color: #ff6b35;
+            }
+            .dismiss-btn {
+                background: rgba(255,255,255,0.2);
+                color: white;
+            }
+        </style>
     </head>
     <body>
         <noscript>Precisa de ativar o JavaScript para executar esta aplicação.</noscript>
         <div id="root"></div>
+        
+        <!-- Offline Indicator -->
+        <div id="offline-indicator" class="offline-indicator">
+            <span>⚠️</span>
+            <span>Está offline - algumas funcionalidades podem não estar disponíveis</span>
+        </div>
+        
+        <!-- Install Prompt -->
+        <div id="install-prompt" class="install-prompt">
+            <h4>📦 Instalar Aplicação</h4>
+            <p>Instale esta aplicação no seu computador para acesso rápido e funcionamento offline.</p>
+            <div class="install-prompt-buttons">
+                <button class="install-btn" id="install-btn">Instalar</button>
+                <button class="dismiss-btn" id="dismiss-btn">Agora não</button>
+            </div>
+        </div>
+        
+        <script>
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then((registration) => {
+                            console.log('Service Worker registado com sucesso:', registration.scope);
+                            
+                            // Check for updates
+                            registration.addEventListener('updatefound', () => {
+                                const newWorker = registration.installing;
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        // New version available
+                                        if (confirm('Nova versão disponível! Deseja atualizar?')) {
+                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                            window.location.reload();
+                                        }
+                                    }
+                                });
+                            });
+                        })
+                        .catch((error) => {
+                            console.log('Falha ao registar Service Worker:', error);
+                        });
+                });
+            }
+            
+            // Offline/Online detection
+            const offlineIndicator = document.getElementById('offline-indicator');
+            
+            function updateOnlineStatus() {
+                if (!navigator.onLine) {
+                    offlineIndicator.classList.add('show');
+                } else {
+                    offlineIndicator.classList.remove('show');
+                }
+            }
+            
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            updateOnlineStatus();
+            
+            // Install prompt
+            let deferredPrompt;
+            const installPrompt = document.getElementById('install-prompt');
+            const installBtn = document.getElementById('install-btn');
+            const dismissBtn = document.getElementById('dismiss-btn');
+            
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Check if user hasn't dismissed before
+                if (!localStorage.getItem('installPromptDismissed')) {
+                    setTimeout(() => {
+                        installPrompt.classList.add('show');
+                    }, 3000);
+                }
+            });
+            
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log('Resultado da instalação:', outcome);
+                    deferredPrompt = null;
+                    installPrompt.classList.remove('show');
+                }
+            });
+            
+            dismissBtn.addEventListener('click', () => {
+                installPrompt.classList.remove('show');
+                localStorage.setItem('installPromptDismissed', 'true');
+            });
+            
+            window.addEventListener('appinstalled', () => {
+                console.log('Aplicação instalada com sucesso!');
+                installPrompt.classList.remove('show');
+                deferredPrompt = null;
+            });
+        </script>
     </body>
 </html>
