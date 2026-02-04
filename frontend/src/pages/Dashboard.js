@@ -500,7 +500,7 @@ const Dashboard = () => {
                       <p className="text-blue-800 font-medium mb-1 flex items-center gap-1.5">
                         <ClipboardList className="w-3.5 h-3.5" /> Alterações:
                       </p>
-                      <div className="text-xs text-blue-700 space-y-1">
+                      <div className="text-xs text-blue-700 space-y-0.5">
                         {order.historico
                           .filter(alt => alt.campo_alterado !== 'artigos_separados')
                           .slice(-3).reverse().map((alt, idx) => {
