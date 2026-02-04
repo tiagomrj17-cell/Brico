@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, CheckSquare, CheckCircle, Hash, Edit3 } from 'lucide-react';
+import { Plus, CheckSquare, CheckCircle, Hash, ChevronRight, ChevronLeft, User, Truck, Package, FileText, Trash2 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -20,6 +20,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
   
   const [nextNumber, setNextNumber] = useState(null);
   const [fullEditMode, setFullEditMode] = useState(fullEdit);
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 3;
   
   const [formData, setFormData] = useState({
     nome_cliente: '',
@@ -41,10 +43,11 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
 
   const [submitting, setSubmitting] = useState(false);
 
-  // Reset fullEditMode quando o modal fecha
+  // Reset step quando modal fecha
   useEffect(() => {
     if (!open) {
       setFullEditMode(fullEdit);
+      setCurrentStep(1);
     }
   }, [open, fullEdit]);
 
@@ -101,6 +104,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
       pago_totalidade: false
     });
     setArtigos([{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false, status: 'Pendente' }]);
+    setCurrentStep(1);
   };
 
   const handleInputChange = (e) => {
@@ -178,8 +182,64 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     return { subtotal_artigos, custo_entrega, total_final, adiantamento, falta_pagar, pago_total };
   };
 
+  // Validação por fase
+  const validateStep = (step) => {
+    if (step === 1) {
+      if (!formData.nome_cliente) {
+        toast.error('Por favor, preencha o nome do cliente');
+        return false;
+      }
+      if (orderType !== 'orcamento' && !formData.contacto) {
+        toast.error('Por favor, preencha o contacto do cliente');
+        return false;
+      }
+      if (!formData.colaborador_id) {
+        toast.error('Por favor, selecione um colaborador');
+        return false;
+      }
+      if (formData.tem_entrega) {
+        if (!formData.morada_entrega) {
+          toast.error('Por favor, preencha a morada de entrega');
+          return false;
+        }
+        if (!formData.distancia_kms) {
+          toast.error('Por favor, preencha a distância em km');
+          return false;
+        }
+      }
+      return true;
+    }
+    if (step === 2) {
+      if (orderType !== 'orcamento') {
+        if (artigos.some(art => !art.codigo || !art.designacao)) {
+          toast.error('Por favor, preencha todos os artigos (código e designação)');
+          return false;
+        }
+        if (artigos.some(art => parseFloat(art.preco_unitario) < 0.01)) {
+          toast.error('O preço unitário deve ser pelo menos €0.01');
+          return false;
+        }
+      }
+      return true;
+    }
+    return true;
+  };
+
+  const nextStep = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+    }
+  };
+
+  const prevStep = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateStep(currentStep)) return;
+    
     setSubmitting(true);
 
     try {
@@ -202,61 +262,17 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
         
         const response = await axios.put(`${API}/orders/${order.id}`, updateData);
         toast.success(`${tipoLabel} atualizado com sucesso!`);
-        onSave(response.data, true); // true = foi edição
+        onSave(response.data, true);
       } else {
-        // Validações - Orçamento tem menos campos obrigatórios
-        if (!formData.nome_cliente || !formData.colaborador_id) {
-          toast.error('Por favor, preencha nome do cliente e selecione um colaborador');
-          setSubmitting(false);
-          return;
-        }
-
-        // Contacto obrigatório apenas para encomendas
-        if (orderType !== 'orcamento' && !formData.contacto) {
-          toast.error('Por favor, preencha o contacto do cliente');
-          setSubmitting(false);
-          return;
-        }
-
-        // Artigos obrigatórios apenas para encomendas
-        if (orderType !== 'orcamento') {
-          if (artigos.some(art => !art.codigo || !art.designacao)) {
-            toast.error('Por favor, preencha todos os artigos');
-            setSubmitting(false);
-            return;
-          }
-
-          if (artigos.some(art => parseFloat(art.preco_unitario) < 0.01)) {
-            toast.error('O preço unitário deve ser pelo menos €0.01');
-            setSubmitting(false);
-            return;
-          }
-        } else {
-          // Para orçamentos, preço pode ser 0
-          if (artigos.some(art => parseFloat(art.preco_unitario) < 0)) {
-            toast.error('O preço unitário não pode ser negativo');
-            setSubmitting(false);
-            return;
-          }
-        }
-
-        if (formData.tem_entrega && (!formData.morada_entrega || !formData.distancia_kms)) {
-          toast.error('Por favor, preencha os dados de entrega');
-          setSubmitting(false);
-          return;
-        }
-
         const { subtotal_artigos, custo_entrega, total_final, pago_total } = calculateTotals();
         const adiantamentoValue = parseFloat(formData.adiantamento) || 0;
 
-        // Validação: Adiantamento obrigatório
         if (adiantamentoValue < 0) {
           toast.error('O adiantamento não pode ser negativo.');
           setSubmitting(false);
           return;
         }
 
-        // Validação: Adiantamento não pode ser maior que o total
         if (adiantamentoValue > total_final) {
           toast.error(`O adiantamento (€${adiantamentoValue.toFixed(2)}) não pode ser superior ao total (€${total_final.toFixed(2)})`);
           setSubmitting(false);
@@ -292,7 +308,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
 
         const response = await axios.post(`${API}/orders`, orderData);
         toast.success(`${tipoLabel} criada com sucesso!`);
-        onSave(response.data, false); // false = foi criação
+        onSave(response.data, false);
       }
     } catch (error) {
       toast.error(`Erro ao guardar ${tipoLabelFeminino}: ` + (error.response?.data?.detail || error.message));
@@ -303,9 +319,551 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
 
   const { subtotal_artigos, custo_entrega, total_final, adiantamento, falta_pagar, pago_total } = calculateTotals();
 
+  // Componentes de cada fase
+  const renderStepIndicator = () => (
+    <div className="flex items-center justify-center mb-6">
+      {[1, 2, 3].map((step, index) => (
+        <React.Fragment key={step}>
+          <div 
+            className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
+              currentStep === step 
+                ? 'bg-orange-500 border-orange-500 text-white' 
+                : currentStep > step 
+                  ? 'bg-green-500 border-green-500 text-white'
+                  : 'bg-gray-100 border-gray-300 text-gray-500'
+            }`}
+          >
+            {currentStep > step ? (
+              <CheckCircle className="w-5 h-5" />
+            ) : step === 1 ? (
+              <User className="w-5 h-5" />
+            ) : step === 2 ? (
+              <Package className="w-5 h-5" />
+            ) : (
+              <FileText className="w-5 h-5" />
+            )}
+          </div>
+          {index < 2 && (
+            <div className={`w-16 h-1 mx-2 rounded ${currentStep > step ? 'bg-green-500' : 'bg-gray-200'}`} />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+
+  const renderStepTitle = () => {
+    const titles = {
+      1: 'Dados do Cliente e Entrega',
+      2: 'Artigos',
+      3: 'Observações e Finalização'
+    };
+    return (
+      <h3 className="text-lg font-semibold text-gray-800 text-center mb-4">
+        Fase {currentStep}: {titles[currentStep]}
+      </h3>
+    );
+  };
+
+  // Fase 1: Dados do Cliente, Colaborador e Entrega
+  const renderStep1 = () => (
+    <div className="space-y-5">
+      {/* Dados do Cliente */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2 text-gray-700">
+          <User className="w-5 h-5" />
+          <span className="font-medium">Dados do Cliente</span>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="nome_cliente">Nome Completo *</Label>
+            <Input
+              id="nome_cliente"
+              name="nome_cliente"
+              data-testid="input-nome-cliente"
+              value={formData.nome_cliente}
+              onChange={handleInputChange}
+              className="mt-1 border-gray-300 focus:border-orange-500"
+              placeholder="Nome do cliente"
+            />
+          </div>
+          <div>
+            <Label htmlFor="contacto">Contacto {orderType !== 'orcamento' ? '*' : ''}</Label>
+            <Input
+              id="contacto"
+              name="contacto"
+              data-testid="input-contacto"
+              value={formData.contacto}
+              onChange={handleInputChange}
+              className="mt-1 border-gray-300 focus:border-orange-500"
+              placeholder="Telefone ou email"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Colaborador */}
+      <div>
+        <Label htmlFor="colaborador_id">Colaborador *</Label>
+        {colaboradores.length === 0 ? (
+          <div className="mt-1 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-yellow-800">
+              Nenhum colaborador cadastrado. Adicione colaboradores em "Gerir Colaboradores".
+            </p>
+          </div>
+        ) : (
+          <Select 
+            value={formData.colaborador_id} 
+            onValueChange={(value) => setFormData(prev => ({...prev, colaborador_id: value}))}
+          >
+            <SelectTrigger className="mt-1 border-gray-300" data-testid="select-colaborador">
+              <SelectValue placeholder="Selecione um colaborador" />
+            </SelectTrigger>
+            <SelectContent>
+              {colaboradores.map((colab) => (
+                <SelectItem key={colab.id} value={colab.id}>{colab.nome}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      </div>
+
+      {/* Entrega */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
+          <div className="flex items-center gap-3">
+            <Truck className={`w-6 h-6 ${formData.tem_entrega ? 'text-orange-500' : 'text-gray-400'}`} />
+            <div>
+              <Label htmlFor="tem_entrega" className="text-base font-semibold cursor-pointer">
+                Necessita de Entrega?
+              </Label>
+              <p className="text-sm text-gray-500">10€ até 10km, depois +2€/km</p>
+            </div>
+          </div>
+          <Switch
+            id="tem_entrega"
+            data-testid="switch-tem-entrega"
+            checked={formData.tem_entrega}
+            onCheckedChange={handleSwitchChange}
+          />
+        </div>
+
+        {formData.tem_entrega && (
+          <div className="space-y-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
+            <div>
+              <Label htmlFor="morada_entrega">Morada de Entrega *</Label>
+              <Input
+                id="morada_entrega"
+                name="morada_entrega"
+                value={formData.morada_entrega}
+                onChange={handleInputChange}
+                className="mt-1 border-gray-300 focus:border-orange-500"
+                placeholder="Rua, número, cidade"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="distancia_kms">Distância (KM) *</Label>
+                <Input
+                  id="distancia_kms"
+                  name="distancia_kms"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value={formData.distancia_kms}
+                  onChange={handleInputChange}
+                  className="mt-1 border-gray-300 focus:border-orange-500"
+                  placeholder="0"
+                />
+              </div>
+              <div>
+                <Label htmlFor="num_colaboradores">Nº Colaboradores *</Label>
+                <Input
+                  id="num_colaboradores"
+                  name="num_colaboradores"
+                  type="number"
+                  min="1"
+                  value={formData.num_colaboradores}
+                  onChange={handleInputChange}
+                  className="mt-1 border-gray-300 focus:border-orange-500"
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="data_entrega_prevista">Data de Entrega Prevista</Label>
+              <Input
+                type="date"
+                id="data_entrega_prevista"
+                name="data_entrega_prevista"
+                value={formData.data_entrega_prevista}
+                onChange={handleInputChange}
+                className="mt-1 border-gray-300 focus:border-orange-500"
+              />
+            </div>
+            
+            {/* Preço da entrega calculado */}
+            <div className="p-3 bg-white rounded border border-orange-300">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-gray-700">Custo de Entrega:</span>
+                <span className="text-xl font-bold text-orange-600">€{custo_entrega.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  // Fase 2: Artigos
+  const renderStep2 = () => (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-gray-700">
+          <Package className="w-5 h-5" />
+          <span className="font-medium">Lista de Artigos</span>
+        </div>
+        <Button
+          type="button"
+          onClick={addArtigo}
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2 border-orange-500 text-orange-600 hover:bg-orange-50"
+        >
+          <Plus className="w-4 h-4" />
+          Adicionar Artigo
+        </Button>
+      </div>
+
+      <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2">
+        {artigos.map((artigo, index) => (
+          <div key={index} className="p-4 bg-gray-50 rounded-lg border space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-gray-700">Artigo #{index + 1}</span>
+              {artigos.length > 1 && (
+                <Button
+                  type="button"
+                  onClick={() => removeArtigo(index)}
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Código {orderType !== 'orcamento' ? '*' : ''}</Label>
+                <Input
+                  value={artigo.codigo}
+                  onChange={(e) => handleArtigoChange(index, 'codigo', e.target.value)}
+                  className="mt-1 border-gray-300"
+                  placeholder="REF001"
+                />
+              </div>
+              <div>
+                <Label>Designação {orderType !== 'orcamento' ? '*' : ''}</Label>
+                <Input
+                  value={artigo.designacao}
+                  onChange={(e) => handleArtigoChange(index, 'designacao', e.target.value)}
+                  className="mt-1 border-gray-300"
+                  placeholder="Nome do artigo"
+                />
+              </div>
+              <div>
+                <Label>Quantidade {orderType !== 'orcamento' ? '*' : ''}</Label>
+                <Input
+                  type="number"
+                  min="1"
+                  value={artigo.quantidade}
+                  onChange={(e) => handleArtigoChange(index, 'quantidade', e.target.value)}
+                  className="mt-1 border-gray-300"
+                />
+              </div>
+              <div>
+                <Label>Preço Unit. (€) {orderType !== 'orcamento' ? '*' : ''}</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min={orderType === 'orcamento' ? "0" : "0.01"}
+                  value={artigo.preco_unitario}
+                  onChange={(e) => handleArtigoChange(index, 'preco_unitario', e.target.value)}
+                  className="mt-1 border-gray-300"
+                />
+              </div>
+            </div>
+            <div className="pt-2 border-t border-gray-200 flex justify-between items-center">
+              <span className="text-sm text-gray-600">Subtotal:</span>
+              <span className="text-lg font-bold text-orange-600">€{artigo.preco_total.toFixed(2)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Resumo parcial */}
+      <div className="p-3 bg-orange-50 rounded-lg border border-orange-200">
+        <div className="flex justify-between items-center">
+          <span className="font-medium text-gray-700">Subtotal Artigos:</span>
+          <span className="text-xl font-bold text-orange-600">€{subtotal_artigos.toFixed(2)}</span>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Fase 3: Observações e Finalização
+  const renderStep3 = () => (
+    <div className="space-y-5">
+      {/* Adiantamento */}
+      <div className={`p-4 rounded-lg border ${adiantamento > total_final ? 'bg-red-50 border-red-300' : 'bg-green-50 border-green-200'}`}>
+        <Label htmlFor="adiantamento" className={`text-base font-semibold ${adiantamento > total_final ? 'text-red-800' : 'text-green-800'}`}>
+          Adiantamento (€) {orderType !== 'orcamento' ? '*' : ''}
+        </Label>
+        <p className="text-sm text-green-700 mb-2">Valor pago pelo cliente (0€ se nenhum)</p>
+        <Input
+          id="adiantamento"
+          name="adiantamento"
+          type="number"
+          step="0.01"
+          min="0"
+          max={total_final}
+          value={formData.adiantamento}
+          onChange={handleInputChange}
+          placeholder="0.00"
+          className={`mt-1 ${adiantamento > total_final ? 'border-red-500' : 'border-green-300'}`}
+        />
+        {adiantamento > total_final && (
+          <p className="text-sm text-red-600 font-semibold mt-2">
+            ⚠️ O adiantamento não pode ser superior ao total (€{total_final.toFixed(2)})
+          </p>
+        )}
+      </div>
+
+      {/* Observações */}
+      <div>
+        <Label htmlFor="observacoes">Observações</Label>
+        <Textarea
+          id="observacoes"
+          name="observacoes"
+          value={formData.observacoes}
+          onChange={handleInputChange}
+          placeholder="Adicione notas ou observações..."
+          className="mt-1 border-gray-300 focus:border-orange-500"
+          rows={3}
+        />
+      </div>
+
+      {/* Resumo Final */}
+      <div className="p-4 bg-orange-50 rounded-lg border border-orange-200 space-y-2">
+        <h3 className="font-semibold text-lg mb-3 text-gray-800">Resumo Final</h3>
+        <div className="flex justify-between items-center">
+          <span className="text-gray-700">Subtotal Artigos:</span>
+          <span className="font-semibold">€{subtotal_artigos.toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-gray-700">Custo de Entrega:</span>
+          <span className="font-semibold">€{custo_entrega.toFixed(2)}</span>
+        </div>
+        <div className="border-t-2 border-orange-300 pt-2 mt-2">
+          <div className="flex justify-between items-center text-xl">
+            <span className="font-bold text-gray-900">Total Final:</span>
+            <span className="font-bold text-orange-600">€{total_final.toFixed(2)}</span>
+          </div>
+        </div>
+        
+        <div className="border-t border-green-300 pt-2 mt-2">
+          <div className="flex justify-between items-center">
+            <span className="text-green-800">Adiantamento:</span>
+            <span className="font-semibold text-green-700">€{adiantamento.toFixed(2)}</span>
+          </div>
+          {pago_total ? (
+            <div className="flex justify-between items-center text-lg mt-2 p-2 bg-green-200 rounded">
+              <span className="font-bold text-green-800 flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                Pago na Totalidade
+              </span>
+              <span className="font-bold text-green-700">✓</span>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center text-lg mt-2 p-2 bg-red-100 rounded">
+              <span className="font-bold text-red-700">Falta Pagar:</span>
+              <span className="font-bold text-red-600">€{falta_pagar.toFixed(2)}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  // Render do modo edição (sem fases)
+  const renderEditMode = () => (
+    <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+        <p className="text-sm text-orange-800">
+          <strong>Nota:</strong> Pode alterar o <strong>estado</strong>, <strong>observações</strong>, <strong>data de entrega prevista</strong>, <strong>pago na totalidade</strong> e marcar artigos como <strong>separados</strong>, <strong>entregues</strong> ou <strong>cancelados</strong>.
+        </p>
+      </div>
+
+      {/* Estado */}
+      <div>
+        <Label htmlFor="status">Estado *</Label>
+        <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({...prev, status: value}))}>
+          <SelectTrigger className="mt-1 border-gray-300" data-testid="select-status">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Pendente">Pendente</SelectItem>
+            <SelectItem value="Em Preparação">Em Preparação</SelectItem>
+            <SelectItem value="Pronta para Levantamento">Pronto para Levantamento</SelectItem>
+            <SelectItem value="Entregue">Entregue</SelectItem>
+            <SelectItem value="Levantada">Levantada</SelectItem>
+            <SelectItem value="Cancelada">Cancelado</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Pago na Totalidade */}
+      {calculateTotals().total_final > 0 && (
+        <div className={`p-4 rounded-lg border ${formData.pago_totalidade ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200'}`}>
+          <div className="flex items-center justify-between">
+            <div>
+              <Label htmlFor="pago_totalidade" className={`text-base font-semibold cursor-pointer ${formData.pago_totalidade ? 'text-green-800' : 'text-gray-700'}`}>
+                Pago na Totalidade
+              </Label>
+              <p className="text-sm text-gray-600 mt-1">Marcar se o cliente já pagou o valor total</p>
+            </div>
+            <Switch
+              id="pago_totalidade"
+              checked={formData.pago_totalidade}
+              onCheckedChange={handlePagoTotalidadeChange}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Data de entrega prevista */}
+      {order.tem_entrega && (
+        <div>
+          <Label htmlFor="data_entrega_prevista">Data de Entrega Prevista</Label>
+          <Input
+            type="date"
+            id="data_entrega_prevista"
+            name="data_entrega_prevista"
+            value={formData.data_entrega_prevista}
+            onChange={handleInputChange}
+            className="mt-1 border-gray-300 focus:border-orange-500"
+          />
+        </div>
+      )}
+
+      {/* Artigos em edição */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-lg">Artigos</h3>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              onClick={handleTudoEntregue}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 border-blue-500 text-blue-600 hover:bg-blue-50"
+            >
+              <CheckCircle className="w-4 h-4" />
+              Tudo Entregue
+            </Button>
+            <Button
+              type="button"
+              onClick={handleTudoSeparado}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 border-green-500 text-green-600 hover:bg-green-50"
+            >
+              <CheckSquare className="w-4 h-4" />
+              Tudo Separado
+            </Button>
+          </div>
+        </div>
+        {artigos.map((artigo, index) => (
+          <div key={index} className={`p-3 rounded-lg border ${
+            artigo.status === 'Entregue' ? 'bg-green-50 border-green-300' :
+            artigo.status === 'Cancelado' ? 'bg-red-50 border-red-300' :
+            'bg-yellow-50 border-yellow-300'
+          }`}>
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <p className="font-medium">{artigo.codigo} - {artigo.designacao}</p>
+                <p className="text-sm text-gray-600">Qtd: {artigo.quantidade} × €{artigo.preco_unitario.toFixed(2)} = €{artigo.preco_total.toFixed(2)}</p>
+              </div>
+              <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
+                <div className="flex flex-col">
+                  <Label className="text-xs text-gray-500 mb-1">Estado</Label>
+                  <Select 
+                    value={artigo.status || 'Pendente'} 
+                    onValueChange={(value) => handleArtigoChange(index, 'status', value)}
+                  >
+                    <SelectTrigger className={`w-[130px] h-8 text-sm ${
+                      artigo.status === 'Entregue' ? 'border-green-500 bg-green-100' :
+                      artigo.status === 'Cancelado' ? 'border-red-500 bg-red-100' :
+                      'border-yellow-500 bg-yellow-100'
+                    }`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Pendente">Pendente</SelectItem>
+                      <SelectItem value="Entregue">Entregue</SelectItem>
+                      <SelectItem value="Cancelado">Cancelado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id={`separado-${index}`}
+                    checked={artigo.separado || false}
+                    onChange={(e) => handleArtigoChange(index, 'separado', e.target.checked)}
+                    className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                  />
+                  <Label htmlFor={`separado-${index}`} className="text-sm cursor-pointer font-medium">
+                    Separado
+                  </Label>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Observações */}
+      <div>
+        <Label htmlFor="observacoes">Observações</Label>
+        <Textarea
+          id="observacoes"
+          name="observacoes"
+          value={formData.observacoes}
+          onChange={handleInputChange}
+          placeholder="Adicione notas ou observações..."
+          className="mt-1 border-gray-300 focus:border-orange-500"
+          rows={3}
+        />
+      </div>
+
+      {/* Buttons */}
+      <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+        <Button type="button" onClick={onClose} variant="outline" className="border-gray-300">
+          Cancelar
+        </Button>
+        <Button
+          type="submit"
+          disabled={submitting}
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
+        >
+          {submitting ? 'A guardar...' : `Atualizar ${tipoLabel}`}
+        </Button>
+      </div>
+    </form>
+  );
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">
             {isEditing ? `Editar ${tipoLabel}` : (orderType === 'orcamento' ? 'Novo Orçamento' : 'Nova Encomenda')}
@@ -321,501 +879,55 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
             </div>
           )}
           <DialogDescription>
-            {isEditing ? `Atualize os dados d${tipoLabelFeminino}` : `Preencha os dados da nova ${orderType === 'orcamento' ? 'orçamento' : 'encomenda'}`}
+            {isEditing ? `Atualize os dados d${tipoLabelFeminino}` : `Preencha os dados em ${totalSteps} fases`}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-          {isEditing && (
-            <>
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                <p className="text-sm text-orange-800">
-                  <strong>Nota:</strong> Pode alterar o <strong>estado</strong>, <strong>observações</strong>, <strong>data de entrega prevista</strong>, <strong>pago na totalidade</strong> e marcar artigos como <strong>separados</strong>, <strong>entregues</strong> ou <strong>cancelados</strong>.
-                </p>
-                {order.data_atualizacao && (
-                  <p className="text-xs text-orange-600 mt-2">
-                    Última alteração: {new Date(order.data_atualizacao).toLocaleString('pt-PT')}
-                  </p>
-                )}
-              </div>
-            </>
-          )}
+        {isEditing ? (
+          renderEditMode()
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            {renderStepIndicator()}
+            {renderStepTitle()}
+            
+            {currentStep === 1 && renderStep1()}
+            {currentStep === 2 && renderStep2()}
+            {currentStep === 3 && renderStep3()}
 
-          {/* Dados do Cliente */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Dados do Cliente</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="nome_cliente">Nome Completo {orderType !== 'orcamento' || isEditing ? '*' : ''}</Label>
-                <Input
-                  id="nome_cliente"
-                  name="nome_cliente"
-                  data-testid="input-nome-cliente"
-                  value={formData.nome_cliente}
-                  onChange={handleInputChange}
-                  className="mt-1 border-gray-300 focus:border-orange-500"
-                  disabled={isEditing && !fullEditMode}
-                  required={!isEditing && orderType !== 'orcamento'}
-                />
-              </div>
-              <div>
-                <Label htmlFor="contacto">Contacto {orderType !== 'orcamento' ? '*' : ''}</Label>
-                <Input
-                  id="contacto"
-                  name="contacto"
-                  data-testid="input-contacto"
-                  value={formData.contacto}
-                  onChange={handleInputChange}
-                  className="mt-1 border-gray-300 focus:border-orange-500"
-                  disabled={isEditing && !fullEditMode}
-                  required={!isEditing && orderType !== 'orcamento'}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Colaborador - Dropdown */}
-          {!isEditing && (
-            <div>
-              <Label htmlFor="colaborador_id">Colaborador *</Label>
-              {colaboradores.length === 0 ? (
-                <div className="mt-1 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <p className="text-sm text-yellow-800">
-                    Nenhum colaborador cadastrado. Por favor, adicione colaboradores primeiro em &quot;Gerir Colaboradores&quot;.
-                  </p>
-                </div>
-              ) : (
-                <Select 
-                  value={formData.colaborador_id} 
-                  onValueChange={(value) => setFormData(prev => ({...prev, colaborador_id: value}))}
-                >
-                  <SelectTrigger className="mt-1 border-gray-300" data-testid="select-colaborador">
-                    <SelectValue placeholder="Selecione um colaborador" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {colaboradores.map((colab) => (
-                      <SelectItem key={colab.id} value={colab.id}>{colab.nome}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
-          )}
-
-          {/* Colaborador em modo edição */}
-          {isEditing && order.nome_colaborador && (
-            <div>
-              <Label>Colaborador</Label>
-              <Input value={order.nome_colaborador} className="mt-1 border-gray-300 bg-gray-50" disabled />
-            </div>
-          )}
-
-          {/* Estado - apenas em edição */}
-          {isEditing && (
-            <div>
-              <Label htmlFor="status">Estado *</Label>
-              <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({...prev, status: value}))}>
-                <SelectTrigger className="mt-1 border-gray-300" data-testid="select-status">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Pendente">Pendente</SelectItem>
-                  <SelectItem value="Em Preparação">Em Preparação</SelectItem>
-                  <SelectItem value="Pronta para Levantamento">Pronto para Levantamento</SelectItem>
-                  <SelectItem value="Entregue">Entregue</SelectItem>
-                  <SelectItem value="Levantada">Levantada</SelectItem>
-                  <SelectItem value="Cancelada">Cancelado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {/* Pago na Totalidade - apenas em edição e se total > 0 */}
-          {isEditing && calculateTotals().total_final > 0 && (
-            <div className={`p-4 rounded-lg border ${formData.pago_totalidade ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200'}`}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="pago_totalidade" className={`text-base font-semibold cursor-pointer ${formData.pago_totalidade ? 'text-green-800' : 'text-gray-700'}`}>
-                    Pago na Totalidade
-                  </Label>
-                  <p className="text-sm text-gray-600 mt-1">Marcar se o cliente já pagou o valor total</p>
-                </div>
-                <Switch
-                  id="pago_totalidade"
-                  checked={formData.pago_totalidade}
-                  onCheckedChange={handlePagoTotalidadeChange}
-                />
-              </div>
-              {formData.pago_totalidade && (
-                <div className="mt-2 flex items-center gap-2 text-green-700">
-                  <CheckCircle className="w-5 h-5" />
-                  <span className="font-semibold">Valor total pago pelo cliente</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Data de entrega prevista - apenas em edição se tem entrega */}
-          {isEditing && order.tem_entrega && (
-            <div>
-              <Label htmlFor="data_entrega_prevista">Data de Entrega Prevista</Label>
-              <Input
-                type="date"
-                id="data_entrega_prevista"
-                name="data_entrega_prevista"
-                value={formData.data_entrega_prevista}
-                onChange={handleInputChange}
-                className="mt-1 border-gray-300 focus:border-orange-500"
-              />
-            </div>
-          )}
-
-          {/* Opção de Entrega */}
-          {!isEditing && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div>
-                  <Label htmlFor="tem_entrega" className="text-base font-semibold cursor-pointer">
-                    Necessita de Entrega?
-                  </Label>
-                  <p className="text-sm text-gray-600 mt-1">10€ até 10km, depois +2€/km adicional</p>
-                </div>
-                <Switch
-                  id="tem_entrega"
-                  data-testid="switch-tem-entrega"
-                  checked={formData.tem_entrega}
-                  onCheckedChange={handleSwitchChange}
-                />
-              </div>
-
-              {formData.tem_entrega && (
-                <div className="space-y-4 pl-4 border-l-2 border-orange-500">
-                  <div>
-                    <Label htmlFor="morada_entrega">Morada de Entrega *</Label>
-                    <Input
-                      id="morada_entrega"
-                      name="morada_entrega"
-                      value={formData.morada_entrega}
-                      onChange={handleInputChange}
-                      className="mt-1 border-gray-300 focus:border-orange-500"
-                      required
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="distancia_kms">Distância (KMs) *</Label>
-                      <Input
-                        id="distancia_kms"
-                        name="distancia_kms"
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        value={formData.distancia_kms}
-                        onChange={handleInputChange}
-                        className="mt-1 border-gray-300 focus:border-orange-500"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="num_colaboradores">Nº Colaboradores Entrega *</Label>
-                      <Input
-                        id="num_colaboradores"
-                        name="num_colaboradores"
-                        type="number"
-                        min="1"
-                        value={formData.num_colaboradores}
-                        onChange={handleInputChange}
-                        className="mt-1 border-gray-300 focus:border-orange-500"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="data_entrega_prevista">Data de Entrega Prevista</Label>
-                    <Input
-                      type="date"
-                      id="data_entrega_prevista"
-                      name="data_entrega_prevista"
-                      value={formData.data_entrega_prevista}
-                      onChange={handleInputChange}
-                      className="mt-1 border-gray-300 focus:border-orange-500"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Artigos - criação */}
-          {!isEditing && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-lg">Artigos</h3>
+            {/* Navigation Buttons */}
+            <div className="flex justify-between pt-4 border-t border-gray-200">
+              <Button
+                type="button"
+                onClick={prevStep}
+                variant="outline"
+                className={`flex items-center gap-2 ${currentStep === 1 ? 'invisible' : ''}`}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Anterior
+              </Button>
+              
+              {currentStep < totalSteps ? (
                 <Button
                   type="button"
-                  onClick={addArtigo}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2 border-orange-500 text-orange-600 hover:bg-orange-50"
+                  onClick={nextStep}
+                  disabled={colaboradores.length === 0 && currentStep === 1}
+                  className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white"
                 >
-                  <Plus className="w-4 h-4" />
-                  Adicionar
+                  Seguinte
+                  <ChevronRight className="w-4 h-4" />
                 </Button>
-              </div>
-              {artigos.map((artigo, index) => (
-                <div key={index} className="p-4 bg-gray-50 rounded-lg space-y-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold text-gray-700">Artigo #{index + 1}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label>Código {orderType !== 'orcamento' ? '*' : ''}</Label>
-                      <Input
-                        value={artigo.codigo}
-                        onChange={(e) => handleArtigoChange(index, 'codigo', e.target.value)}
-                        className="mt-1 border-gray-300"
-                        required={orderType !== 'orcamento'}
-                      />
-                    </div>
-                    <div>
-                      <Label>Designação {orderType !== 'orcamento' ? '*' : ''}</Label>
-                      <Input
-                        value={artigo.designacao}
-                        onChange={(e) => handleArtigoChange(index, 'designacao', e.target.value)}
-                        className="mt-1 border-gray-300"
-                        required={orderType !== 'orcamento'}
-                      />
-                    </div>
-                    <div>
-                      <Label>Quantidade {orderType !== 'orcamento' ? '*' : ''}</Label>
-                      <Input
-                        type="number"
-                        min="1"
-                        value={artigo.quantidade}
-                        onChange={(e) => handleArtigoChange(index, 'quantidade', e.target.value)}
-                        className="mt-1 border-gray-300"
-                        required={orderType !== 'orcamento'}
-                      />
-                    </div>
-                    <div>
-                      <Label>Preço Unitário (€) {orderType !== 'orcamento' ? '*' : ''}</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min={orderType === 'orcamento' ? "0" : "0.01"}
-                        value={artigo.preco_unitario}
-                        onChange={(e) => handleArtigoChange(index, 'preco_unitario', e.target.value)}
-                        className="mt-1 border-gray-300"
-                        required={orderType !== 'orcamento'}
-                      />
-                    </div>
-                  </div>
-                  <div className="pt-2 border-t border-gray-300">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-600">Preço Total:</span>
-                      <span className="text-lg font-bold text-orange-600">€{artigo.preco_total.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Artigos em edição */}
-          {isEditing && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-lg">Artigos</h3>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    onClick={handleTudoEntregue}
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2 border-blue-500 text-blue-600 hover:bg-blue-50"
-                  >
-                    <CheckCircle className="w-4 h-4" />
-                    Tudo Entregue
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={handleTudoSeparado}
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2 border-green-500 text-green-600 hover:bg-green-50"
-                  >
-                    <CheckSquare className="w-4 h-4" />
-                    Tudo Separado
-                  </Button>
-                </div>
-              </div>
-              {artigos.map((artigo, index) => (
-                <div key={index} className={`p-3 rounded-lg border ${
-                  artigo.status === 'Entregue' ? 'bg-green-50 border-green-300' :
-                  artigo.status === 'Cancelado' ? 'bg-red-50 border-red-300' :
-                  'bg-yellow-50 border-yellow-300'
-                }`}>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <p className="font-medium">{artigo.codigo} - {artigo.designacao}</p>
-                      <p className="text-sm text-gray-600">Qtd: {artigo.quantidade} × €{artigo.preco_unitario.toFixed(2)} = €{artigo.preco_total.toFixed(2)}</p>
-                    </div>
-                    <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
-                      {/* Status dropdown */}
-                      <div className="flex flex-col">
-                        <Label className="text-xs text-gray-500 mb-1">Estado</Label>
-                        <Select 
-                          value={artigo.status || 'Pendente'} 
-                          onValueChange={(value) => handleArtigoChange(index, 'status', value)}
-                        >
-                          <SelectTrigger className={`w-[130px] h-8 text-sm ${
-                            artigo.status === 'Entregue' ? 'border-green-500 bg-green-100' :
-                            artigo.status === 'Cancelado' ? 'border-red-500 bg-red-100' :
-                            'border-yellow-500 bg-yellow-100'
-                          }`}>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Pendente">
-                              <span className="flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
-                                Pendente
-                              </span>
-                            </SelectItem>
-                            <SelectItem value="Entregue">
-                              <span className="flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                                Entregue
-                              </span>
-                            </SelectItem>
-                            <SelectItem value="Cancelado">
-                              <span className="flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-red-500"></span>
-                                Cancelado
-                              </span>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      {/* Separado checkbox */}
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          id={`separado-${index}`}
-                          checked={artigo.separado || false}
-                          onChange={(e) => handleArtigoChange(index, 'separado', e.target.checked)}
-                          className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                        />
-                        <Label htmlFor={`separado-${index}`} className="text-sm cursor-pointer font-medium">
-                          Separado
-                        </Label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Adiantamento - em criação */}
-          {!isEditing && (
-            <div className={`p-4 rounded-lg border ${adiantamento > total_final ? 'bg-red-50 border-red-300' : 'bg-green-50 border-green-200'}`}>
-              <Label htmlFor="adiantamento" className={`text-base font-semibold ${adiantamento > total_final ? 'text-red-800' : 'text-green-800'}`}>
-                Adiantamento (€) {orderType !== 'orcamento' ? '*' : ''}
-              </Label>
-              <p className="text-sm text-green-700 mb-2">Valor pago pelo cliente (0€ se nenhum adiantamento)</p>
-              <Input
-                id="adiantamento"
-                name="adiantamento"
-                type="number"
-                step="0.01"
-                min="0"
-                max={total_final}
-                value={formData.adiantamento}
-                onChange={handleInputChange}
-                placeholder="0.00"
-                required={orderType !== 'orcamento'}
-                className={`mt-1 ${adiantamento > total_final ? 'border-red-500 focus:border-red-500' : 'border-green-300 focus:border-green-500'}`}
-              />
-              {adiantamento > total_final && (
-                <p className="text-sm text-red-600 font-semibold mt-2">
-                  ⚠️ O adiantamento não pode ser superior ao total (€{total_final.toFixed(2)})
-                </p>
+              ) : (
+                <Button
+                  type="submit"
+                  disabled={submitting || adiantamento > total_final}
+                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+                >
+                  {submitting ? 'A criar...' : `Criar ${tipoLabel}`}
+                </Button>
               )}
             </div>
-          )}
-
-          {/* Observações */}
-          <div>
-            <Label htmlFor="observacoes">Observações</Label>
-            <Textarea
-              id="observacoes"
-              name="observacoes"
-              value={formData.observacoes}
-              onChange={handleInputChange}
-              placeholder={`Adicione notas ou observações...`}
-              className="mt-1 border-gray-300 focus:border-orange-500"
-              rows={3}
-            />
-          </div>
-
-          {/* Resumo de Custos */}
-          {!isEditing && (
-            <div className="p-4 bg-orange-50 rounded-lg space-y-2">
-              <h3 className="font-semibold text-lg mb-2">Resumo de Custos</h3>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-700">Subtotal Artigos:</span>
-                <span className="font-semibold">€{subtotal_artigos.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-700">Custo de Entrega:</span>
-                <span className="font-semibold">€{custo_entrega.toFixed(2)}</span>
-              </div>
-              <div className="border-t-2 border-orange-300 pt-2 mt-2">
-                <div className="flex justify-between items-center text-xl">
-                  <span className="font-bold text-gray-900">Total Final:</span>
-                  <span className="font-bold text-orange-600">€{total_final.toFixed(2)}</span>
-                </div>
-              </div>
-              
-              {/* Adiantamento e estado de pagamento */}
-              <div className="border-t border-green-300 pt-2 mt-2 bg-green-100 -mx-4 px-4 py-2 rounded-b-lg">
-                <div className="flex justify-between items-center">
-                  <span className="text-green-800">Adiantamento:</span>
-                  <span className="font-semibold text-green-700">€{adiantamento.toFixed(2)}</span>
-                </div>
-                {pago_total ? (
-                  <div className="flex justify-between items-center text-lg mt-1 bg-green-200 -mx-4 px-4 py-2 rounded-b-lg">
-                    <span className="font-bold text-green-800 flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5" />
-                      Pago na Totalidade
-                    </span>
-                    <span className="font-bold text-green-700">✓</span>
-                  </div>
-                ) : (
-                  <div className="flex justify-between items-center text-lg mt-1 bg-red-100 -mx-4 px-4 py-2 rounded-b-lg">
-                    <span className="font-bold text-red-700">Falta Pagar:</span>
-                    <span className="font-bold text-red-600">€{falta_pagar.toFixed(2)}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Buttons */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-            <Button type="button" onClick={onClose} variant="outline" className="border-gray-300">
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              disabled={submitting || (!isEditing && colaboradores.length === 0)}
-              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
-            >
-              {submitting ? 'A guardar...' : isEditing ? `Atualizar ${tipoLabel}` : `Criar ${tipoLabel}`}
-            </Button>
-          </div>
-        </form>
+          </form>
+        )}
       </DialogContent>
     </Dialog>
   );
