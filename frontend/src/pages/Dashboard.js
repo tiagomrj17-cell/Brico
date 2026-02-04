@@ -414,7 +414,7 @@ const Dashboard = () => {
                       {/* Número + Badge em mobile ficam lado a lado */}
                       <div className="flex items-center justify-between sm:justify-start gap-2 mb-2">
                         {order.numero_encomenda && (
-                          <p className={`text-xl sm:text-2xl font-bold ${order.tipo === 'orcamento' ? 'text-blue-600' : 'text-orange-600'}`}>
+                          <p className={`text-xl sm:text-2xl font-bold ${order.tipo === 'orcamento' ? 'text-blue-600' : 'text-green-600'}`}>
                             #{order.numero_encomenda}
                           </p>
                         )}
