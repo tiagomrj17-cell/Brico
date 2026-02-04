@@ -172,11 +172,8 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     }
 
     const total_final = subtotal_artigos + custo_entrega;
-    const adiantamento = parseFloat(formData.adiantamento) || 0;
-    const falta_pagar = total_final - adiantamento;
-    const pago_total = adiantamento >= total_final && total_final > 0;
 
-    return { subtotal_artigos, custo_entrega, total_final, adiantamento, falta_pagar, pago_total };
+    return { subtotal_artigos, custo_entrega, total_final };
   };
 
   // Validação por fase
