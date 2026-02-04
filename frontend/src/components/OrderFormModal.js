@@ -911,7 +911,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
               ) : (
                 <Button
                   type="submit"
-                  disabled={submitting || adiantamento > total_final}
+                  disabled={submitting}
                   className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
                 >
                   {submitting ? 'A criar...' : `Criar ${tipoLabel}`}
