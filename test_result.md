@@ -6,6 +6,13 @@
 
 ## Latest Changes (Current Fork Session)
 
+### Bug Fix: Phase 3 Skipping Issue (2026-02-04)
+- [x] **FIXED**: Form was skipping Phase 3 and creating order immediately when clicking "Seguinte" on Phase 2
+- **Root Cause**: Form submit was being triggered when pressing Enter in Phase 2 fields, bypassing Phase 3
+- **Solution**: Modified `nextStep()` function to prevent event propagation and added check in `handleSubmit()` to only allow submission on Phase 3
+- **Files Modified**: `/app/frontend/src/components/OrderFormModal.js`
+- **Verified**: Users can now properly fill Phase 3 (Adiantamento + Observações) before creating orders
+
 ### Per-Item Status Feature Implementation
 - [x] Backend: Added `status` field to ArticleItem model (Pendente/Entregue/Cancelado) - WORKING
 - [ ] OrderFormModal: Status dropdown for each article in edit mode - NOT TESTED (Frontend)
