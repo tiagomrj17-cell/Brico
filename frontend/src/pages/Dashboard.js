@@ -467,8 +467,8 @@ const Dashboard = () => {
                       {order.total_final > 0 && (
                         <>
                           {order.pago_totalidade ? (
-                            <p className="text-xs text-green-600 font-semibold mt-1">
-                              ✓ Pago
+                            <p className="text-xs text-green-600 font-semibold mt-1 flex items-center gap-1">
+                              <Check className="w-3 h-3" /> Pago
                             </p>
                           ) : (
                             <p className="text-xs text-red-600 font-semibold mt-1">
