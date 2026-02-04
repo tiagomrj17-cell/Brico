@@ -270,14 +270,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
         toast.success(`${tipoLabel} atualizado com sucesso!`);
         onSave(response.data, true);
       } else {
-        const { subtotal_artigos, custo_entrega, total_final, pago_total } = calculateTotals();
-        const adiantamentoValue = parseFloat(formData.adiantamento) || 0;
-
-        if (adiantamentoValue < 0) {
-          toast.error('O adiantamento não pode ser negativo.');
-          setSubmitting(false);
-          return;
-        }
+        const { subtotal_artigos, custo_entrega, total_final } = calculateTotals();
 
         if (adiantamentoValue > total_final) {
           toast.error(`O adiantamento (€${adiantamentoValue.toFixed(2)}) não pode ser superior ao total (€${total_final.toFixed(2)})`);
