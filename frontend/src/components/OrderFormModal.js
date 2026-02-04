@@ -692,7 +692,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
                 <CheckCircle className="w-5 h-5" />
                 Pago na Totalidade
               </span>
-              <span className="font-bold text-green-700">✓</span>
+              <span className="font-bold text-green-700"><Check className="w-5 h-5" /></span>
             </div>
           ) : (
             <div className="flex justify-between items-center text-lg mt-2 p-2 bg-red-100 rounded">
