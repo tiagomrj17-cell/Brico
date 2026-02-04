@@ -404,31 +404,20 @@ const PrintPageInternal = () => {
           
           {order.total_final > 0 && (
             <div style={{ marginTop: '4mm', paddingTop: '4mm', borderTop: '2px dashed #22c55e' }}>
-              <table style={{ width: '100%', fontSize: '11pt' }}>
-                <tbody>
-                  <tr>
-                    <td style={{ padding: '1mm 0', color: '#166534', fontWeight: 'bold' }}>Valor Pago:</td>
-                    <td style={{ padding: '1mm 0', textAlign: 'right', fontWeight: 'bold', color: '#166534' }}>
-                      €{(order.adiantamento || 0).toFixed(2)}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              
               {order.pago_totalidade ? (
-                <div style={{ backgroundColor: '#dcfce7', padding: '3mm', borderRadius: '2mm', textAlign: 'center', marginTop: '2mm' }}>
+                <div style={{ backgroundColor: '#dcfce7', padding: '3mm', borderRadius: '2mm', textAlign: 'center' }}>
                   <p style={{ margin: '0', fontSize: '14pt', fontWeight: 'bold', color: '#166534' }}>
                     PAGO NA TOTALIDADE
                   </p>
                 </div>
               ) : (
-                <div style={{ backgroundColor: '#fef2f2', padding: '2mm', marginTop: '2mm' }}>
+                <div style={{ backgroundColor: '#fef2f2', padding: '2mm' }}>
                   <table style={{ width: '100%' }}>
                     <tbody>
                       <tr>
-                        <td style={{ fontSize: '14pt', fontWeight: 'bold', color: '#dc2626' }}>FALTA PAGAR:</td>
+                        <td style={{ fontSize: '14pt', fontWeight: 'bold', color: '#dc2626' }}>POR PAGAR:</td>
                         <td style={{ textAlign: 'right', fontSize: '16pt', fontWeight: 'bold', color: '#dc2626' }}>
-                          €{((order.total_final || 0) - (order.adiantamento || 0)).toFixed(2)}
+                          €{(order.total_final || 0).toFixed(2)}
                         </td>
                       </tr>
                     </tbody>
