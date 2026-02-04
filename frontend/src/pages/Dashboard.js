@@ -24,6 +24,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('Todos');
   const [colaboradorFilter, setColaboradorFilter] = useState('Todos');
+  const [tipoFilter, setTipoFilter] = useState('Todos'); // Novo filtro de tipo
   const [searchText, setSearchText] = useState('');
   
   const [orderFormOpen, setOrderFormOpen] = useState(false);
@@ -44,14 +45,26 @@ const Dashboard = () => {
   useEffect(() => {
     let filtered = orders;
     
+    // Filtro por status
     if (statusFilter !== 'Todos') {
       filtered = filtered.filter(order => order.status === statusFilter);
     }
     
+    // Filtro por colaborador
     if (colaboradorFilter !== 'Todos') {
       filtered = filtered.filter(order => order.colaborador_id === colaboradorFilter);
     }
     
+    // Filtro por tipo (encomenda/orçamento)
+    if (tipoFilter !== 'Todos') {
+      if (tipoFilter === 'Encomendas') {
+        filtered = filtered.filter(order => order.tipo !== 'orcamento');
+      } else if (tipoFilter === 'Orçamentos') {
+        filtered = filtered.filter(order => order.tipo === 'orcamento');
+      }
+    }
+    
+    // Filtro por texto
     if (searchText.trim()) {
       const search = searchText.toLowerCase();
       filtered = filtered.filter(order => 
@@ -66,7 +79,7 @@ const Dashboard = () => {
     }
     
     setFilteredOrders(filtered);
-  }, [statusFilter, colaboradorFilter, searchText, orders]);
+  }, [statusFilter, colaboradorFilter, tipoFilter, searchText, orders]);
 
   const fetchOrders = async () => {
     try {
