@@ -483,7 +483,7 @@ const Dashboard = () => {
                   {order.data_entrega_prevista && (
                     <div className="mb-4 p-3 bg-blue-50 rounded-lg text-sm border border-blue-100">
                       <p className="text-blue-800 flex items-center gap-2">
-                        <span>📅</span>
+                        <Calendar className="w-4 h-4" />
                         <span className="font-medium">Entrega Prevista:</span> {order.data_entrega_prevista}
                       </p>
                     </div>
