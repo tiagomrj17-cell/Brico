@@ -592,7 +592,7 @@ const EntregasPage = () => {
           {viewingOrder && (
             <div className="py-4 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold text-orange-600">
+                <span className="text-2xl font-bold text-green-600">
                   #{viewingOrder.numero_encomenda}
                 </span>
                 {getStatusBadge(getDeliveryStatus(viewingOrder))}
