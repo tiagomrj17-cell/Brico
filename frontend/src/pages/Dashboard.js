@@ -352,56 +352,71 @@ const Dashboard = () => {
           </Card>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {filteredOrders.map((order) => (
-              <Card key={order.id} className="bg-white border-gray-200 hover:shadow-md transition-shadow">
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      {/* Título Principal: Número Sequencial */}
-                      {order.numero_encomenda && (
-                        <p className={`text-xl font-bold mb-1 ${order.tipo === 'orcamento' ? 'text-blue-700' : 'text-green-700'}`}>
-                          #{order.numero_encomenda}
-                        </p>
-                      )}
+            {filteredOrders.map((order, index) => (
+              <Card 
+                key={order.id} 
+                className="bg-white border-gray-200 hover:shadow-lg transition-all duration-200 card-hover fade-in"
+                style={{animationDelay: `${index * 50}ms`}}
+              >
+                <CardContent className="p-4 sm:p-5">
+                  {/* Header do card */}
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
+                    <div className="flex-1 min-w-0">
+                      {/* Número + Badge em mobile ficam lado a lado */}
+                      <div className="flex items-center justify-between sm:justify-start gap-2 mb-2">
+                        {order.numero_encomenda && (
+                          <p className={`text-xl sm:text-2xl font-bold ${order.tipo === 'orcamento' ? 'text-blue-600' : 'text-orange-600'}`}>
+                            #{order.numero_encomenda}
+                          </p>
+                        )}
+                        <Badge className={`status-badge ${getStatusColor(order.status)} sm:hidden`}>
+                          {order.status}
+                        </Badge>
+                      </div>
                       
-                      {/* Nome do Cliente - negrito */}
-                      <p className="text-base font-bold text-gray-900 mb-0.5">{order.nome_cliente}</p>
+                      {/* Nome do Cliente */}
+                      <p className="text-lg font-bold text-gray-900 mb-1 truncate">{order.nome_cliente}</p>
                       
-                      {/* Contacto - negrito */}
-                      <p className="text-sm font-semibold text-gray-800">Contacto: {order.contacto}</p>
+                      {/* Contacto */}
+                      <p className="text-base font-semibold text-gray-700">
+                        <span className="text-gray-500 font-normal">Tel: </span>
+                        {order.contacto}
+                      </p>
                       
-                      {/* Colaborador - light */}
+                      {/* Colaborador */}
                       {order.nome_colaborador && (
-                        <p className="text-sm text-gray-500 font-normal">
+                        <p className="text-sm text-gray-500 mt-1">
                           Colaborador: {order.nome_colaborador}
                         </p>
                       )}
                       
-                      {/* Data/Hora - light */}
-                      <p className="text-xs text-gray-500 font-normal mt-0.5">{formatDate(order.data_criacao)}</p>
+                      {/* Data */}
+                      <p className="text-xs text-gray-400 mt-1">{formatDate(order.data_criacao)}</p>
                     </div>
-                    <Badge className={`status-badge ${getStatusColor(order.status)}`}>
+                    
+                    {/* Badge desktop */}
+                    <Badge className={`status-badge ${getStatusColor(order.status)} hidden sm:flex`}>
                       {order.status}
                     </Badge>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 mb-3 text-sm">
-                    <div>
-                      <p className="text-gray-600">Tipo</p>
-                      <p className="font-semibold">{order.tem_entrega ? 'Entrega' : 'Levantamento'}</p>
+                  {/* Info grid - responsivo */}
+                  <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-gray-500 text-xs mb-1">Tipo</p>
+                      <p className="font-semibold text-gray-900">{order.tem_entrega ? '🚚 Entrega' : '🏪 Levantamento'}</p>
                     </div>
-                    <div>
-                      <p className="text-gray-600">Total</p>
-                      <p className="font-semibold text-orange-600 text-base">€{order.total_final.toFixed(2)}</p>
+                    <div className="bg-orange-50 p-3 rounded-lg">
+                      <p className="text-gray-500 text-xs mb-1">Total</p>
+                      <p className="font-bold text-orange-600 text-lg">€{order.total_final.toFixed(2)}</p>
                       {order.total_final > 0 && (
                         <>
-                          <p className="text-xs text-green-600">Pago: €{(order.adiantamento || 0).toFixed(2)}</p>
                           {order.pago_totalidade ? (
-                            <p className="text-xs text-green-600 font-bold">
-                              ✓ Pago na totalidade
+                            <p className="text-xs text-green-600 font-semibold mt-1">
+                              ✓ Pago
                             </p>
                           ) : (
-                            <p className="text-xs text-red-600 font-bold">
+                            <p className="text-xs text-red-600 font-semibold mt-1">
                               Falta: €{(order.total_final - (order.adiantamento || 0)).toFixed(2)}
                             </p>
                           )}
@@ -411,23 +426,24 @@ const Dashboard = () => {
                   </div>
 
                   {order.data_entrega_prevista && (
-                    <div className="mb-3 p-2 bg-blue-50 rounded text-sm">
-                      <p className="text-blue-800">
+                    <div className="mb-4 p-3 bg-blue-50 rounded-lg text-sm border border-blue-100">
+                      <p className="text-blue-800 flex items-center gap-2">
+                        <span>📅</span>
                         <span className="font-medium">Entrega Prevista:</span> {order.data_entrega_prevista}
                       </p>
                     </div>
                   )}
 
                   {order.observacoes && (
-                    <div className="mb-3 p-2 bg-gray-50 rounded text-sm">
-                      <p className="text-gray-600 font-medium">Observações:</p>
-                      <p className="text-gray-700">{order.observacoes}</p>
+                    <div className="mb-4 p-3 bg-yellow-50 rounded-lg text-sm border border-yellow-100">
+                      <p className="text-gray-700 font-medium mb-1">📝 Observações:</p>
+                      <p className="text-gray-600">{order.observacoes}</p>
                     </div>
                   )}
 
                   {order.historico && order.historico.length > 0 && (
-                    <div className="mb-3 p-2 bg-blue-50 rounded text-sm border border-blue-200">
-                      <p className="text-blue-800 font-medium mb-1">Últimas Alterações:</p>
+                    <div className="mb-4 p-3 bg-blue-50 rounded-lg text-sm border border-blue-200">
+                      <p className="text-blue-800 font-medium mb-2">📋 Últimas Alterações:</p>
                       <div className="text-xs text-blue-700 space-y-1">
                         {order.historico
                           .filter(alt => alt.campo_alterado !== 'artigos_separados')
