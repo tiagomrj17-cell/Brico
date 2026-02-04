@@ -41,8 +41,6 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
   };
 
   const tipoDoc = order.tipo === 'orcamento' ? 'Orçamento' : 'Encomenda';
-  const adiantamento = order.adiantamento || 0;
-  const faltaPagar = order.total_final - adiantamento;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
