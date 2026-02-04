@@ -408,14 +408,11 @@ const Dashboard = () => {
                 style={{animationDelay: `${index * 30}ms`}}
               >
                 <CardContent className="p-0">
-                  {/* Header compacto com número, nome e badge */}
+                  {/* Header com número grande e badge */}
                   <div className={`px-3 py-2 flex items-center justify-between gap-2 ${order.tipo === 'orcamento' ? 'bg-blue-50 border-b border-blue-100' : 'bg-green-50 border-b border-green-100'}`}>
-                    <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <span className={`text-base font-bold ${order.tipo === 'orcamento' ? 'text-blue-600' : 'text-green-600'}`}>
-                        #{order.numero_encomenda}
-                      </span>
-                      <span className="text-sm font-semibold text-gray-800 truncate">{order.nome_cliente}</span>
-                    </div>
+                    <span className={`text-lg sm:text-xl font-bold ${order.tipo === 'orcamento' ? 'text-blue-600' : 'text-green-600'}`}>
+                      #{order.numero_encomenda}
+                    </span>
                     <Badge className={`status-badge ${getStatusColor(order.status)} text-xs py-0.5 px-2`}>
                       {order.status}
                     </Badge>
@@ -423,20 +420,26 @@ const Dashboard = () => {
                   
                   {/* Corpo do card */}
                   <div className="px-3 py-2">
-                    {/* Linha de info principal */}
+                    {/* Nome do cliente */}
+                    <p className="font-semibold text-gray-900 text-sm mb-1">{order.nome_cliente}</p>
+                    
+                    {/* Contacto e Colaborador */}
                     <div className="flex items-center justify-between text-xs text-gray-600 mb-2">
                       <div className="flex items-center gap-3">
                         <span className="flex items-center gap-1">
                           <Phone className="w-3 h-3" /> {order.contacto}
                         </span>
-                        {order.nome_colaborador && (
-                          <span className="hidden sm:flex items-center gap-1 text-gray-500">
-                            <Users className="w-3 h-3" /> {order.nome_colaborador}
-                          </span>
-                        )}
                       </div>
                       <span className="text-gray-400">{formatDate(order.data_criacao)}</span>
                     </div>
+                    
+                    {/* Criado por (Colaborador) */}
+                    {order.nome_colaborador && (
+                      <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
+                        <Users className="w-3 h-3" />
+                        <span>Criado por: <span className="font-medium text-gray-700">{order.nome_colaborador}</span></span>
+                      </div>
+                    )}
                     
                     {/* Linha de tipo, entrega e total */}
                     <div className="flex items-center justify-between gap-2 py-2 border-t border-gray-100">
@@ -454,16 +457,36 @@ const Dashboard = () => {
                           </span>
                         )}
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex items-center gap-2">
                         <span className="font-bold text-orange-600 text-sm">€{order.total_final.toFixed(2)}</span>
                         {order.total_final > 0 && (
-                          <span className={`ml-2 text-xs font-medium ${order.pago_totalidade ? 'text-green-600' : 'text-red-500'}`}>
+                          <button
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              try {
+                                await fetch(`${API_BASE_URL}/orders/${order.id}`, {
+                                  method: 'PUT',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ pago_totalidade: !order.pago_totalidade })
+                                });
+                                fetchOrders();
+                                toast.success(order.pago_totalidade ? 'Marcado como não pago' : 'Marcado como pago');
+                              } catch (error) {
+                                toast.error('Erro ao atualizar pagamento');
+                              }
+                            }}
+                            className={`text-xs font-medium px-2 py-0.5 rounded-full transition-all ${
+                              order.pago_totalidade 
+                                ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                                : 'bg-red-100 text-red-600 hover:bg-red-200'
+                            }`}
+                          >
                             {order.pago_totalidade ? (
-                              <span className="flex items-center gap-0.5 inline-flex"><Check className="w-3 h-3" />Pago</span>
+                              <span className="flex items-center gap-0.5"><Check className="w-3 h-3" />Pago</span>
                             ) : (
-                              `Falta €${(order.total_final - (order.adiantamento || 0)).toFixed(2)}`
+                              'Não Pago'
                             )}
-                          </span>
+                          </button>
                         )}
                       </div>
                     </div>
