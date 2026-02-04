@@ -278,7 +278,7 @@ const EntregasPage = () => {
           >
             <CardContent className="p-2 sm:p-3 text-center">
               <p className="text-2xl sm:text-3xl font-bold text-gray-900">{counts.total}</p>
-              <p className="text-sm text-gray-500 font-medium">Total</p>
+              <p className="text-xs text-gray-500 font-medium">Total</p>
             </CardContent>
           </Card>
           
@@ -287,9 +287,9 @@ const EntregasPage = () => {
             onClick={() => setStatusFilter('Por Agendar')}
             style={{animationDelay: '50ms'}}
           >
-            <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-3xl sm:text-4xl font-bold text-gray-700">{counts.porAgendar}</p>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1 font-medium">Por Agendar</p>
+            <CardContent className="p-2 sm:p-3 text-center">
+              <p className="text-2xl sm:text-3xl font-bold text-gray-700">{counts.porAgendar}</p>
+              <p className="text-xs text-gray-600 font-medium">Por Agendar</p>
             </CardContent>
           </Card>
           
@@ -298,9 +298,9 @@ const EntregasPage = () => {
             onClick={() => setStatusFilter('Agendada')}
             style={{animationDelay: '100ms'}}
           >
-            <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-3xl sm:text-4xl font-bold text-blue-700">{counts.agendada}</p>
-              <p className="text-xs sm:text-sm text-blue-600 mt-1 font-medium">Agendadas</p>
+            <CardContent className="p-2 sm:p-3 text-center">
+              <p className="text-2xl sm:text-3xl font-bold text-blue-700">{counts.agendada}</p>
+              <p className="text-xs text-blue-600 font-medium">Agendadas</p>
             </CardContent>
           </Card>
           
@@ -309,9 +309,9 @@ const EntregasPage = () => {
             onClick={() => setStatusFilter('Em Trânsito')}
             style={{animationDelay: '150ms'}}
           >
-            <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-3xl sm:text-4xl font-bold text-orange-700">{counts.emTransito}</p>
-              <p className="text-xs sm:text-sm text-orange-600 mt-1 font-medium">Em Trânsito</p>
+            <CardContent className="p-2 sm:p-3 text-center">
+              <p className="text-2xl sm:text-3xl font-bold text-orange-700">{counts.emTransito}</p>
+              <p className="text-xs text-orange-600 font-medium">Em Trânsito</p>
             </CardContent>
           </Card>
           
@@ -320,9 +320,9 @@ const EntregasPage = () => {
             onClick={() => setStatusFilter('Atrasada')}
             style={{animationDelay: '200ms'}}
           >
-            <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-3xl sm:text-4xl font-bold text-red-700">{counts.atrasada}</p>
-              <p className="text-xs sm:text-sm text-red-600 mt-1 font-medium">Atrasadas</p>
+            <CardContent className="p-2 sm:p-3 text-center">
+              <p className="text-2xl sm:text-3xl font-bold text-red-700">{counts.atrasada}</p>
+              <p className="text-xs text-red-600 font-medium">Atrasadas</p>
             </CardContent>
           </Card>
           
@@ -331,9 +331,9 @@ const EntregasPage = () => {
             onClick={() => setStatusFilter('Entregue')}
             style={{animationDelay: '250ms'}}
           >
-            <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-3xl sm:text-4xl font-bold text-green-700">{counts.entregue}</p>
-              <p className="text-xs sm:text-sm text-green-600 mt-1 font-medium">Entregues</p>
+            <CardContent className="p-2 sm:p-3 text-center">
+              <p className="text-2xl sm:text-3xl font-bold text-green-700">{counts.entregue}</p>
+              <p className="text-xs text-green-600 font-medium">Entregues</p>
             </CardContent>
           </Card>
         </div>
