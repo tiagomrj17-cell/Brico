@@ -272,11 +272,6 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
       } else {
         const { subtotal_artigos, custo_entrega, total_final } = calculateTotals();
 
-        if (adiantamentoValue > total_final) {
-          toast.error(`O adiantamento (€${adiantamentoValue.toFixed(2)}) não pode ser superior ao total (€${total_final.toFixed(2)})`);
-          setSubmitting(false);
-          return;
-        }
 
         const orderData = {
           nome_cliente: formData.nome_cliente,
@@ -301,8 +296,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
           data_entrega_prevista: formData.data_entrega_prevista || null,
           colaborador_id: formData.colaborador_id,
           tipo: orderType,
-          adiantamento: adiantamentoValue,
-          pago_totalidade: pago_total
+          pago_totalidade: formData.pago_totalidade
         };
 
         const response = await axios.post(`${API}/orders`, orderData);
@@ -316,7 +310,7 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     }
   };
 
-  const { subtotal_artigos, custo_entrega, total_final, adiantamento, falta_pagar, pago_total } = calculateTotals();
+  const { subtotal_artigos, custo_entrega, total_final } = calculateTotals();
 
   // Componentes de cada fase
   const renderStepIndicator = () => (
