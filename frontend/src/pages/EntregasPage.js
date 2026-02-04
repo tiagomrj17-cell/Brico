@@ -269,71 +269,71 @@ const EntregasPage = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-        {/* Stats Cards - responsivos */}
+        {/* Stats Cards - responsivos com cores de fundo */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Todos' ? 'ring-2 ring-orange-500 shadow-md' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up bg-white border-gray-200 ${statusFilter === 'Todos' ? 'ring-2 ring-gray-400 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Todos')}
             style={{animationDelay: '0ms'}}
           >
             <CardContent className="p-4 sm:p-5 text-center">
               <p className="text-3xl font-bold text-gray-900">{counts.total}</p>
-              <p className="text-sm text-gray-500">Total</p>
+              <p className="text-sm text-gray-500 font-medium">Total</p>
             </CardContent>
           </Card>
           
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Por Agendar' ? 'ring-2 ring-gray-500 shadow-md' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up bg-gray-50 border-gray-300 ${statusFilter === 'Por Agendar' ? 'ring-2 ring-gray-500 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Por Agendar')}
             style={{animationDelay: '50ms'}}
           >
             <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-3xl sm:text-4xl font-bold text-gray-600">{counts.porAgendar}</p>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">Por Agendar</p>
+              <p className="text-3xl sm:text-4xl font-bold text-gray-700">{counts.porAgendar}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1 font-medium">Por Agendar</p>
             </CardContent>
           </Card>
           
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Agendada' ? 'ring-2 ring-blue-500 shadow-md' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up bg-blue-50 border-blue-200 ${statusFilter === 'Agendada' ? 'ring-2 ring-blue-500 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Agendada')}
             style={{animationDelay: '100ms'}}
           >
             <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-3xl sm:text-4xl font-bold text-blue-600">{counts.agendada}</p>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">Agendadas</p>
+              <p className="text-3xl sm:text-4xl font-bold text-blue-700">{counts.agendada}</p>
+              <p className="text-xs sm:text-sm text-blue-600 mt-1 font-medium">Agendadas</p>
             </CardContent>
           </Card>
           
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Em Trânsito' ? 'ring-2 ring-orange-500 shadow-md' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up bg-orange-50 border-orange-200 ${statusFilter === 'Em Trânsito' ? 'ring-2 ring-orange-500 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Em Trânsito')}
             style={{animationDelay: '150ms'}}
           >
             <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-3xl sm:text-4xl font-bold text-orange-600">{counts.emTransito}</p>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">Em Trânsito</p>
+              <p className="text-3xl sm:text-4xl font-bold text-orange-700">{counts.emTransito}</p>
+              <p className="text-xs sm:text-sm text-orange-600 mt-1 font-medium">Em Trânsito</p>
             </CardContent>
           </Card>
           
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Atrasada' ? 'ring-2 ring-red-500 shadow-md' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up bg-red-50 border-red-200 ${statusFilter === 'Atrasada' ? 'ring-2 ring-red-500 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Atrasada')}
             style={{animationDelay: '200ms'}}
           >
             <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-3xl sm:text-4xl font-bold text-red-600">{counts.atrasada}</p>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">Atrasadas</p>
+              <p className="text-3xl sm:text-4xl font-bold text-red-700">{counts.atrasada}</p>
+              <p className="text-xs sm:text-sm text-red-600 mt-1 font-medium">Atrasadas</p>
             </CardContent>
           </Card>
           
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Entregue' ? 'ring-2 ring-green-500 shadow-md' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up bg-green-50 border-green-200 ${statusFilter === 'Entregue' ? 'ring-2 ring-green-500 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Entregue')}
             style={{animationDelay: '250ms'}}
           >
             <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-3xl sm:text-4xl font-bold text-green-600">{counts.entregue}</p>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">Entregues</p>
+              <p className="text-3xl sm:text-4xl font-bold text-green-700">{counts.entregue}</p>
+              <p className="text-xs sm:text-sm text-green-600 mt-1 font-medium">Entregues</p>
             </CardContent>
           </Card>
         </div>
