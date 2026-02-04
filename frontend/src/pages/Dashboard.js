@@ -428,7 +428,7 @@ const Dashboard = () => {
                       
                       {/* Contacto */}
                       <p className="text-base font-semibold text-gray-700">
-                        <span className="text-gray-500 font-normal">Tel: </span>
+                        <span className="text-gray-500 font-normal">Contacto: </span>
                         {order.contacto}
                       </p>
                       
