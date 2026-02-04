@@ -407,44 +407,41 @@ const Dashboard = () => {
                 className="bg-white border-gray-200 hover:shadow-lg transition-all duration-200 card-hover fade-in"
                 style={{animationDelay: `${index * 50}ms`}}
               >
-                <CardContent className="p-4 sm:p-5">
+                <CardContent className="p-3 sm:p-4">
                   {/* Header do card */}
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
+                  <div className="flex items-start justify-between gap-2 mb-3">
                     <div className="flex-1 min-w-0">
-                      {/* Número + Badge em mobile ficam lado a lado */}
-                      <div className="flex items-center justify-between sm:justify-start gap-2 mb-2">
+                      {/* Número + Nome */}
+                      <div className="flex items-center gap-2 mb-1">
                         {order.numero_encomenda && (
-                          <p className={`text-xl sm:text-2xl font-bold ${order.tipo === 'orcamento' ? 'text-blue-600' : 'text-green-600'}`}>
+                          <p className={`text-lg sm:text-xl font-bold ${order.tipo === 'orcamento' ? 'text-blue-600' : 'text-green-600'}`}>
                             #{order.numero_encomenda}
                           </p>
                         )}
-                        <Badge className={`status-badge ${getStatusColor(order.status)} sm:hidden`}>
-                          {order.status}
-                        </Badge>
                       </div>
                       
                       {/* Nome do Cliente */}
-                      <p className="text-lg font-bold text-gray-900 mb-1 truncate">{order.nome_cliente}</p>
+                      <p className="text-base font-bold text-gray-900 mb-0.5 truncate">{order.nome_cliente}</p>
                       
                       {/* Contacto */}
-                      <p className="text-base font-semibold text-gray-700">
-                        <span className="text-gray-500 font-normal">Contacto: </span>
+                      <p className="text-sm text-gray-700">
+                        <span className="text-gray-500">Contacto: </span>
                         {order.contacto}
                       </p>
                       
                       {/* Colaborador */}
                       {order.nome_colaborador && (
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-xs text-gray-500 mt-0.5">
                           Colaborador: {order.nome_colaborador}
                         </p>
                       )}
                       
                       {/* Data */}
-                      <p className="text-xs text-gray-400 mt-1">{formatDate(order.data_criacao)}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{formatDate(order.data_criacao)}</p>
                     </div>
                     
-                    {/* Badge desktop */}
-                    <Badge className={`status-badge ${getStatusColor(order.status)} hidden sm:flex`}>
+                    {/* Badge único */}
+                    <Badge className={`status-badge ${getStatusColor(order.status)} shrink-0`}>
                       {order.status}
                     </Badge>
                   </div>
