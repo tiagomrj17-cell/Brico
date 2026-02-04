@@ -79,7 +79,6 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
         data_entrega_prevista: order.data_entrega_prevista || '',
         colaborador_id: order.colaborador_id || '',
         status: order.status,
-        adiantamento: order.adiantamento || '',
         pago_totalidade: order.pago_totalidade || false
       });
       setArtigos(order.artigos || [{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false }]);
@@ -99,7 +98,6 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
       observacoes: '',
       data_entrega_prevista: '',
       colaborador_id: '',
-      adiantamento: '',
       pago_totalidade: false
     });
     setArtigos([{ codigo: '', designacao: '', quantidade: 1, preco_unitario: 0, preco_total: 0, separado: false, status: 'Pendente' }]);
