@@ -557,7 +557,7 @@ const Dashboard = () => {
                       onClick={() => setViewingOrder(order)}
                       className="flex items-center gap-2 border-gray-300 hover:bg-gray-100 min-h-[40px] text-sm"
                     >
-                      👁️ <span className="hidden sm:inline">Ver </span>Detalhes
+                      <Eye className="w-4 h-4" /> <span className="hidden sm:inline">Ver </span>Detalhes
                     </Button>
                     
                     {/* Botão Editar */}
