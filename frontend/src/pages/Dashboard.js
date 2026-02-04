@@ -172,6 +172,15 @@ const Dashboard = () => {
             </div>
             <div className="flex items-center gap-3">
               <Button
+                onClick={() => navigate('/entregas')}
+                variant="outline"
+                className="flex items-center gap-2 border-orange-400 text-orange-600 hover:bg-orange-50"
+              >
+                <Truck className="w-4 h-4" />
+                Entregas
+              </Button>
+              
+              <Button
                 onClick={() => navigate('/colaboradores')}
                 variant="outline"
                 className="flex items-center gap-2 border-gray-400 text-gray-700 hover:bg-gray-50"
