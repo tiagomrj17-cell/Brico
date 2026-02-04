@@ -400,154 +400,86 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {filteredOrders.map((order, index) => (
               <Card 
                 key={order.id} 
-                className="bg-white border-gray-200 hover:shadow-lg transition-all duration-200 card-hover fade-in"
-                style={{animationDelay: `${index * 50}ms`}}
+                className="bg-white border-gray-200 hover:shadow-lg transition-all duration-200 card-hover fade-in overflow-hidden"
+                style={{animationDelay: `${index * 30}ms`}}
               >
-                <CardContent className="p-3 sm:p-4">
-                  {/* Header do card */}
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    <div className="flex-1 min-w-0">
-                      {/* Número + Nome */}
-                      <div className="flex items-center gap-2 mb-1">
-                        {order.numero_encomenda && (
-                          <p className={`text-lg sm:text-xl font-bold ${order.tipo === 'orcamento' ? 'text-blue-600' : 'text-green-600'}`}>
-                            #{order.numero_encomenda}
-                          </p>
-                        )}
-                      </div>
-                      
-                      {/* Nome do Cliente */}
-                      <p className="text-base font-bold text-gray-900 mb-0.5 truncate">{order.nome_cliente}</p>
-                      
-                      {/* Contacto */}
-                      <p className="text-sm text-gray-700">
-                        <span className="text-gray-500">Contacto: </span>
-                        {order.contacto}
-                      </p>
-                      
-                      {/* Colaborador */}
-                      {order.nome_colaborador && (
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          Colaborador: {order.nome_colaborador}
-                        </p>
-                      )}
-                      
-                      {/* Data */}
-                      <p className="text-xs text-gray-400 mt-0.5">{formatDate(order.data_criacao)}</p>
+                <CardContent className="p-0">
+                  {/* Header compacto com número, nome e badge */}
+                  <div className={`px-3 py-2 flex items-center justify-between gap-2 ${order.tipo === 'orcamento' ? 'bg-blue-50 border-b border-blue-100' : 'bg-green-50 border-b border-green-100'}`}>
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <span className={`text-base font-bold ${order.tipo === 'orcamento' ? 'text-blue-600' : 'text-green-600'}`}>
+                        #{order.numero_encomenda}
+                      </span>
+                      <span className="text-sm font-semibold text-gray-800 truncate">{order.nome_cliente}</span>
                     </div>
-                    
-                    {/* Badge único */}
-                    <Badge className={`status-badge ${getStatusColor(order.status)} shrink-0`}>
+                    <Badge className={`status-badge ${getStatusColor(order.status)} text-xs py-0.5 px-2`}>
                       {order.status}
                     </Badge>
                   </div>
-
-                  {/* Info grid - responsivo */}
-                  <div className="grid grid-cols-2 gap-3 mb-3 text-sm">
-                    <div className="bg-gray-50 p-2 rounded-lg">
-                      <p className="text-gray-500 text-xs mb-0.5">Tipo</p>
-                      <p className="font-semibold text-gray-900 flex items-center gap-1 text-sm">
-                        {order.tem_entrega ? (
-                          <><Truck className="w-3.5 h-3.5 text-orange-500" /> Entrega</>
-                        ) : (
-                          <><Store className="w-3.5 h-3.5 text-purple-500" /> Levantamento</>
+                  
+                  {/* Corpo do card */}
+                  <div className="px-3 py-2">
+                    {/* Linha de info principal */}
+                    <div className="flex items-center justify-between text-xs text-gray-600 mb-2">
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-3 h-3" /> {order.contacto}
+                        </span>
+                        {order.nome_colaborador && (
+                          <span className="hidden sm:flex items-center gap-1 text-gray-500">
+                            <Users className="w-3 h-3" /> {order.nome_colaborador}
+                          </span>
                         )}
-                      </p>
+                      </div>
+                      <span className="text-gray-400">{formatDate(order.data_criacao)}</span>
                     </div>
-                    <div className="bg-orange-50 p-2 rounded-lg">
-                      <p className="text-gray-500 text-xs mb-0.5">Total</p>
-                      <p className="font-bold text-orange-600 text-base">€{order.total_final.toFixed(2)}</p>
-                      {order.total_final > 0 && (
-                        <>
-                          {order.pago_totalidade ? (
-                            <p className="text-xs text-green-600 font-semibold flex items-center gap-1">
-                              <Check className="w-3 h-3" /> Pago
-                            </p>
+                    
+                    {/* Linha de tipo, entrega e total */}
+                    <div className="flex items-center justify-between gap-2 py-2 border-t border-gray-100">
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="flex items-center gap-1 font-medium text-gray-700">
+                          {order.tem_entrega ? (
+                            <><Truck className="w-3.5 h-3.5 text-orange-500" /> Entrega</>
                           ) : (
-                            <p className="text-xs text-red-600 font-semibold">
-                              Falta: €{(order.total_final - (order.adiantamento || 0)).toFixed(2)}
-                            </p>
+                            <><Store className="w-3.5 h-3.5 text-purple-500" /> Levantamento</>
                           )}
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  {order.data_entrega_prevista && (
-                    <div className="mb-3 p-2 bg-blue-50 rounded-lg text-sm border border-blue-100">
-                      <p className="text-blue-800 flex items-center gap-2">
-                        <Calendar className="w-3.5 h-3.5" />
-                        <span className="font-medium">Entrega:</span> {order.data_entrega_prevista}
-                      </p>
-                    </div>
-                  )}
-
-                  {order.observacoes && (
-                    <div className="mb-3 p-2 bg-yellow-50 rounded-lg text-sm border border-yellow-100">
-                      <p className="text-gray-700 font-medium mb-0.5 flex items-center gap-1.5 text-xs">
-                        <FileText className="w-3.5 h-3.5 text-yellow-600" /> Observações:
-                      </p>
-                      <p className="text-gray-600 text-xs">{order.observacoes}</p>
-                    </div>
-                  )}
-
-                  {order.historico && order.historico.length > 0 && (
-                    <div className="mb-3 p-2 bg-blue-50 rounded-lg text-xs border border-blue-200">
-                      <p className="text-blue-800 font-medium mb-1 flex items-center gap-1.5">
-                        <ClipboardList className="w-3.5 h-3.5" /> Alterações:
-                      </p>
-                      <div className="text-xs text-blue-700 space-y-0.5">
-                        {order.historico
-                          .filter(alt => alt.campo_alterado !== 'artigos_separados')
-                          .slice(-3).reverse().map((alt, idx) => {
-                          const nomeCampo = {
-                            'status': 'Estado',
-                            'observacoes': 'Observações',
-                            'data_entrega_prevista': 'Data Prevista',
-                            'data_levantada': 'Levantamento',
-                            'artigos': 'Artigos',
-                            'pago_totalidade': 'Pago na Totalidade'
-                          }[alt.campo_alterado] || alt.campo_alterado;
-                          
-                          // Formatar valor para campos especiais
-                          let valorFormatado = alt.valor_novo;
-                          
-                          // Tentar fazer parse se for string JSON
-                          let valorParsed = alt.valor_novo;
-                          if (typeof alt.valor_novo === 'string') {
-                            try {
-                              valorParsed = JSON.parse(alt.valor_novo.replace(/'/g, '"').replace(/True/g, 'true').replace(/False/g, 'false'));
-                            } catch (e) {
-                              valorParsed = alt.valor_novo;
-                            }
-                          }
-                          
-                          if (alt.campo_alterado === 'artigos' && Array.isArray(valorParsed)) {
-                            valorFormatado = valorParsed.map(a => `${a.designacao || a.codigo} (x${a.quantidade})`).join(', ');
-                          } else if (alt.campo_alterado === 'pago_totalidade') {
-                            valorFormatado = (valorParsed === true || valorParsed === 'True' || valorParsed === 'true') ? 'Sim' : 'Não';
-                          } else if (Array.isArray(valorParsed)) {
-                            valorFormatado = valorParsed.map(a => a.designacao || a.codigo || JSON.stringify(a)).join(', ');
-                          } else if (typeof valorParsed === 'object' && valorParsed !== null) {
-                            valorFormatado = valorParsed.designacao || valorParsed.codigo || JSON.stringify(valorParsed);
-                          }
-                          
-                          return (
-                            <p key={idx} className="truncate">
-                              <span className="font-medium">{nomeCampo}:</span> {valorFormatado}
-                            </p>
-                          );
-                        })}
+                        </span>
+                        {order.data_entrega_prevista && (
+                          <span className="flex items-center gap-1 text-blue-600">
+                            <Calendar className="w-3 h-3" /> {order.data_entrega_prevista}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-orange-600 text-sm">€{order.total_final.toFixed(2)}</span>
+                        {order.total_final > 0 && (
+                          <span className={`ml-2 text-xs font-medium ${order.pago_totalidade ? 'text-green-600' : 'text-red-500'}`}>
+                            {order.pago_totalidade ? (
+                              <span className="flex items-center gap-0.5 inline-flex"><Check className="w-3 h-3" />Pago</span>
+                            ) : (
+                              `Falta €${(order.total_final - (order.adiantamento || 0)).toFixed(2)}`
+                            )}
+                          </span>
+                        )}
                       </div>
                     </div>
-                  )}
-
-                  {/* Botões de ação - responsivos */}
-                  <div className="flex items-center gap-2 pt-3 border-t border-gray-200 flex-wrap">
+                    
+                    {/* Observações (colapsável) */}
+                    {order.observacoes && (
+                      <div className="py-1.5 border-t border-gray-100">
+                        <p className="text-xs text-gray-600 truncate" title={order.observacoes}>
+                          <FileText className="w-3 h-3 text-yellow-500 inline mr-1" />
+                          {order.observacoes}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Botões compactos */}
+                    <div className="flex items-center gap-1.5 pt-2 border-t border-gray-100">
                     <Button
                       variant="outline"
                       size="sm"
