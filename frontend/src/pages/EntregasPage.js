@@ -424,29 +424,22 @@ const EntregasPage = () => {
                   style={{animationDelay: `${index * 30}ms`}}
                 >
                   <CardContent className="p-0">
-                    {/* Header compacto */}
+                    {/* Header com número grande */}
                     <div className="px-3 py-2 bg-green-50 border-b border-green-100 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base font-bold text-green-600">#{order.numero_encomenda}</span>
-                        <span className="text-sm font-semibold text-gray-800 truncate">{order.nome_cliente}</span>
-                      </div>
+                      <span className="text-lg sm:text-xl font-bold text-green-600">#{order.numero_encomenda}</span>
                       {getStatusBadge(deliveryStatus)}
                     </div>
                     
                     {/* Corpo compacto */}
                     <div className="px-3 py-2">
-                      {/* Info linha 1 */}
+                      {/* Nome do cliente */}
+                      <p className="font-semibold text-gray-900 text-sm mb-1">{order.nome_cliente}</p>
+                      
+                      {/* Contacto e Data */}
                       <div className="flex items-center justify-between text-xs text-gray-600 mb-2">
-                        <div className="flex items-center gap-3">
-                          <span className="flex items-center gap-1">
-                            <Phone className="w-3 h-3" /> {order.contacto}
-                          </span>
-                          {order.nome_colaborador && (
-                            <span className="hidden sm:flex items-center gap-1 text-gray-500">
-                              <Package className="w-3 h-3" /> {order.nome_colaborador}
-                            </span>
-                          )}
-                        </div>
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-3 h-3" /> {order.contacto}
+                        </span>
                         <span className="flex items-center gap-1 text-blue-600 font-medium">
                           <Calendar className="w-3 h-3" />
                           {order.data_entrega_prevista ? formatDate(order.data_entrega_prevista) : 'Sem data'}
@@ -464,6 +457,23 @@ const EntregasPage = () => {
                             {order.distancia_kms} km
                           </Badge>
                         )}
+                      </div>
+                      
+                      {/* Info de entrega: colaboradores e custo */}
+                      <div className="flex items-center justify-between py-1.5 border-t border-gray-100 text-xs">
+                        <div className="flex items-center gap-3">
+                          {order.num_colaboradores && (
+                            <span className="flex items-center gap-1 text-gray-600">
+                              <Users className="w-3 h-3" /> {order.num_colaboradores} colab.
+                            </span>
+                          )}
+                          {order.custo_entrega > 0 && (
+                            <span className="flex items-center gap-1 text-orange-600 font-medium">
+                              <Truck className="w-3 h-3" /> €{order.custo_entrega.toFixed(2)}
+                            </span>
+                          )}
+                        </div>
+                        <span className="font-bold text-orange-600">€{order.total_final?.toFixed(2) || '0.00'}</span>
                       </div>
                       
                       {/* Botões compactos */}
@@ -497,7 +507,7 @@ const EntregasPage = () => {
                               <CheckCircle className="w-3.5 h-3.5" /> Entregue
                             </Button>
                           </>
-                        )}
+                        )}}
                         
                         {/* Total inline */}
                         <div className="ml-auto flex items-center gap-2 text-xs">
