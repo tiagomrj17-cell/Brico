@@ -493,23 +493,18 @@ const EntregasPage = () => {
                             <Button
                               size="sm"
                               onClick={() => handleMarkDelivered(order)}
-                              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white min-h-[40px] flex-1 sm:flex-none justify-center"
+                              className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white h-7 px-2.5 text-xs"
                             >
-                              <CheckCircle className="w-4 h-4" />
-                              <span>Entregue</span>
+                              <CheckCircle className="w-3.5 h-3.5" /> Entregue
                             </Button>
                           </>
                         )}
-                      </div>
-                    
-                      {/* Total */}
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-3 border-t border-gray-200 bg-gray-50 -mx-4 sm:-mx-5 px-4 sm:px-5 -mb-4 sm:-mb-5 pb-4 sm:pb-5 mt-4 rounded-b-xl">
-                        <span className="text-sm text-gray-500">
-                          {order.artigos?.length || 0} artigo(s) • Custo entrega: €{order.custo_entrega?.toFixed(2) || '0.00'}
-                        </span>
-                        <span className="text-xl font-bold text-orange-600">
-                          Total: €{order.total_final?.toFixed(2) || '0.00'}
-                        </span>
+                        
+                        {/* Total inline */}
+                        <div className="ml-auto flex items-center gap-2 text-xs">
+                          <span className="text-gray-500">{order.artigos?.length || 0} art.</span>
+                          <span className="font-bold text-orange-600 text-sm">€{order.total_final?.toFixed(2) || '0.00'}</span>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
