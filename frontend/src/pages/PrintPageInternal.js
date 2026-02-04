@@ -418,7 +418,7 @@ const PrintPageInternal = () => {
               {order.pago_totalidade ? (
                 <div style={{ backgroundColor: '#dcfce7', padding: '3mm', borderRadius: '2mm', textAlign: 'center', marginTop: '2mm' }}>
                   <p style={{ margin: '0', fontSize: '14pt', fontWeight: 'bold', color: '#166534' }}>
-                    ✓ PAGO NA TOTALIDADE
+                    PAGO NA TOTALIDADE
                   </p>
                 </div>
               ) : (
