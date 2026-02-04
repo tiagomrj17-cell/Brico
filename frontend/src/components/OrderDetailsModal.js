@@ -142,14 +142,14 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                         <p className="text-sm text-gray-600">Código: {artigo.codigo}</p>
                         <div className="flex flex-wrap gap-2 mt-2">
                           {/* Status badge */}
-                          <span className={`text-xs font-medium px-2 py-1 rounded ${statusBadge}`}>
-                            {artigo.status === 'Entregue' ? '✓ Entregue' : 
-                             artigo.status === 'Cancelado' ? '✗ Cancelado' : 
-                             '⏳ Pendente'}
+                          <span className={`text-xs font-medium px-2 py-1 rounded flex items-center gap-1 ${statusBadge}`}>
+                            {artigo.status === 'Entregue' ? <><CheckCircle className="w-3 h-3" /> Entregue</> : 
+                             artigo.status === 'Cancelado' ? <><XCircle className="w-3 h-3" /> Cancelado</> : 
+                             <><Clock className="w-3 h-3" /> Pendente</>}
                           </span>
                           {artigo.separado && (
-                            <span className="text-xs text-green-700 font-medium bg-green-50 px-2 py-1 rounded border border-green-200">
-                              ✓ Separado
+                            <span className="text-xs text-green-700 font-medium bg-green-50 px-2 py-1 rounded border border-green-200 flex items-center gap-1">
+                              <Check className="w-3 h-3" /> Separado
                             </span>
                           )}
                         </div>
