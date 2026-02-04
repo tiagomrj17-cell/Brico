@@ -496,7 +496,7 @@ async def generate_unique_order_code(tipo: str = "encomenda", max_retries: int =
             num = int(order['numero_encomenda'].replace(prefix, ""))
             if num > max_num:
                 max_num = num
-        except:
+        except (ValueError, TypeError, KeyError):
             pass
     
     return f"{prefix}{str(max_num + 1).zfill(4)}"
