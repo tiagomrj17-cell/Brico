@@ -96,16 +96,10 @@
         <noscript>Precisa de ativar o JavaScript para executar esta aplicação.</noscript>
         <div id="root"></div>
         
-        <!-- Offline Indicator -->
-        <div id="offline-indicator" class="offline-indicator">
-            <span>⚠️</span>
-            <span>Está offline - algumas funcionalidades podem não estar disponíveis</span>
-        </div>
-        
         <!-- Install Prompt -->
         <div id="install-prompt" class="install-prompt">
             <h4>📦 Instalar Aplicação</h4>
-            <p>Instale esta aplicação no seu computador para acesso rápido e funcionamento offline.</p>
+            <p>Instale esta aplicação no seu computador para acesso rápido.</p>
             <div class="install-prompt-buttons">
                 <button class="install-btn" id="install-btn">Instalar</button>
                 <button class="dismiss-btn" id="dismiss-btn">Agora não</button>
@@ -139,21 +133,6 @@
                         });
                 });
             }
-            
-            // Offline/Online detection
-            const offlineIndicator = document.getElementById('offline-indicator');
-            
-            function updateOnlineStatus() {
-                if (!navigator.onLine) {
-                    offlineIndicator.classList.add('show');
-                } else {
-                    offlineIndicator.classList.remove('show');
-                }
-            }
-            
-            window.addEventListener('online', updateOnlineStatus);
-            window.addEventListener('offline', updateOnlineStatus);
-            updateOnlineStatus();
             
             // Install prompt
             let deferredPrompt;
