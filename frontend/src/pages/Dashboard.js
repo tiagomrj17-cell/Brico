@@ -490,17 +490,18 @@ const Dashboard = () => {
                     </div>
                   )}
 
-                  <div className="flex items-center gap-2 pt-3 border-t border-gray-200 flex-wrap">
+                  {/* Botões de ação - responsivos */}
+                  <div className="flex items-center gap-2 sm:gap-3 pt-4 border-t border-gray-200 flex-wrap">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setViewingOrder(order)}
-                      className="flex items-center gap-2 border-gray-300"
+                      className="flex items-center gap-2 border-gray-300 hover:bg-gray-100 min-h-[40px] text-sm"
                     >
-                      Ver Detalhes
+                      👁️ <span className="hidden sm:inline">Ver </span>Detalhes
                     </Button>
                     
-                    {/* Botão Editar - desativado se Levantada, Entregue ou Cancelada */}
+                    {/* Botão Editar */}
                     <Button
                       variant="outline"
                       size="sm"
@@ -515,10 +516,10 @@ const Dashboard = () => {
                         setOrderFormOpen(true);
                       }}
                       disabled={!canEdit(order)}
-                      className={`flex items-center gap-2 border-gray-300 ${!canEdit(order) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`flex items-center gap-2 border-blue-300 text-blue-600 hover:bg-blue-50 min-h-[40px] text-sm ${!canEdit(order) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <Edit className="w-4 h-4" />
-                      Editar
+                      <span className="hidden sm:inline">Editar</span>
                     </Button>
                     
                     {/* Dropdown de Impressão */}
@@ -527,20 +528,20 @@ const Dashboard = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="flex items-center gap-2 border-orange-300 text-orange-600 hover:bg-orange-50"
+                          className="flex items-center gap-2 border-orange-300 text-orange-600 hover:bg-orange-50 min-h-[40px] text-sm"
                         >
                           <Printer className="w-4 h-4" />
-                          Imprimir
+                          <span className="hidden sm:inline">Imprimir</span>
                           <ChevronDown className="w-3 h-3" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handlePrintCliente(order)} className="cursor-pointer">
-                          <FileText className="w-4 h-4 mr-2" />
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => handlePrintCliente(order)} className="cursor-pointer py-3 hover:bg-gray-50">
+                          <FileText className="w-4 h-4 mr-3" />
                           Versão Cliente
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handlePrintInterno(order)} className="cursor-pointer">
-                          <Package className="w-4 h-4 mr-2" />
+                        <DropdownMenuItem onClick={() => handlePrintInterno(order)} className="cursor-pointer py-3 hover:bg-gray-50">
+                          <Package className="w-4 h-4 mr-3" />
                           Versão Interna
                         </DropdownMenuItem>
                       </DropdownMenuContent>
