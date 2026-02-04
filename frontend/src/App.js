@@ -6,6 +6,7 @@ import Dashboard from '@/pages/Dashboard';
 import PrintPageInternal from '@/pages/PrintPageInternal';
 import PrintPageCliente from '@/pages/PrintPageCliente';
 import ColaboradoresPage from '@/pages/ColaboradoresPage';
+import EntregasPage from '@/pages/EntregasPage';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/entregas" element={<EntregasPage />} />
           <Route path="/print-interno/:orderId" element={<PrintPageInternal />} />
           <Route path="/print-cliente/:orderId" element={<PrintPageCliente />} />
           <Route path="/colaboradores" element={<ColaboradoresPage />} />
