@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Check } from 'lucide-react';
 
 const OrderDetailsModal = ({ open, onClose, order }) => {
   if (!order) return null;
