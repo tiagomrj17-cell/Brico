@@ -244,50 +244,51 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           <Card className="bg-yellow-50 border-yellow-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '50ms'}}>
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Pendente</CardDescription>
+            <CardHeader className="pb-2 pt-4">
+              <CardDescription className="text-xs sm:text-sm font-medium text-yellow-700">Pendente</CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-yellow-700">{counts.pendente}</p>
+            <CardContent className="pb-4">
+              <p className="text-3xl sm:text-4xl font-bold text-yellow-700">{counts.pendente}</p>
             </CardContent>
           </Card>
-          <Card className="bg-blue-50 border-blue-200 shadow-sm">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Em Preparação</CardDescription>
+          <Card className="bg-blue-50 border-blue-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '100ms'}}>
+            <CardHeader className="pb-2 pt-4">
+              <CardDescription className="text-xs sm:text-sm font-medium text-blue-700">Em Preparação</CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-blue-700">{counts.emPreparacao}</p>
+            <CardContent className="pb-4">
+              <p className="text-3xl sm:text-4xl font-bold text-blue-700">{counts.emPreparacao}</p>
             </CardContent>
           </Card>
-          <Card className="bg-indigo-50 border-indigo-200 shadow-sm">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Pronto</CardDescription>
+          <Card className="bg-indigo-50 border-indigo-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '150ms'}}>
+            <CardHeader className="pb-2 pt-4">
+              <CardDescription className="text-xs sm:text-sm font-medium text-indigo-700">Pronto</CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-indigo-700">{counts.prontaLevantamento}</p>
+            <CardContent className="pb-4">
+              <p className="text-3xl sm:text-4xl font-bold text-indigo-700">{counts.prontaLevantamento}</p>
             </CardContent>
           </Card>
-          <Card className="bg-green-50 border-green-200 shadow-sm">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Concluído</CardDescription>
+          <Card className="bg-green-50 border-green-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '200ms'}}>
+            <CardHeader className="pb-2 pt-4">
+              <CardDescription className="text-xs sm:text-sm font-medium text-green-700">Concluído</CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-green-700">{counts.entregue + counts.levantada}</p>
+            <CardContent className="pb-4">
+              <p className="text-3xl sm:text-4xl font-bold text-green-700">{counts.entregue + counts.levantada}</p>
             </CardContent>
           </Card>
-          <Card className="bg-red-50 border-red-200 shadow-sm">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Cancelado</CardDescription>
+          <Card className="bg-red-50 border-red-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '250ms'}}>
+            <CardHeader className="pb-2 pt-4">
+              <CardDescription className="text-xs sm:text-sm font-medium text-red-700">Cancelado</CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-red-700">{counts.cancelada}</p>
+            <CardContent className="pb-4">
+              <p className="text-3xl sm:text-4xl font-bold text-red-700">{counts.cancelada}</p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 relative z-10">
-          <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-gray-600" />
+        {/* Filtros com melhor responsividade */}
+        <div className="mb-6 flex flex-col gap-4 relative z-10 bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center gap-2 text-gray-700">
+            <Filter className="w-5 h-5" />
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-52 border-gray-300" data-testid="filter-status">
                 <SelectValue placeholder="Filtrar por status" />
