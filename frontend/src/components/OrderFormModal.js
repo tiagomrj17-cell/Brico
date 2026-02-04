@@ -225,7 +225,12 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     return true;
   };
 
-  const nextStep = () => {
+  const nextStep = (e) => {
+    // Prevenir qualquer propagação de eventos que possa causar submit
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (validateStep(currentStep)) {
       setCurrentStep(prev => Math.min(prev + 1, totalSteps));
     }
