@@ -389,7 +389,7 @@ const EntregasPage = () => {
                   setSearchText('');
                   setDateFilter('');
                 }}
-                className="w-full border-gray-300"
+                className="w-full border-gray-300 min-h-[44px]"
               >
                 Limpar Filtros
               </Button>
@@ -399,14 +399,14 @@ const EntregasPage = () => {
 
         {/* Delivery Cards */}
         {filteredOrders.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <Truck className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma entrega encontrada</h3>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 sm:p-16 text-center fade-in">
+            <Truck className="w-20 h-20 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-medium text-gray-900 mb-2">Nenhuma entrega encontrada</h3>
             <p className="text-gray-500">Não há entregas que correspondam aos filtros selecionados.</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredOrders.map((order) => {
+            {filteredOrders.map((order, index) => {
               const deliveryStatus = getDeliveryStatus(order);
               const isDelivered = deliveryStatus === 'Entregue';
               const isCancelled = deliveryStatus === 'Cancelada';
@@ -414,20 +414,21 @@ const EntregasPage = () => {
               return (
                 <Card 
                   key={order.id} 
-                  className={`overflow-hidden transition-all hover:shadow-md ${
+                  className={`overflow-hidden transition-all duration-200 hover:shadow-lg card-hover fade-in ${
                     isDelivered ? 'bg-green-50 border-green-200' :
                     isCancelled ? 'bg-red-50 border-red-200 opacity-60' :
                     deliveryStatus === 'Atrasada' ? 'bg-red-50 border-red-200' :
                     deliveryStatus === 'Em Trânsito' ? 'bg-orange-50 border-orange-200' :
                     'bg-white'
                   }`}
+                  style={{animationDelay: `${index * 50}ms`}}
                 >
-                  <CardContent className="p-4">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      {/* Info Principal */}
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="text-lg font-bold text-orange-600">
+                  <CardContent className="p-4 sm:p-5">
+                    <div className="flex flex-col gap-4">
+                      {/* Header do card */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <span className="text-xl sm:text-2xl font-bold text-orange-600">
                             #{order.numero_encomenda}
                           </span>
                           {getStatusBadge(deliveryStatus)}
