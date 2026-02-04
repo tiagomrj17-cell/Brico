@@ -339,40 +339,40 @@ const EntregasPage = () => {
         </div>
 
         {/* Filters - melhorados para mobile */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-6 fade-in">
-          <div className="flex items-center gap-2 mb-4">
-            <Filter className="w-5 h-5 text-gray-500" />
-            <span className="text-base font-medium text-gray-700">Filtros</span>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4 mb-4 fade-in">
+          <div className="flex items-center gap-2 mb-3">
+            <Filter className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-medium text-gray-700">Filtros</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
             <div>
-              <Label className="text-xs text-gray-500 mb-2 block">Pesquisar</Label>
+              <Label className="text-xs text-gray-500 mb-1 block">Pesquisar</Label>
               <Input
                 placeholder="Cliente, nº, morada..."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                className="border-gray-300 min-h-[44px]"
+                className="border-gray-300 min-h-[36px] text-sm"
               />
             </div>
             
             <div>
-              <Label className="text-xs text-gray-500 mb-2 block">Data de Entrega</Label>
+              <Label className="text-xs text-gray-500 mb-1 block">Data de Entrega</Label>
               <Input
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="border-gray-300 min-h-[44px]"
+                className="border-gray-300 min-h-[36px] text-sm"
               />
             </div>
             
             <div>
-              <Label className="text-xs text-gray-500 mb-2 block">Colaborador</Label>
+              <Label className="text-xs text-gray-500 mb-1 block">Colaborador</Label>
               <Select value={colaboradorFilter} onValueChange={setColaboradorFilter}>
-                <SelectTrigger className="border-gray-300 min-h-[44px]">
+                <SelectTrigger className="border-gray-300 min-h-[36px] text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Todos">Todos os Colaboradores</SelectItem>
+                  <SelectItem value="Todos">Todos</SelectItem>
                   {colaboradores.map((colab) => (
                     <SelectItem key={colab.id} value={colab.id}>{colab.nome}</SelectItem>
                   ))}
@@ -389,9 +389,9 @@ const EntregasPage = () => {
                   setSearchText('');
                   setDateFilter('');
                 }}
-                className="w-full border-gray-300 min-h-[44px]"
+                className="w-full border-gray-300 min-h-[36px] text-sm"
               >
-                Limpar Filtros
+                Limpar
               </Button>
             </div>
           </div>
