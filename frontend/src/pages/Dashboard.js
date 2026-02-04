@@ -226,9 +226,9 @@ const Dashboard = () => {
                 <DropdownMenuContent align="end" className="w-56 p-2">
                   <DropdownMenuItem 
                     onClick={handleCreateEncomenda} 
-                    className="cursor-pointer py-3 px-4 text-base hover:bg-orange-50 rounded-lg transition-colors"
+                    className="cursor-pointer py-3 px-4 text-base hover:bg-green-50 rounded-lg transition-colors"
                   >
-                    <Package className="w-5 h-5 mr-3 text-orange-600" />
+                    <Package className="w-5 h-5 mr-3 text-green-600" />
                     Nova Encomenda
                   </DropdownMenuItem>
                   <DropdownMenuItem 
@@ -246,9 +246,13 @@ const Dashboard = () => {
       </div>
 
       <div className="no-print max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Cards de estatísticas com animação */}
+        {/* Cards de estatísticas - clicáveis para filtrar */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <Card className="bg-white border-gray-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '0ms'}}>
+          <Card 
+            onClick={() => setStatusFilter('Todos')}
+            className={`bg-white border-gray-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Todos' ? 'ring-2 ring-gray-400' : ''}`} 
+            style={{animationDelay: '0ms'}}
+          >
             <CardHeader className="pb-2 pt-4">
               <CardDescription className="text-xs sm:text-sm font-medium">Total</CardDescription>
             </CardHeader>
@@ -256,7 +260,11 @@ const Dashboard = () => {
               <p className="text-3xl sm:text-4xl font-bold text-gray-900" data-testid="total-encomendas">{counts.total}</p>
             </CardContent>
           </Card>
-          <Card className="bg-yellow-50 border-yellow-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '50ms'}}>
+          <Card 
+            onClick={() => setStatusFilter('Pendente')}
+            className={`bg-yellow-50 border-yellow-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Pendente' ? 'ring-2 ring-yellow-500' : ''}`} 
+            style={{animationDelay: '50ms'}}
+          >
             <CardHeader className="pb-2 pt-4">
               <CardDescription className="text-xs sm:text-sm font-medium text-yellow-700">Pendente</CardDescription>
             </CardHeader>
@@ -264,7 +272,11 @@ const Dashboard = () => {
               <p className="text-3xl sm:text-4xl font-bold text-yellow-700">{counts.pendente}</p>
             </CardContent>
           </Card>
-          <Card className="bg-blue-50 border-blue-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '100ms'}}>
+          <Card 
+            onClick={() => setStatusFilter('Em Preparação')}
+            className={`bg-blue-50 border-blue-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Em Preparação' ? 'ring-2 ring-blue-500' : ''}`} 
+            style={{animationDelay: '100ms'}}
+          >
             <CardHeader className="pb-2 pt-4">
               <CardDescription className="text-xs sm:text-sm font-medium text-blue-700">Em Preparação</CardDescription>
             </CardHeader>
@@ -272,7 +284,11 @@ const Dashboard = () => {
               <p className="text-3xl sm:text-4xl font-bold text-blue-700">{counts.emPreparacao}</p>
             </CardContent>
           </Card>
-          <Card className="bg-indigo-50 border-indigo-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '150ms'}}>
+          <Card 
+            onClick={() => setStatusFilter('Pronta para Levantamento')}
+            className={`bg-indigo-50 border-indigo-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Pronta para Levantamento' ? 'ring-2 ring-indigo-500' : ''}`} 
+            style={{animationDelay: '150ms'}}
+          >
             <CardHeader className="pb-2 pt-4">
               <CardDescription className="text-xs sm:text-sm font-medium text-indigo-700">Pronto</CardDescription>
             </CardHeader>
@@ -280,7 +296,11 @@ const Dashboard = () => {
               <p className="text-3xl sm:text-4xl font-bold text-indigo-700">{counts.prontaLevantamento}</p>
             </CardContent>
           </Card>
-          <Card className="bg-green-50 border-green-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '200ms'}}>
+          <Card 
+            onClick={() => setStatusFilter('Entregue')}
+            className={`bg-green-50 border-green-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Entregue' ? 'ring-2 ring-green-500' : ''}`} 
+            style={{animationDelay: '200ms'}}
+          >
             <CardHeader className="pb-2 pt-4">
               <CardDescription className="text-xs sm:text-sm font-medium text-green-700">Concluído</CardDescription>
             </CardHeader>
@@ -288,7 +308,11 @@ const Dashboard = () => {
               <p className="text-3xl sm:text-4xl font-bold text-green-700">{counts.entregue + counts.levantada}</p>
             </CardContent>
           </Card>
-          <Card className="bg-red-50 border-red-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '250ms'}}>
+          <Card 
+            onClick={() => setStatusFilter('Cancelada')}
+            className={`bg-red-50 border-red-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Cancelada' ? 'ring-2 ring-red-500' : ''}`} 
+            style={{animationDelay: '250ms'}}
+          >
             <CardHeader className="pb-2 pt-4">
               <CardDescription className="text-xs sm:text-sm font-medium text-red-700">Cancelado</CardDescription>
             </CardHeader>
@@ -298,14 +322,26 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Filtros com melhor responsividade */}
+        {/* Filtros com tipo adicionado */}
         <div className="mb-6 flex flex-col gap-4 relative z-10 bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center gap-2 text-gray-700 mb-2">
             <Filter className="w-5 h-5" />
             <span className="font-medium">Filtros</span>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+            {/* Filtro por Tipo */}
+            <Select value={tipoFilter} onValueChange={setTipoFilter}>
+              <SelectTrigger className="w-full border-gray-300 min-h-[44px]" data-testid="filter-tipo">
+                <SelectValue placeholder="Tipo" />
+              </SelectTrigger>
+              <SelectContent className="z-50">
+                <SelectItem value="Todos">Todos</SelectItem>
+                <SelectItem value="Encomendas">Encomendas</SelectItem>
+                <SelectItem value="Orçamentos">Orçamentos</SelectItem>
+              </SelectContent>
+            </Select>
+            
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full border-gray-300 min-h-[44px]" data-testid="filter-status">
                 <SelectValue placeholder="Estado" />
