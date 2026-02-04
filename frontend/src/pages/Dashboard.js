@@ -500,7 +500,9 @@ const Dashboard = () => {
 
                   {order.historico && order.historico.length > 0 && (
                     <div className="mb-4 p-3 bg-blue-50 rounded-lg text-sm border border-blue-200">
-                      <p className="text-blue-800 font-medium mb-2">📋 Últimas Alterações:</p>
+                      <p className="text-blue-800 font-medium mb-2 flex items-center gap-2">
+                        <ClipboardList className="w-4 h-4" /> Últimas Alterações:
+                      </p>
                       <div className="text-xs text-blue-700 space-y-1">
                         {order.historico
                           .filter(alt => alt.campo_alterado !== 'artigos_separados')
