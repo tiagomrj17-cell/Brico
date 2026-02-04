@@ -453,7 +453,13 @@ const Dashboard = () => {
                   <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                     <div className="bg-gray-50 p-3 rounded-lg">
                       <p className="text-gray-500 text-xs mb-1">Tipo</p>
-                      <p className="font-semibold text-gray-900">{order.tem_entrega ? '🚚 Entrega' : '🏪 Levantamento'}</p>
+                      <p className="font-semibold text-gray-900 flex items-center gap-1">
+                        {order.tem_entrega ? (
+                          <><Truck className="w-4 h-4 text-orange-500" /> Entrega</>
+                        ) : (
+                          <><Store className="w-4 h-4 text-purple-500" /> Levantamento</>
+                        )}
+                      </p>
                     </div>
                     <div className="bg-orange-50 p-3 rounded-lg">
                       <p className="text-gray-500 text-xs mb-1">Total</p>
