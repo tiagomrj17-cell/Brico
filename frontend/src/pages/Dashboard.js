@@ -447,24 +447,24 @@ const Dashboard = () => {
                   </div>
 
                   {/* Info grid - responsivo */}
-                  <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-gray-500 text-xs mb-1">Tipo</p>
-                      <p className="font-semibold text-gray-900 flex items-center gap-1">
+                  <div className="grid grid-cols-2 gap-3 mb-3 text-sm">
+                    <div className="bg-gray-50 p-2 rounded-lg">
+                      <p className="text-gray-500 text-xs mb-0.5">Tipo</p>
+                      <p className="font-semibold text-gray-900 flex items-center gap-1 text-sm">
                         {order.tem_entrega ? (
-                          <><Truck className="w-4 h-4 text-orange-500" /> Entrega</>
+                          <><Truck className="w-3.5 h-3.5 text-orange-500" /> Entrega</>
                         ) : (
-                          <><Store className="w-4 h-4 text-purple-500" /> Levantamento</>
+                          <><Store className="w-3.5 h-3.5 text-purple-500" /> Levantamento</>
                         )}
                       </p>
                     </div>
-                    <div className="bg-orange-50 p-3 rounded-lg">
-                      <p className="text-gray-500 text-xs mb-1">Total</p>
-                      <p className="font-bold text-orange-600 text-lg">€{order.total_final.toFixed(2)}</p>
+                    <div className="bg-orange-50 p-2 rounded-lg">
+                      <p className="text-gray-500 text-xs mb-0.5">Total</p>
+                      <p className="font-bold text-orange-600 text-base">€{order.total_final.toFixed(2)}</p>
                       {order.total_final > 0 && (
                         <>
                           {order.pago_totalidade ? (
-                            <p className="text-xs text-green-600 font-semibold mt-1 flex items-center gap-1">
+                            <p className="text-xs text-green-600 font-semibold flex items-center gap-1">
                               <Check className="w-3 h-3" /> Pago
                             </p>
                           ) : (
