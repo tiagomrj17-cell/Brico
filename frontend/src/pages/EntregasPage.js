@@ -247,37 +247,37 @@ const EntregasPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header responsivo */}
       <div className="bg-white shadow-md border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <Button
               onClick={() => navigate('/')}
               variant="ghost"
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 min-h-[44px] -ml-2"
+              className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 min-h-[36px] -ml-2 text-sm"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4" />
               <span>Voltar</span>
             </Button>
             <div className="fade-in">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-                <Truck className="w-7 h-7 sm:w-8 sm:h-8 text-orange-500" />
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <Truck className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" />
                 Gestão de Entregas
               </h1>
-              <p className="text-gray-500 text-sm sm:text-base mt-1">Acompanhe e gira todas as entregas</p>
+              <p className="text-gray-500 text-xs sm:text-sm">Acompanhe e gira todas as entregas</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-5">
         {/* Stats Cards - responsivos com cores de fundo */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
+        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 mb-4">
           <Card 
             className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up bg-white border-gray-200 ${statusFilter === 'Todos' ? 'ring-2 ring-gray-400 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Todos')}
             style={{animationDelay: '0ms'}}
           >
-            <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-3xl font-bold text-gray-900">{counts.total}</p>
+            <CardContent className="p-2 sm:p-3 text-center">
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{counts.total}</p>
               <p className="text-sm text-gray-500 font-medium">Total</p>
             </CardContent>
           </Card>
