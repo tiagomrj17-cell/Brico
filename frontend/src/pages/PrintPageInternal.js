@@ -356,11 +356,11 @@ const PrintPageInternal = () => {
                     <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'right', fontSize: '10pt' }}>€{(artigo.preco_unitario || 0).toFixed(2)}</td>
                     <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'right', fontWeight: 'bold', fontSize: '10pt' }}>€{(artigo.preco_total || 0).toFixed(2)}</td>
                     <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'center', color: artigo.separado ? '#16a34a' : '#999', fontWeight: artigo.separado ? 'bold' : 'normal', fontSize: '10pt' }}>
-                      {artigo.separado ? '✓ SIM' : '—'}
+                      {artigo.separado ? 'SIM' : '—'}
                     </td>
                     <td style={{ padding: '2mm', border: '1px solid #ddd', textAlign: 'center', fontSize: '10pt', ...statusStyle }}>
-                      {artigo.status === 'Entregue' ? '✓ Entregue' : 
-                       artigo.status === 'Cancelado' ? '✗ Cancelado' : 
+                      {artigo.status === 'Entregue' ? 'Entregue' : 
+                       artigo.status === 'Cancelado' ? 'Cancelado' : 
                        'Pendente'}
                     </td>
                   </tr>
