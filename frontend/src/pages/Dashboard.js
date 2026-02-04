@@ -608,7 +608,7 @@ const Dashboard = () => {
                     </span>
                   ) : (
                     <span className="block text-red-600 font-bold">
-                      Falta Pagar: €{(createdOrder?.total_final - (createdOrder?.adiantamento || 0)).toFixed(2)}
+                      Por Pagar: €{createdOrder?.total_final?.toFixed(2)}
                     </span>
                   )
                 )}
