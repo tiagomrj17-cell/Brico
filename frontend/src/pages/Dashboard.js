@@ -328,14 +328,13 @@ const Dashboard = () => {
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      {/* Título: Número + Nome do Cliente */}
+                      {/* Título Principal: Número Sequencial */}
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         {order.numero_encomenda && (
-                          <span className={`text-lg font-bold ${order.tipo === 'orcamento' ? 'text-blue-700' : 'text-green-700'}`}>
+                          <span className={`text-xl font-bold ${order.tipo === 'orcamento' ? 'text-blue-700' : 'text-green-700'}`}>
                             #{order.numero_encomenda}
                           </span>
                         )}
-                        <span className="text-lg font-bold text-gray-900">{order.nome_cliente}</span>
                         {order.tipo === 'orcamento' ? (
                           <Badge className="bg-blue-100 text-blue-800 text-xs">Orçamento</Badge>
                         ) : (
@@ -343,14 +342,17 @@ const Dashboard = () => {
                         )}
                       </div>
                       
-                      {/* Colaborador primeiro */}
+                      {/* Nome do Cliente */}
+                      <p className="text-base font-semibold text-gray-900 mb-0.5">{order.nome_cliente}</p>
+                      
+                      {/* Colaborador */}
                       {order.nome_colaborador && (
                         <p className="text-sm text-gray-700 font-medium">
                           Colaborador: {order.nome_colaborador}
                         </p>
                       )}
                       
-                      {/* Contacto */}
+                      {/* Contacto abaixo do colaborador */}
                       <p className="text-sm text-gray-600">Contacto: {order.contacto}</p>
                       
                       {/* Data/Hora abaixo do contacto */}
