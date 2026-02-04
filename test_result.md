@@ -6,6 +6,18 @@
 
 ## Latest Changes (Current Fork Session)
 
+### New Feature: Entregas (Deliveries) Management Page (2026-02-04)
+- [x] Created new page `/entregas` for delivery management
+- [x] Statistics cards showing: Total, Por Agendar, Agendadas, Em Trânsito, Atrasadas, Entregues
+- [x] Filter system: Search, Date, Collaborator
+- [x] Delivery cards with full info: Client, Address, Distance, Date, Status
+- [x] Actions: View Details, Schedule/Reschedule, Mark as Delivered
+- [x] Schedule modal for setting delivery dates
+- [x] Details modal showing full order information
+- [x] Added "Entregas" button in Dashboard header
+- **Files Created**: `/app/frontend/src/pages/EntregasPage.js`
+- **Files Modified**: `/app/frontend/src/App.js`, `/app/frontend/src/pages/Dashboard.js`
+
 ### Bug Fix: Phase 3 Skipping Issue (2026-02-04)
 - [x] **FIXED**: Form was skipping Phase 3 and creating order immediately when clicking "Seguinte" on Phase 2
 - **Root Cause**: Form submit was being triggered when pressing Enter in Phase 2 fields, bypassing Phase 3
