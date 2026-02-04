@@ -234,50 +234,49 @@ const EntregasPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Truck className="w-12 h-12 text-orange-500 animate-pulse mx-auto mb-4" />
-          <p className="text-gray-600">A carregar entregas...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="text-center fade-in">
+          <Truck className="w-16 h-16 text-orange-500 loading-pulse mx-auto mb-4" />
+          <p className="text-gray-600 text-lg">A carregar entregas...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-4">
-              <Button
-                onClick={() => navigate('/')}
-                variant="ghost"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Voltar
-              </Button>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                  <Truck className="w-8 h-8 text-orange-500" />
-                  Gestão de Entregas
-                </h1>
-                <p className="text-gray-500 mt-1">Acompanhe e gira todas as entregas</p>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Header responsivo */}
+      <div className="bg-white shadow-md border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <Button
+              onClick={() => navigate('/')}
+              variant="ghost"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 min-h-[44px] -ml-2"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span>Voltar</span>
+            </Button>
+            <div className="fade-in">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
+                <Truck className="w-7 h-7 sm:w-8 sm:h-8 text-orange-500" />
+                Gestão de Entregas
+              </h1>
+              <p className="text-gray-500 text-sm sm:text-base mt-1">Acompanhe e gira todas as entregas</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        {/* Stats Cards - responsivos */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
           <Card 
-            className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Todos' ? 'ring-2 ring-orange-500' : ''}`}
+            className={`cursor-pointer transition-all hover:shadow-lg card-hover slide-up ${statusFilter === 'Todos' ? 'ring-2 ring-orange-500 shadow-md' : ''}`}
             onClick={() => setStatusFilter('Todos')}
+            style={{animationDelay: '0ms'}}
           >
-            <CardContent className="p-4 text-center">
+            <CardContent className="p-4 sm:p-5 text-center">
               <p className="text-3xl font-bold text-gray-900">{counts.total}</p>
               <p className="text-sm text-gray-500">Total</p>
             </CardContent>
