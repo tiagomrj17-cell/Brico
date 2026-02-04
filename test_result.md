@@ -1,10 +1,29 @@
 # Test Results - Sistema de Gestão de Encomendas
 
 ## Testing Protocol
-- Date: 2026-01-08
-- Testing Focus: Per-item Status feature (Pendente, Entregue, Cancelado)
+- Date: 2026-02-04
+- Testing Focus: UI/UX Improvements - Colors, Icons, Labels
 
 ## Latest Changes (Current Fork Session)
+
+### UI/UX Improvements (2026-02-04)
+- [x] **Cor das Encomendas alterada para VERDE** (Orçamentos mantêm AZUL)
+- [x] **Emojis substituídos por ícones Lucide:**
+  - 🚚 → Ícone Truck (Entrega)
+  - 🏪 → Ícone Store (Levantamento)
+  - 📅 → Ícone Calendar (Data)
+  - 📝 → Ícone FileText (Observações)
+  - 📋 → Ícone ClipboardList (Alterações)
+  - ✓ → Ícone Check/CheckCircle
+  - 👁️ → Ícone Eye (Ver Detalhes)
+- [x] **"Tel:" alterado para "Contacto:"** (palavra completa)
+- **Files Modified**: 
+  - `/app/frontend/src/pages/Dashboard.js`
+  - `/app/frontend/src/pages/EntregasPage.js`
+  - `/app/frontend/src/components/OrderDetailsModal.js`
+  - `/app/frontend/src/components/OrderFormModal.js`
+  - `/app/frontend/src/pages/PrintPageCliente.js`
+  - `/app/frontend/src/pages/PrintPageInternal.js`
 
 ### New Feature: Entregas (Deliveries) Management Page (2026-02-04)
 - [x] Created new page `/entregas` for delivery management
