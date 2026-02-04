@@ -198,16 +198,16 @@ const Dashboard = () => {
                 variant="outline"
                 className="flex items-center gap-1.5 border-orange-400 text-orange-600 hover:bg-orange-50 hover:border-orange-500 transition-all flex-1 sm:flex-none justify-center min-h-[38px] text-sm"
               >
-                <Truck className="w-5 h-5" />
+                <Truck className="w-4 h-4" />
                 <span className="sm:inline">Entregas</span>
               </Button>
               
               <Button
                 onClick={() => navigate('/colaboradores')}
                 variant="outline"
-                className="flex items-center gap-2 border-gray-400 text-gray-700 hover:bg-gray-100 hover:border-gray-500 transition-all flex-1 sm:flex-none justify-center min-h-[44px]"
+                className="flex items-center gap-1.5 border-gray-400 text-gray-700 hover:bg-gray-100 hover:border-gray-500 transition-all flex-1 sm:flex-none justify-center min-h-[38px] text-sm"
               >
-                <Users className="w-5 h-5" />
+                <Users className="w-4 h-4" />
                 <span className="hidden sm:inline">Colaboradores</span>
                 <span className="sm:hidden">Equipa</span>
               </Button>
@@ -216,26 +216,26 @@ const Dashboard = () => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     data-testid="btn-nova-encomenda"
-                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg shadow-lg hover:shadow-xl transition-all min-h-[48px] flex-1 sm:flex-none justify-center"
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base shadow-lg hover:shadow-xl transition-all min-h-[38px] flex-1 sm:flex-none justify-center"
                   >
-                    <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span>Criar</span>
-                    <ChevronDown className="w-4 h-4" />
+                    <ChevronDown className="w-3.5 h-3.5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 p-2">
+                <DropdownMenuContent align="end" className="w-48 p-1.5">
                   <DropdownMenuItem 
                     onClick={handleCreateEncomenda} 
-                    className="cursor-pointer py-3 px-4 text-base hover:bg-green-50 rounded-lg transition-colors"
+                    className="cursor-pointer py-2.5 px-3 text-sm hover:bg-green-50 rounded-lg transition-colors"
                   >
-                    <Package className="w-5 h-5 mr-3 text-green-600" />
+                    <Package className="w-4 h-4 mr-2 text-green-600" />
                     Nova Encomenda
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={handleCreateOrcamento} 
-                    className="cursor-pointer py-3 px-4 text-base hover:bg-blue-50 rounded-lg transition-colors"
+                    className="cursor-pointer py-2.5 px-3 text-sm hover:bg-blue-50 rounded-lg transition-colors"
                   >
-                    <FileText className="w-5 h-5 mr-3 text-blue-600" />
+                    <FileText className="w-4 h-4 mr-2 text-blue-600" />
                     Novo Orçamento
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -245,9 +245,9 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="no-print max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="no-print max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
         {/* Cards de estatísticas - clicáveis para filtrar */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 mb-4 sm:mb-6">
           <Card 
             onClick={() => setStatusFilter('Todos')}
             className={`bg-white border-gray-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up ${statusFilter === 'Todos' ? 'ring-2 ring-gray-400' : ''}`} 
