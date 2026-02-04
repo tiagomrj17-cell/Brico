@@ -33,7 +33,6 @@ const OrderFormModal = ({ open, onClose, onSave, order, orderType = 'encomenda',
     observacoes: '',
     data_entrega_prevista: '',
     colaborador_id: '',
-    adiantamento: '',
     pago_totalidade: false
   });
 
