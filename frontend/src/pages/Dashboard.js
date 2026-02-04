@@ -329,18 +329,11 @@ const Dashboard = () => {
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       {/* Título Principal: Número Sequencial */}
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        {order.numero_encomenda && (
-                          <span className={`text-xl font-bold ${order.tipo === 'orcamento' ? 'text-blue-700' : 'text-green-700'}`}>
-                            #{order.numero_encomenda}
-                          </span>
-                        )}
-                        {order.tipo === 'orcamento' ? (
-                          <Badge className="bg-blue-100 text-blue-800 text-xs">Orçamento</Badge>
-                        ) : (
-                          <Badge className="bg-green-100 text-green-800 text-xs">Encomenda</Badge>
-                        )}
-                      </div>
+                      {order.numero_encomenda && (
+                        <p className={`text-xl font-bold mb-1 ${order.tipo === 'orcamento' ? 'text-blue-700' : 'text-green-700'}`}>
+                          #{order.numero_encomenda}
+                        </p>
+                      )}
                       
                       {/* Nome do Cliente - negrito */}
                       <p className="text-base font-bold text-gray-900 mb-0.5">{order.nome_cliente}</p>
