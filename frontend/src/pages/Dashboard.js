@@ -163,50 +163,66 @@ const Dashboard = () => {
   const counts = getStatusCounts();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="no-print bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900">Encomendas e Orçamentos</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Header com sombra suave */}
+      <div className="no-print bg-white shadow-md border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            {/* Título */}
+            <div className="fade-in">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+                Encomendas e Orçamentos
+              </h1>
+              <p className="text-sm text-gray-500 mt-1 hidden sm:block">
+                Gestão completa das suas encomendas
+              </p>
             </div>
-            <div className="flex items-center gap-3">
+            
+            {/* Botões de ação */}
+            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto flex-wrap">
               <Button
                 onClick={() => navigate('/entregas')}
                 variant="outline"
-                className="flex items-center gap-2 border-orange-400 text-orange-600 hover:bg-orange-50"
+                className="flex items-center gap-2 border-orange-400 text-orange-600 hover:bg-orange-50 hover:border-orange-500 transition-all flex-1 sm:flex-none justify-center min-h-[44px]"
               >
-                <Truck className="w-4 h-4" />
-                Entregas
+                <Truck className="w-5 h-5" />
+                <span className="sm:inline">Entregas</span>
               </Button>
               
               <Button
                 onClick={() => navigate('/colaboradores')}
                 variant="outline"
-                className="flex items-center gap-2 border-gray-400 text-gray-700 hover:bg-gray-50"
+                className="flex items-center gap-2 border-gray-400 text-gray-700 hover:bg-gray-100 hover:border-gray-500 transition-all flex-1 sm:flex-none justify-center min-h-[44px]"
               >
-                <Users className="w-4 h-4" />
-                Gerir Colaboradores
+                <Users className="w-5 h-5" />
+                <span className="hidden sm:inline">Colaboradores</span>
+                <span className="sm:hidden">Equipa</span>
               </Button>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     data-testid="btn-nova-encomenda"
-                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white flex items-center gap-2 px-6 py-6 text-lg"
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg shadow-lg hover:shadow-xl transition-all min-h-[48px] flex-1 sm:flex-none justify-center"
                   >
-                    <Plus className="w-5 h-5" />
-                    Criar Novo
+                    <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <span>Criar</span>
                     <ChevronDown className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={handleCreateEncomenda} className="cursor-pointer">
-                    <Package className="w-4 h-4 mr-2" />
+                <DropdownMenuContent align="end" className="w-56 p-2">
+                  <DropdownMenuItem 
+                    onClick={handleCreateEncomenda} 
+                    className="cursor-pointer py-3 px-4 text-base hover:bg-orange-50 rounded-lg transition-colors"
+                  >
+                    <Package className="w-5 h-5 mr-3 text-orange-600" />
                     Nova Encomenda
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleCreateOrcamento} className="cursor-pointer">
-                    <FileText className="w-4 h-4 mr-2" />
+                  <DropdownMenuItem 
+                    onClick={handleCreateOrcamento} 
+                    className="cursor-pointer py-3 px-4 text-base hover:bg-blue-50 rounded-lg transition-colors"
+                  >
+                    <FileText className="w-5 h-5 mr-3 text-blue-600" />
                     Novo Orçamento
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -216,17 +232,18 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="no-print max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <Card className="bg-white border-gray-200 shadow-sm">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs">Total</CardDescription>
+      <div className="no-print max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Cards de estatísticas com animação */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <Card className="bg-white border-gray-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '0ms'}}>
+            <CardHeader className="pb-2 pt-4">
+              <CardDescription className="text-xs sm:text-sm font-medium">Total</CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-gray-900" data-testid="total-encomendas">{counts.total}</p>
+            <CardContent className="pb-4">
+              <p className="text-3xl sm:text-4xl font-bold text-gray-900" data-testid="total-encomendas">{counts.total}</p>
             </CardContent>
           </Card>
-          <Card className="bg-yellow-50 border-yellow-200 shadow-sm">
+          <Card className="bg-yellow-50 border-yellow-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover slide-up" style={{animationDelay: '50ms'}}>
             <CardHeader className="pb-2">
               <CardDescription className="text-xs">Pendente</CardDescription>
             </CardHeader>
