@@ -487,7 +487,6 @@ const EntregasPage = () => {
                             >
                               <CalendarPlus className="w-3.5 h-3.5" />
                               {order.data_entrega_prevista ? 'Reagendar' : 'Agendar'}
-                              </span>
                             </Button>
                             
                             <Button
