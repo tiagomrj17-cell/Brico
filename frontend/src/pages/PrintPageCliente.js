@@ -365,29 +365,17 @@ const PrintPageCliente = () => {
                   </p>
                 </div>
               ) : (
-                <div>
-                  <table style={{ width: '100%', fontSize: '11pt' }}>
+                <div style={{ backgroundColor: '#fef2f2', padding: '2mm' }}>
+                  <table style={{ width: '100%' }}>
                     <tbody>
                       <tr>
-                        <td style={{ padding: '1mm 0', color: '#166534' }}>Adiantamento Pago:</td>
-                        <td style={{ padding: '1mm 0', textAlign: 'right', fontWeight: 'bold', color: '#166534' }}>
-                          €{(order.adiantamento || 0).toFixed(2)}
+                        <td style={{ fontSize: '14pt', fontWeight: 'bold', color: '#dc2626' }}>POR PAGAR:</td>
+                        <td style={{ textAlign: 'right', fontSize: '16pt', fontWeight: 'bold', color: '#dc2626' }}>
+                          €{(order.total_final || 0).toFixed(2)}
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <div style={{ backgroundColor: '#fef2f2', padding: '2mm', marginTop: '2mm' }}>
-                    <table style={{ width: '100%' }}>
-                      <tbody>
-                        <tr>
-                          <td style={{ fontSize: '14pt', fontWeight: 'bold', color: '#dc2626' }}>FALTA PAGAR:</td>
-                          <td style={{ textAlign: 'right', fontSize: '16pt', fontWeight: 'bold', color: '#dc2626' }}>
-                            €{((order.total_final || 0) - (order.adiantamento || 0)).toFixed(2)}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
               )}
             </div>
